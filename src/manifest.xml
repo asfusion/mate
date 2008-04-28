@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<componentPackage>    
+	<component class="com.asfusion.mate.core.EventMap"/>
+	<component class="com.asfusion.mate.core.SmartObject"/>
+	<component class="com.asfusion.mate.core.Properties"/>
+	<component class="com.asfusion.mate.ioc.InjectorSettings"/>
+	
+	<component class="com.asfusion.mate.actionLists.EventHandlers"/>
+	<component class="com.asfusion.mate.actionLists.ServiceHandlers"/>
+	<component class="com.asfusion.mate.actionLists.MessageHandlers"/>
+	<component class="com.asfusion.mate.actionLists.Injectors"/>
+	
+	<component class="com.asfusion.mate.actions.DataCopier"/>
+	<component class="com.asfusion.mate.actions.StopHandlers"/>
+	<component class="com.asfusion.mate.actions.builders.ObjectBuilder"/>
+	<component class="com.asfusion.mate.actions.builders.CommandInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.EventAnnouncer"/>
+	<component class="com.asfusion.mate.actions.builders.HTTPServiceInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.RemoteObjectInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.ResponseAnnouncer"/>
+	<component class="com.asfusion.mate.actions.builders.ServiceResponseAnnouncer"/>
+	<component class="com.asfusion.mate.actions.builders.WebServiceInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.MethodInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.serviceClasses.Request"/>
+	
+	<component class="com.asfusion.mate.events.Listener"/>
+	<component class="com.asfusion.mate.responses.ResponseHandler"/>
+	<component class="com.asfusion.mate.responses.ServiceResponseHandler"/>
+	<component class="com.asfusion.mate.events.Dispatcher"/>
+	<component class="com.asfusion.mate.events.EventProperties"/>
+	
+	<component class="com.asfusion.mate.utils.debug.Debugger"/>
+	
+	
+	<component class="com.asfusion.mate.actions.PropertyInjector"/>
+	
+</componentPackage>
