@@ -62,7 +62,7 @@ package com.asfusion.mate.core
 				catch(error:TypeError)
 				{
 					logInfo = new LogInfo( scope, source, error,null, null,sourceKey );
-					logInfo.data = {target:target, targetKey:targetKey};
+					logInfo.data = {target:target, targetKey:targetKey, source:source, sourceKey:sourceKey};
 					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
 					isWatching = false;
 				}
@@ -82,7 +82,7 @@ package com.asfusion.mate.core
 				catch(error:TypeError)
 				{
 					logInfo = new LogInfo( scope, source, error);
-					logInfo.data = {target:target, targetKey:targetKey};
+					logInfo.data = {target:target, targetKey:targetKey, source:source};
 					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
 					isWatching = false;
 				}
