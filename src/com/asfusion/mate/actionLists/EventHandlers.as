@@ -21,7 +21,6 @@ package com.asfusion.mate.actionLists
 {
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.events.MateManagerEvent;
-	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
 	import flash.events.Event;
@@ -44,11 +43,6 @@ package com.asfusion.mate.actionLists
 	 */
 	public class EventHandlers extends AbstractHandlers
 	{
-		/**
-		 * The scope of this IActionList. <code>EventHandlers</code> creates a new scope each time a call to
-		 * <code>fireEvent</code> occurs.
-		 */
-		protected var scope:Scope;
 		
 		/**
 		 * Flag indicating if this <code>EventHandlers</code> tag is registered to listen to an event or not.
@@ -202,9 +196,10 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:Event):void
 		{
-			scope = new Scope(event, debug, inheritedScope);
-			scope.owner = this;
-			runSequence(scope, actions);
+			var currentScope:Scope = new Scope(event, debug, inheritedScope);
+			currentScope.owner = this;
+			setScope(currentScope);
+			runSequence(currentScope, actions);
 		}
 		
 

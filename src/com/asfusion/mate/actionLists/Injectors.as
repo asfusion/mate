@@ -21,12 +21,6 @@ package com.asfusion.mate.actionLists
 		 */
 		protected var registered:Boolean;
 		
-		/**
-		 * The scope of this <code>InjectorHandlers</code> tag. The <code>InjectorHandlers</code> creates a new scope each time a call to
-		 * <code>fireEvent</code> occurs.
-		 */
-		protected var scope:Scope;
-		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
 		-------------------------------------------------------------------------------------------------------------*/
@@ -103,9 +97,10 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:InjectorEvent):void
 		{
-			scope = new Scope(event, debug, inheritedScope);
-			scope.owner = this;
-			runSequence(scope, actions);
+			var currentScope:Scope = new Scope(event, debug, inheritedScope);
+			currentScope.owner = this;
+			setScope(currentScope);
+			runSequence(currentScope, actions);
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

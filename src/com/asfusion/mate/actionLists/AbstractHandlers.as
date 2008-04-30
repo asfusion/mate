@@ -90,6 +90,17 @@ package com.asfusion.mate.actionLists
 		
 		
 		
+		/*-.........................................scope..........................................*/
+		private var _scope:IScope;
+		[Bindable (event="scopeChange")]
+		/**
+		 * @inheritDoc
+		 */
+		public function get scope():IScope
+		{
+			return _scope;
+		}
+		
 		/*-.........................................debug..........................................*/
 		private var _debug:Boolean;
 		/**
@@ -228,6 +239,16 @@ package com.asfusion.mate.actionLists
 		protected function commitProperties():void
 		{
 			// this method is abstract it will be implemented by children
+		}
+		
+		/*-.........................................setScope..........................................*/
+		/**
+		 * Processes the properties set on the component.
+		*/
+		protected function setScope(scope:IScope):void
+		{
+			_scope = scope;
+			dispatchEvent( new ActionListEvent(ActionListEvent.SCOPE_CHANGE));
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

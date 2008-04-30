@@ -49,6 +49,13 @@ package com.asfusion.mate.actionLists
 		function set debug(value:Boolean):void
 		
 		/**
+		 * Returns the current scope for this IActionList
+		 * 
+		 *  @default null
+		 * */
+		function get scope():IScope
+		
+		/**
 		 * A reference to the document object associated with this IActionList.
 		 * A document object is an Object at the top of the hierarchy of a Flex 
 		 * application, MXML component, or AS component.

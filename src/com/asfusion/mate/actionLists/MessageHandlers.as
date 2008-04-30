@@ -19,10 +19,11 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actionLists
 {	
+	import com.asfusion.mate.utils.debug.DebuggerUtil;
+	
 	import mx.messaging.*;
 	import mx.messaging.events.MessageEvent;
 	import mx.messaging.events.MessageFaultEvent;
-	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
 	/**
 	 * The <code>MessageHandlers</code> tag allows you to register a set of handlers as a consumer of a Flex Messaging Service. 
@@ -31,12 +32,6 @@ package com.asfusion.mate.actionLists
 	 */
 	public class MessageHandlers extends AbstractHandlers
 	{
-		
-		/**
-		 * The scope of this <code>MessageHandlers</code>. The <code>MessageHandlers</code> tag creates a new scope each time a call to
-		 * <code>fireEvent</code> occurs.
-		 */
-		protected var messageScope:MessageScope;
 		
 		/**
 		 * An internal reference to the Consumer instance
@@ -250,11 +245,11 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireFaultEvent(event:MessageFaultEvent):void
 		{
-			messageScope = new MessageScope(event,debug, inheritedScope);
-			messageScope.owner = this;
-			messageScope.message = event.message;
-			messageScope.currentEvent = event;
-			runSequence(messageScope, faultHandlers);
+			var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
+			currentScope.owner = this;
+			currentScope.message = event.message;
+			currentScope.currentEvent = event;
+			runSequence(currentScope, faultHandlers);
 		}
 		
 		/*-.........................................fireEvent..........................................*/
@@ -264,11 +259,11 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:MessageEvent):void
 		{
-			messageScope = new MessageScope(event,debug, inheritedScope);
-			messageScope.owner = this;
-			messageScope.message = event.message;
-			messageScope.currentEvent = event;
-			runSequence(messageScope, actions);
+			var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
+			currentScope.owner = this;
+			currentScope.message = event.message;
+			currentScope.currentEvent = event;
+			runSequence(currentScope, actions);
 		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Override Protected methods

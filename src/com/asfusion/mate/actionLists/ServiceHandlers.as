@@ -19,11 +19,8 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actionLists
 {
-	import com.asfusion.mate.actionLists.EventHandlers;
-	import com.asfusion.mate.actionLists.IActionList;
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.utils.debug.*;
-	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
 	import flash.events.Event;
 	
@@ -41,12 +38,6 @@ package com.asfusion.mate.actionLists
 	 */
 	public class ServiceHandlers extends EventHandlers implements IActionList
 	{	
-		
-		/**
-		 * The scope of this <code>IActionList</code>. The <code>IActionList</code> tag creates a new scope each time a call to
-		 * <code>fireEvent</code> occurs.
-		 */
-		protected var serviceScope:ServiceScope;
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
@@ -107,23 +98,24 @@ package com.asfusion.mate.actionLists
 		 * @inheritDoc
 		 */
 		override protected function fireEvent(event:Event):void
-		{
-			serviceScope = new ServiceScope(inheritedScope.event, debug, inheritedScope);
-			serviceScope.owner = this;
-			
+		{	
 			if(AbstractEvent(event).token == token) 
 			{
+				var currentScope:ServiceScope = new ServiceScope(inheritedScope.event, debug, inheritedScope);
+				currentScope.owner = this;
+			
 				if(event is FaultEvent)
 				{
-					serviceScope.fault  = FaultEvent(event).fault;
+					currentScope.fault  = FaultEvent(event).fault;
 				}
 				if(event is ResultEvent)
 				{
-					serviceScope.result  = ResultEvent(event).result;
+					currentScope.result  = ResultEvent(event).result;
 				}
 				dispatcher.removeEventListener(type,fireEvent);
 				
-				runSequence(serviceScope, actions);
+				setScope(currentScope);
+				runSequence(currentScope, actions);
 			}
 		}
 	}

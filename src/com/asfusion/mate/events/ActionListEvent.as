@@ -39,6 +39,11 @@ package com.asfusion.mate.events
 		 */
 		public static const END:String = "end";
 		
+		/**
+		 * Dispatched when the scope changes.
+		 */
+		public static const SCOPE_CHANGE:String = "scopeChange";
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Fields
 		-------------------------------------------------------------------------------------------------------------*/
