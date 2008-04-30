@@ -288,7 +288,7 @@ package com.asfusion.mate.utils.debug
 			
 			if(info.target)
 			{
-				message += "- CLASS: " + getClassName(info.target) + " \n";
+				message += "- TAG: " + getClassName(info.target) + " \n";
 			}
 			
 			if(info.target is IBuilder && info.instance)
@@ -490,23 +490,25 @@ package com.asfusion.mate.utils.debug
 			{
 				var target:Object = info.data.target;
 				var targetKey:String = info.data.targetKey;
+				var source:Object = info.data.source;
+				var sourceKey:String = info.data.sourceKey;
 				var type:String = getType(target, targetKey);
 				var value:Object;
-				if(!info.property)
+				if(!sourceKey)
 				{
-					value = info.instance;
+					value = source;
 				}
 				else
 				{
-					var multipleLevels:int = info.property.indexOf(".");
+					var multipleLevels:int = sourceKey.indexOf(".");
 					if(multipleLevels == -1)
 					{
-						value = info.instance[info.property];
+						value = source[sourceKey];
 					}
 					else
 					{
-						value = info.instance;
-						var properties:Array = info.property.split(".");
+						value = source;
+						var properties:Array = sourceKey.split(".");
 						for each(var property:String in properties)
 						{
 							value = value[property];

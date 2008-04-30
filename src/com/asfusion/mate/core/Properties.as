@@ -52,6 +52,8 @@ package com.asfusion.mate.core
 		 */
 		public static function smartCopy(source:Object, target:Object, scope:IScope):Object
 		{
+			var logInfo:LogInfo;
+			
 			for( var propertyName:String in source)
 			{
 				var realValue:* = source[propertyName];
@@ -65,8 +67,14 @@ package com.asfusion.mate.core
 				}
 				catch(error:ReferenceError)
 				{
-					var logInfo:LogInfo = new LogInfo(scope, target, error, null, null, propertyName)
+					logInfo = new LogInfo(scope, target, error, null, null, propertyName)
 					scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo); 
+				}
+				catch(error:TypeError)
+				{
+					logInfo = new LogInfo(scope, target, error, null, null, propertyName)
+					logInfo.data = {target:target, targetKey:propertyName, source:realValue};
+					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
 				}
 				
 			}
