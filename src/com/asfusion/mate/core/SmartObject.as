@@ -40,6 +40,11 @@ package com.asfusion.mate.core
 	public class SmartObject extends Proxy implements IEventDispatcher, ISmartObject
 	{
 		/*-----------------------------------------------------------------------------------------------------------
+		*                                          Protected Fields
+		-------------------------------------------------------------------------------------------------------------*/
+		protected var chain:Array = null;
+		
+		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Private Fields
 		-------------------------------------------------------------------------------------------------------------*/
 		private var dispatcher:EventDispatcher = new EventDispatcher(IEventDispatcher(this));
@@ -96,10 +101,15 @@ package com.asfusion.mate.core
 		/**
 		 * Constructor
 		 */
-		public function SmartObject(source:String = null, key:String = null):void
+		public function SmartObject(source:String = null, key:String = null, chain:Array = null):void
 		{
 			this.source = source;
 			sourceKey = key;
+			if(key)
+			{
+				this.chain = (chain) ? chain : new Array();
+				this.chain.push( key );
+			}
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------
@@ -127,7 +137,7 @@ package com.asfusion.mate.core
 		override flash_proxy function getProperty(name:*):*
 		{
 			var localName:String = (name is QName) ? QName(name).localName : name;
-			var newSmarObject:SmartObject = new SmartObject(source.toString(), localName);
+			var newSmarObject:SmartObject = new SmartObject(source, localName, chain);
 			return newSmarObject;
 		}
 		/*-----------------------------------------------------------------------------------------------------------
@@ -145,7 +155,19 @@ package com.asfusion.mate.core
 			{
 				try
 				{
-					value = (sourceKey) ? realSource[sourceKey] : realSource;
+					if(!sourceKey)
+					{
+						value = realSource;
+					}
+					else
+					{
+						var currentSource:Object = realSource;
+						for each(var property:String in chain)
+						{
+							currentSource = currentSource[property]
+						}
+						value = currentSource;
+					}
 				}
 				catch(error:ReferenceError)
 				{
