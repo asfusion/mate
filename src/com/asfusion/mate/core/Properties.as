@@ -57,7 +57,7 @@ package com.asfusion.mate.core
 				var realValue:* = source[propertyName];
 				if(realValue is ISmartObject)
 				{
-					realValue = ISmartObject(realValue).getValue(scope, scope.getCurrentTarget()); 
+					realValue = ISmartObject(realValue).getValue(scope); 
 				}
 				try
 				{
