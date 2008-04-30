@@ -177,7 +177,8 @@ package com.asfusion.mate.core
 					}
 					else
 					{
-						var logInfo:LogInfo = new LogInfo(scope, realSource, error, null, null, sourceKey)
+						var stringChain:String = (chain) ? chain.join(".") : null;
+						var logInfo:LogInfo = new LogInfo(scope, realSource, error, null, null, stringChain)
 						scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo);
 					}
 				}
