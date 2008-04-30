@@ -20,6 +20,8 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.utils.debug.LogInfo;
+	import com.asfusion.mate.utils.debug.LogTypes;
 	
 	use namespace mate;
 	
@@ -52,8 +54,21 @@ package com.asfusion.mate.core
 		{
 			for( var propertyName:String in source)
 			{
-				var realValue:* = (source[propertyName] is ISmartObject)? ISmartObject(source[propertyName]).getValue(scope, scope.getCurrentTarget()) :  source[propertyName];
-				target[propertyName] = realValue;
+				var realValue:* = source[propertyName];
+				if(realValue is ISmartObject)
+				{
+					realValue = ISmartObject(realValue).getValue(scope, scope.getCurrentTarget()); 
+				}
+				try
+				{
+					target[propertyName] = realValue;
+				}
+				catch(error:ReferenceError)
+				{
+					var logInfo:LogInfo = new LogInfo(scope, target, error, null, null, propertyName)
+					scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo); 
+				}
+				
 			}
 			if(source._id) target['id'] = source._id;
 			return target;
