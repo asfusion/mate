@@ -21,8 +21,8 @@ package com.asfusion.mate.utils.debug
 {
 	import com.asfusion.mate.actionLists.IScope;
 	import com.asfusion.mate.actionLists.Scope;
-	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.actions.builders.IBuilder;
+	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.events.MateLogEvent;
 	
 	import flash.events.Event;
@@ -155,10 +155,15 @@ package com.asfusion.mate.utils.debug
 	       
 	        for each (var prop:XML in description.accessor)
 	        {
-	        	attribute = prop..@name.toString();	
+	        	var tempAttribute:XMLList = prop..@name; 
+	        	attribute = tempAttribute[0].toString();	
                if(target[attribute] != null && (!omit || !omit.hasOwnProperty(attribute)) )
                {
-               		attributes += "   " + attribute + '="'+ formatValue(target[attribute] , scope) +'"';
+               		var formatedValue:String = formatValue(target[attribute] , scope);
+               		if(formatedValue != "")
+               		{
+               			attributes += "   " + attribute + '="'+ formatedValue +'"';
+               		}
                }
             }
 			return attributes;
