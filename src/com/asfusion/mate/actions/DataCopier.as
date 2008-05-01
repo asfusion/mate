@@ -19,8 +19,10 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions
 {
-	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.core.ISmartObject;
+	import com.asfusion.mate.utils.debug.LogInfo;
+	import com.asfusion.mate.utils.debug.LogTypes;
 
 	/**
 	 * The DataSaver tag allows you to save values into some object. A possible storage is the "data" object available while the <code>IActionList</code> is running.
@@ -104,7 +106,7 @@ package com.asfusion.mate.actions
 		{
 			var realSource:* 		= getRealObject(source, scope);
 			var realDestination:* 	= getRealObject(destination, scope);
-			
+			var logInfo:LogInfo;
 			if(realSource)
 			{
 				try
@@ -118,10 +120,22 @@ package com.asfusion.mate.actions
 						realDestination = (sourceKey) ? realSource[sourceKey] : realSource;
 					}
 				}
-				catch(error:Error)
+				catch(error:ReferenceError)
 				{
-					trace('getProperty error @todo' + error);
+					logInfo = new LogInfo(scope, realDestination, error, null, null, destinationKey)
+					scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo);
 				}
+				catch(error:TypeError)
+				{
+					logInfo = new LogInfo(scope, realDestination, error, null, null, destinationKey)
+					logInfo.data = {target:realDestination, targetKey:destinationKey, source:realSource, sourceKey:sourceKey};
+					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
+				}
+			}
+			else
+			{
+				logInfo = new LogInfo( scope);
+				scope.getLogger().error(LogTypes.SOURCE_UNDEFINED, logInfo);
 			}
 		
 			scope.lastReturn = null;

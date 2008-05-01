@@ -188,7 +188,10 @@ package com.asfusion.mate.utils.debug
 	    /*-.........................................getType..........................................*/
 	    protected function getType(target:Object, targetKey:String):String
 	    {
-	    	//var targetClass:Class  = Class(getDefinitionByName(getQualifiedClassName(target)));
+	    	if(target == null || targetKey == null)
+	    	{
+	    		return null;
+	    	}
 	    	var type:String;
 	    	var property:XMLList;
 	    	var classType:String;
@@ -515,10 +518,21 @@ package com.asfusion.mate.utils.debug
 						}
 					}
 				}
-				var errorString:String = "Unable to set property "+ targetKey +
-										 " on "+ getClassName(target) +
-										 " because is not type "+type+
-										 ". Provided value was of type "+getClassName(value);
+				if(!target)
+				{
+					
+				}
+				var errorString:String = "Unable to set property "+ targetKey + " on ";
+				if(target)
+				{
+					errorString +=  getClassName(target) + " because is not type "+type+
+									". Provided value was of type "+getClassName(value);
+				}
+				else
+				{
+					errorString += (target) ? getClassName(target) : "a null Object."
+				}
+							 
 				message = formatError(info,errorString);
 			}
 			return message;
