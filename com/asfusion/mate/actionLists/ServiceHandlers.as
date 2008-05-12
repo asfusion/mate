@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.actionLists
 {
 	import com.asfusion.mate.core.*;
+	import com.asfusion.mate.events.UnhandledFaultEvent;
 	import com.asfusion.mate.utils.debug.*;
 	
 	import flash.events.Event;
@@ -101,21 +102,35 @@ package com.asfusion.mate.actionLists
 		{	
 			if(AbstractEvent(event).token == token) 
 			{
-				var currentScope:ServiceScope = new ServiceScope(inheritedScope.event, debug, inheritedScope);
-				currentScope.owner = this;
-			
-				if(event is FaultEvent)
+				if(actions && actions.length > 0)
 				{
-					currentScope.fault  = FaultEvent(event).fault;
+					var currentScope:ServiceScope = new ServiceScope(inheritedScope.event, debug, inheritedScope);
+					currentScope.owner = this;
+				
+					if(event is FaultEvent)
+					{
+						currentScope.fault  = FaultEvent(event).fault;
+					}
+					if(event is ResultEvent)
+					{
+						currentScope.result  = ResultEvent(event).result;
+					}
+					
+					
+					setScope(currentScope);
+					runSequence(currentScope, actions);
 				}
-				if(event is ResultEvent)
+				else if(event is FaultEvent)
 				{
-					currentScope.result  = ResultEvent(event).result;
+					var faultEvent:UnhandledFaultEvent = new UnhandledFaultEvent(UnhandledFaultEvent.FAULT);
+					faultEvent.fault = FaultEvent(event).fault;
+					faultEvent.headers = FaultEvent(event).headers;
+					faultEvent.message = FaultEvent(event).message;
+					faultEvent.token = FaultEvent(event).token;
+					faultEvent.messageId = FaultEvent(event).messageId;
+					inheritedScope.dispatcher.dispatchEvent(faultEvent);
 				}
 				dispatcher.removeEventListener(type,fireEvent);
-				
-				setScope(currentScope);
-				runSequence(currentScope, actions);
 			}
 		}
 	}

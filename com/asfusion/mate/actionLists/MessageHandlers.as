@@ -19,12 +19,15 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actionLists
 {	
+	import com.asfusion.mate.events.UnhandledMessageFaultEvent;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
+	import com.asfusion.mate.core.mate;
 	
 	import mx.messaging.*;
 	import mx.messaging.events.MessageEvent;
 	import mx.messaging.events.MessageFaultEvent;
 	
+	use namespace mate;
 	/**
 	 * The <code>MessageHandlers</code> tag allows you to register a set of handlers as a consumer of a Flex Messaging Service. 
 	 * All the tags inside the <code>MessageHandlers</code> tag will be executed in order when a <code>Message</code> matching the 
@@ -245,11 +248,24 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireFaultEvent(event:MessageFaultEvent):void
 		{
-			var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
-			currentScope.owner = this;
-			currentScope.message = event.message;
-			currentScope.currentEvent = event;
-			runSequence(currentScope, faultHandlers);
+			if(faultHandlers && faultHandlers.length > 0)
+			{
+				var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
+				currentScope.owner = this;
+				currentScope.message = event.message;
+				currentScope.currentEvent = event;
+				runSequence(currentScope, faultHandlers);
+			}
+			else
+			{
+				var faultEvent:UnhandledMessageFaultEvent = new UnhandledMessageFaultEvent(UnhandledMessageFaultEvent.FAULT);
+				faultEvent.faultCode = event.faultCode;
+				faultEvent.faultDetail = event.faultDetail;
+				faultEvent.faultString = event.faultString;
+				faultEvent.message = event.message;
+				faultEvent.rootCause = event.rootCause;
+				dispatcher.dispatchEvent(faultEvent);
+			}
 		}
 		
 		/*-.........................................fireEvent..........................................*/
