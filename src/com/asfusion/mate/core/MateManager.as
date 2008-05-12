@@ -81,7 +81,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	private var cacheInstances:Dictionary = new Dictionary();
 	private var listenerProxyRegistered:Boolean = false;
 	private var methodQueue:Dictionary = new Dictionary();
-	private var listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
+	private var listenerProxyType:String = FlexEvent.INITIALIZE;
 	
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Public setters and Getters

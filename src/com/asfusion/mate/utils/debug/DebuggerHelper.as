@@ -452,10 +452,14 @@ package com.asfusion.mate.utils.debug
 					index = info.error.message.indexOf(getClassName(info.instance) + '()' ,0);
 					message = "Wrong number of arguments supplied when calling the constructor";
 				}
+				else if(info.method)
+				{
+					message = 'Wrong number of arguments supplied when calling method '+ info.method;
+					index = info.error.message.indexOf(info.method + '()' ,0);
+				}
 				else
 				{
-					message = 'Wrong number of arguments supplied';
-					index = info.error.message.indexOf(info.method + '()' ,0);
+					message = 'Wrong number of arguments supplied when calling method';
 				}
 
 				if(index != -1)
@@ -473,13 +477,18 @@ package com.asfusion.mate.utils.debug
 		{
 			var message:String = '';
 			var info:LogInfo = event.parameters[0];
-			if(info.error)
+			if(info.error && info.instance)
 			{
 				validateSignature(info);
 				if(info.foundProblem)
 				{
 					message = info.problem;
 				}
+			}
+			else
+			{
+				var errorString:String = "Argument type mismatch when calling method.";
+				message = formatError(info,errorString);
 			}
 			return message;
 		}

@@ -19,9 +19,10 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions.builders
 {
+	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.actions.AbstractServiceInvoker;
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.actionLists.*;
+	import com.asfusion.mate.events.UnhandledFaultEvent;
 	
 	import mx.messaging.ChannelSet;
 	import mx.rpc.AsyncToken;
@@ -225,7 +226,7 @@ package com.asfusion.mate.actions.builders
 				resultHandlersInstance.token = token;
 				resultHandlersInstance.validateNow();
 			}
-			if(faultHandlers && faultHandlers.length > 0)
+			if( (faultHandlers && faultHandlers.length > 0) || scope.dispatcher.hasEventListener(UnhandledFaultEvent.FAULT))
 			{
 				var faultHandlersInstance:ServiceHandlers = createInnerHandlers(scope,  
 																				FaultEvent.FAULT, 
