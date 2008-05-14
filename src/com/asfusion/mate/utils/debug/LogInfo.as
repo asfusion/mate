@@ -19,8 +19,6 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.utils.debug
 {
-	import com.asfusion.mate.actionLists.IScope;
-	
 	/**
 	 * LogInfo is an object sent to the <code>Debugger</code> that encapsulates
 	 * all the information necessary to create a log.
