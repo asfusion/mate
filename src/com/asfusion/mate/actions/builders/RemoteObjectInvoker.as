@@ -19,9 +19,9 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions.builders
 {
+	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.utils.debug.*;
 	
 	import mx.rpc.AbstractOperation;
@@ -180,8 +180,30 @@ package com.asfusion.mate.actions.builders
 			if(showCursorChanged)		remoteObjectInstance.showBusyCursor = showBusyCursor;
 			if(source) 					remoteObjectInstance.source = source;
 			
-			if(username && password) RemoteObject(currentInstance).setCredentials(username, password);
-			if(remoteUsername && remotePassword) RemoteObject(currentInstance).setRemoteCredentials(remoteUsername, remotePassword);
+			if(username && password)
+			{
+				if(username is ISmartObject)
+				{
+					username = ISmartObject(username).getValue(scope);
+				}
+				if(password is ISmartObject)
+				{
+					password = ISmartObject(password).getValue(scope);
+				}
+				remoteObjectInstance.setCredentials(username as String, password as String);
+			}
+			if(remoteUsername && remotePassword)
+			{
+				if(remoteUsername is ISmartObject)
+				{
+					remoteUsername = ISmartObject(remoteUsername).getValue(scope);
+				}
+				if(remotePassword is ISmartObject)
+				{
+					remotePassword = ISmartObject(remotePassword).getValue(scope);
+				}
+				remoteObjectInstance.setRemoteCredentials(remoteUsername as String, remotePassword as String);
+			}
 		}
 		
 		/*-.........................................run..........................................*/

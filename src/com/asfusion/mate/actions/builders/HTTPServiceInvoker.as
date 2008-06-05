@@ -261,8 +261,30 @@ package com.asfusion.mate.actions.builders
 			if(proxyChanged)			httpInstance.useProxy = useProxy;
 			if(objectsBindableChanged)	httpInstance.makeObjectsBindable = makeObjectsBindable;
 			
-			if(username && password) httpInstance.setCredentials(username, password);
-			if(remoteUsername && remotePassword) httpInstance.setRemoteCredentials(remoteUsername, remotePassword);
+			if(username && password)
+			{
+				if(username is ISmartObject)
+				{
+					username = ISmartObject(username).getValue(scope);
+				}
+				if(password is ISmartObject)
+				{
+					password = ISmartObject(password).getValue(scope);
+				}
+				httpInstance.setCredentials(username as String, password as String);
+			}
+			if(remoteUsername && remotePassword)
+			{
+				if(remoteUsername is ISmartObject)
+				{
+					remoteUsername = ISmartObject(remoteUsername).getValue(scope);
+				}
+				if(remotePassword is ISmartObject)
+				{
+					remotePassword = ISmartObject(remotePassword).getValue(scope);
+				}
+				httpInstance.setRemoteCredentials(remoteUsername as String, remotePassword as String);
+			}
 		}
 		
 		/*-.........................................run..........................................*/

@@ -251,8 +251,30 @@ package com.asfusion.mate.actions.builders
 			if(wsdl)					webServiceInstance.wsdl = wsdl;
 			if(service)					webServiceInstance.service = service;
 			
-			if(username && password) WebService(currentInstance).setCredentials(username, password);
-			if(remoteUsername && remotePassword) WebService(currentInstance).setRemoteCredentials(remoteUsername, remotePassword);
+			if(username && password)
+			{
+				if(username is ISmartObject)
+				{
+					username = ISmartObject(username).getValue(scope);
+				}
+				if(password is ISmartObject)
+				{
+					password = ISmartObject(password).getValue(scope);
+				}
+				webServiceInstance.setCredentials(username as String, password as String);
+			}
+			if(remoteUsername && remotePassword)
+			{
+				if(remoteUsername is ISmartObject)
+				{
+					remoteUsername = ISmartObject(remoteUsername).getValue(scope);
+				}
+				if(remotePassword is ISmartObject)
+				{
+					remotePassword = ISmartObject(remotePassword).getValue(scope);
+				}
+				webServiceInstance.setRemoteCredentials(remoteUsername as String, remotePassword as String);
+			}
 			
 			webServiceInstance.loadWSDL();
 		}
