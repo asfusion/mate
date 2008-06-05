@@ -147,60 +147,60 @@ package com.asfusion.mate.actions.builders
 		
     
 		/*-.........................................username..........................................*/
-		private var _username:String;
+		private var _username:Object;
 		/**
 		 * Username to supply to <code>setCredentials</code> method
 		 */
-		public function get username():String
+		public function get username():Object
 		{
 			return _username;
 		}
-		public function set username(value:String):void
+		public function set username(value:Object):void
 		{
 			_username = value;
 		}
 		
 		
 		/*-.........................................password..........................................*/
-		private var _password:String;
+		private var _password:Object;
 		/**
 		 * Password to supply to <code>setCredentials</code> method
 		 */
-		public function get password():String
+		public function get password():Object
 		{
 			return _password;
 		}
-		public function set password(value:String):void
+		public function set password(value:Object):void
 		{
 			_password = value;
 		}
 		
 		
 		/*-.........................................remoteUsername..........................................*/
-		private var _remoteUsername:String;
+		private var _remoteUsername:Object;
 		/**
 		 * Username to supply to <code>setCredentials</code> method
 		 */
-		public function get remoteUsername():String
+		public function get remoteUsername():Object
 		{
 			return _remoteUsername;
 		}
-		public function set remoteUsername(value:String):void
+		public function set remoteUsername(value:Object):void
 		{
 			_remoteUsername = value;
 		}
 		
 		
 		/*-.........................................remotePassword..........................................*/
-		private var _remotePassword:String;
+		private var _remotePassword:Object;
 		/**
 		 * Password to supply to <code>setCredentials</code> method
 		 */
-		public function get remotePassword():String
+		public function get remotePassword():Object
 		{
 			return _remotePassword;
 		}
-		public function set remotePassword(value:String):void
+		public function set remotePassword(value:Object):void
 		{
 			_remotePassword = value;
 		}
