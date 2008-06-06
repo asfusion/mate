@@ -53,7 +53,7 @@ package com.asfusion.mate.ioc
 		}
 		
 		/*-.........................................eventType..........................................*/
-		private var _eventType:String = FlexEvent.INITIALIZE;
+		private var _eventType:String = FlexEvent.CREATION_COMPLETE;
 		/**
 		 * Event type that Mate will listen to that will be dispatched by the application views
 		 * 

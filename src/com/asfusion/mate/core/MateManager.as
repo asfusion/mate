@@ -81,7 +81,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	private var cacheInstances:Dictionary = new Dictionary();
 	private var listenerProxyRegistered:Boolean = false;
 	private var methodQueue:Dictionary = new Dictionary();
-	private var listenerProxyType:String = FlexEvent.INITIALIZE;
+	private var listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
 	
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Public setters and Getters
@@ -194,8 +194,8 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		}
 		if(!listenerProxyRegistered)
 		{
-			application.addEventListener(type, listenerProxyHandler, true);
-			systemManager.addEventListener(type, listenerProxyHandler, true);
+			application.addEventListener(type, listenerProxyHandler, true,1);
+			systemManager.addEventListener(type, listenerProxyHandler, true,1);
 			listenerProxyType = type;
 			listenerProxyRegistered = true;
 		}
