@@ -12,6 +12,7 @@
 	
 	<component class="com.asfusion.mate.actions.DataCopier"/>
 	<component class="com.asfusion.mate.actions.StopHandlers"/>
+	<component class="com.asfusion.mate.actions.InlineInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.ObjectBuilder"/>
 	<component class="com.asfusion.mate.actions.builders.CommandInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.EventAnnouncer"/>
