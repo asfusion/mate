@@ -72,7 +72,7 @@ package com.asfusion.mate.actions
 				var argumentList:Array = (new SmartArguments()).getRealArguments(scope, this.arguments);
 				try
 				{
-					method.apply(null, argumentList);
+					scope.lastReturn = method.apply(null, argumentList);
 				}
 				catch(error:ArgumentError)
 				{
