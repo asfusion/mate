@@ -195,6 +195,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		if(!listenerProxyRegistered)
 		{
 			application.addEventListener(type, listenerProxyHandler, true,1);
+			application.addEventListener(type, listenerProxyHandler, false,1);
 			systemManager.addEventListener(type, listenerProxyHandler, true,1);
 			listenerProxyType = type;
 			listenerProxyRegistered = true;
@@ -206,6 +207,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	{
 		type = (type == null) ? listenerProxyType : type;
 		application.removeEventListener(type, listenerProxyHandler, true);
+		application.removeEventListener(type, listenerProxyHandler, false);
 		systemManager.removeEventListener(type, listenerProxyHandler, true);
 		listenerProxyRegistered = false;
 	}
