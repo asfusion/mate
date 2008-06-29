@@ -183,7 +183,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     	cacheInstances[template] = instance;
     }
     
-    /*-.........................................addEventAdapter........................................*/
+    /*-.........................................addListenerProxy........................................*/
 	public function addListenerProxy(type:String = null):void
 	{
 		type = (type == null) ? listenerProxyType : type;
@@ -202,7 +202,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		}
 	}
     
-    /*-.........................................removeEventAdapter........................................*/
+    /*-.........................................removeListenerProxy........................................*/
 	public function removeListenerProxy(type:String = null):void
 	{
 		type = (type == null) ? listenerProxyType : type;
@@ -242,7 +242,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Event Handlers
      -------------------------------------------------------------------------------------------------------------*/
-	/*-.........................................eventAdapterHandler........................................*/
+	/*-.........................................listenerProxyHandler........................................*/
 	private function listenerProxyHandler(event:Event):void
 	{
 		var type:String = getQualifiedClassName(event.target);

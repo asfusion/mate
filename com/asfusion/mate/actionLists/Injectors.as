@@ -19,7 +19,12 @@ package com.asfusion.mate.actionLists
 		/**
 		 * Flag indicating if this <code>InjectorHandlers</code> is registered to listen to a target or not.
 		 */
-		protected var registered:Boolean;
+		protected var targetRegistered:Boolean;
+		
+		/**
+		 * Flag indicating if this <code>InjectorHandlers</code> is registered to listen to a target list or not.
+		 */
+		protected var targetsRegistered:Boolean;
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
@@ -40,7 +45,30 @@ package com.asfusion.mate.actionLists
 			var oldValue:Class = _target;
 	        if (oldValue !== value)
 	        {
+	        	if(targetRegistered) unregister(oldValue);
 	        	_target = value;
+	        	validateNow();
+	        }
+		}
+		
+		/*-.........................................targets..........................................*/
+		private var _targets:Array;
+		/**
+		 * An array of classes that, when an object is created, should trigger the <code>InjectorHandlers</code> to run. 
+		 * 
+		 *  @default null
+		 * */
+		public function get targets():Array
+		{
+			return _targets;
+		}
+		public function set targets(value:Array):void
+		{
+			var oldValue:Array = _targets;
+	        if (oldValue !== value)
+	        {
+	        	if(targetRegistered) unregister(oldValue);
+	        	_targets = value;
 	        	validateNow()
 	        }
 		}
@@ -81,13 +109,23 @@ package com.asfusion.mate.actionLists
 		*/
 		override protected function commitProperties():void
 		{
-			if(!registered && target)
+			if(!targetRegistered && target)
 			{
 				var type:String = getQualifiedClassName(target);
 				dispatcher.addEventListener(type,fireEvent);
-				registered = true;
-				manager.addListenerProxy();
+				targetRegistered = true;
 			}
+			
+			if(!targetsRegistered && targets)
+			{
+				for each( var currentTarget:Class in targets)
+				{
+					var currentType:String = getQualifiedClassName(currentTarget);
+					dispatcher.addEventListener(currentType,fireEvent);
+				}
+				targetsRegistered = true;
+			}
+			manager.addListenerProxy();
 		}
 		
 		/*-.........................................fireEvent..........................................*/
@@ -103,6 +141,27 @@ package com.asfusion.mate.actionLists
 			runSequence(currentScope, actions);
 		}
 		
+		/*-.........................................unregister..........................................*/
+		/**
+		 * Unregisters a target/s. Used internally whenever a new target/s is set.
+		*/
+		protected function unregister(obj:Object):void
+		{
+			if(obj is Class)
+			{
+				var type:String = getQualifiedClassName(obj);
+				dispatcher.removeEventListener(type, fireEvent);
+			}
+			else if(obj is Array)
+			{
+				for each( var currentTarget:Class in targets)
+				{
+					var currentType:String = getQualifiedClassName(currentTarget);
+					dispatcher.removeEventListener(currentType, fireEvent);
+				}
+			}
+		}
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Event Handlers
 		-------------------------------------------------------------------------------------------------------------*/
@@ -114,11 +173,20 @@ package com.asfusion.mate.actionLists
 		*/
 		override protected function handleDispatcherChange(event:MateManagerEvent):void
 		{
-			if(registered)
+			if(targetRegistered)
 			{
 				var type:String = getQualifiedClassName(target);
 				event.oldDispatcher.removeEventListener(type, fireEvent);
 				dispatcher.addEventListener(type,fireEvent);
+			}
+			if(targetsRegistered)
+			{
+				for each( var currentTarget:Class in targets)
+				{
+					var currentType:String = getQualifiedClassName(currentTarget);
+					event.oldDispatcher.removeEventListener(currentType, fireEvent);
+					dispatcher.addEventListener(currentType,fireEvent);
+				}
 			}
 		}
 
