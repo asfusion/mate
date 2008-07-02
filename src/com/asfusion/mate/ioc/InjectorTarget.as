@@ -23,7 +23,7 @@ package com.asfusion.mate.ioc
 		 * A reference to the document object associated with this InjectorTarget. A document object is an Object at the top
 		 * of the hierarchy of a Flex application, MXML component, or AS component.
 		 */
-		protected var IMXMLdocument:Object;
+		protected var document:Object;
 		
 		/*-.........................................initialized..........................................*/
 		/**
@@ -31,7 +31,7 @@ package com.asfusion.mate.ioc
 		 */
 		public function initialized(document:Object, id:String):void
 		{
-			IMXMLdocument = document;
+			document = document;
 			register();
 		}
 	}
