@@ -23,6 +23,7 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.actions.BaseAction;
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
+	import com.asfusion.mate.ioc.InjectorRegistry;
 	use namespace mate;
 	
 	/**
@@ -84,10 +85,29 @@ package com.asfusion.mate.actions.builders
 		{
 			return _cache;
 		}
+		[Inspectable(enumeration="true,false")]
 		public function set cache(value:Boolean):void
 		{
 			_cache = value;
 		}
+		
+		/*-.........................................registerTarget..........................................*/
+		private var _registerTarget:Boolean = true;
+		/**
+		 * Registers the newly created object has an injector target. If true, this allows this object to be injected
+		 * with properties using the <code>Injectors</code> tags.
+		 */
+		 public function get registerTarget():Boolean
+		{
+			return _registerTarget;
+		}
+		[Inspectable(enumeration="true,false")]
+		public function set registerTarget(value:Boolean):void
+		{
+			_registerTarget = value;
+		}
+		
+		
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                           Protected methods
@@ -116,6 +136,10 @@ package com.asfusion.mate.actions.builders
 			else
 			{
 				currentInstance = creator.create(generator, scope, cache);
+			}
+			if(registerTarget && currentInstance)
+			{
+				InjectorRegistry.register(currentInstance);
 			}
 			return currentInstance;
 		}
