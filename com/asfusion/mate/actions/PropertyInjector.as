@@ -3,13 +3,8 @@ package com.asfusion.mate.actions
 	import com.asfusion.mate.actionLists.IScope;
 	import com.asfusion.mate.core.Binder;
 	import com.asfusion.mate.core.Creator;
+	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.events.InjectorEvent;
-	import com.asfusion.mate.utils.debug.LogInfo;
-	import com.asfusion.mate.utils.debug.LogTypes;
-	
-	import flash.events.IEventDispatcher;
-	
-	import mx.binding.utils.BindingUtils;
 
 	/**
 	 * PropertyInjector sets a value from an object (source) to a destination (target). 
@@ -94,7 +89,18 @@ package com.asfusion.mate.actions
 		 */
 		override protected function prepare(scope:IScope):void
 		{
-			currentInstance = (source is Class) ? createInstance(scope) : source;
+			if(source is Class)
+			{
+				currentInstance = createInstance(scope);
+			}
+			else if (source is ISmartObject)
+			{
+				currentInstance = ISmartObject(source).getValue(scope);
+			}
+			else
+			{
+				currentInstance = source;
+			}
 		}
 		
 		/*-.........................................run..........................................*/
