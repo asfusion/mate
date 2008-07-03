@@ -25,13 +25,20 @@ package com.asfusion.mate.ioc
 		 */
 		protected var document:Object;
 		
+		/*-.........................................id..........................................*/
+		/**
+		 * ID of the component.
+		 */
+		protected var id:String;
+		
 		/*-.........................................initialized..........................................*/
 		/**
 		 * Called automatically by the MXML compiler if the InjectorTarget is set up using a tag.
 		 */
 		public function initialized(document:Object, id:String):void
 		{
-			document = document;
+			this.document = document;
+			this.id = id;
 			register();
 		}
 	}
