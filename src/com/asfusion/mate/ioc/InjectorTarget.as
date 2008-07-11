@@ -12,7 +12,7 @@ package com.asfusion.mate.ioc
 		-------------------------------------------------------------------------------------------------------------*/
 		public function register():void
 		{
-			InjectorRegistry.register(this);
+			InjectorRegistry.register(this, id);
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

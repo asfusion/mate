@@ -114,5 +114,11 @@ package com.asfusion.mate.core
 		 * Removes a proxy listener for a specific type.
 		 */
 		function removeListenerProxy(type:String = null):void
+		
+		/**
+		 * Locks or unlocks the proxy listener.
+		 */
+		/*-.........................................lockProxy........................................*/
+		function lockProxy(lock:Boolean):void
 	}
 }
