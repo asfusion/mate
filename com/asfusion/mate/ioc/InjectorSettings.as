@@ -48,8 +48,12 @@ package com.asfusion.mate.ioc
 		}
 		public function set autoWire(value:Boolean):void
 		{
-			if(value) MateManager.instance.addListenerProxy(eventType);
-			else MateManager.instance.removeListenerProxy();
+			if(value && eventType)
+			{
+				MateManager.instance.lockProxy(false);
+				MateManager.instance.addListenerProxy(eventType);
+			}
+			else MateManager.instance.lockProxy(true);
 		}
 		
 		/*-.........................................eventType..........................................*/

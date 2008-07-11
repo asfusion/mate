@@ -114,6 +114,7 @@ package com.asfusion.mate.actionLists
 				var type:String = getQualifiedClassName(target);
 				dispatcher.addEventListener(type,fireEvent);
 				targetRegistered = true;
+				manager.addListenerProxy();
 			}
 			
 			if(!targetsRegistered && targets)
@@ -124,8 +125,8 @@ package com.asfusion.mate.actionLists
 					dispatcher.addEventListener(currentType,fireEvent);
 				}
 				targetsRegistered = true;
+				manager.addListenerProxy();
 			}
-			manager.addListenerProxy();
 		}
 		
 		/*-.........................................fireEvent..........................................*/

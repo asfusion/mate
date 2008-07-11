@@ -82,6 +82,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	private var listenerProxyRegistered:Boolean = false;
 	private var methodQueue:Dictionary = new Dictionary();
 	private var listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
+	private var isLock:Boolean;
 	
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Public setters and Getters
@@ -188,6 +189,8 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	{
 		type = (type == null) ? listenerProxyType : type;
 		
+		if(isLock) return;
+		
 		if(listenerProxyType != type && listenerProxyRegistered)
 		{
 			removeListenerProxy(listenerProxyType);
@@ -210,6 +213,13 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		application.removeEventListener(type, listenerProxyHandler, false);
 		systemManager.removeEventListener(type, listenerProxyHandler, true);
 		listenerProxyRegistered = false;
+	}
+	
+	/*-.........................................unLockProxy........................................*/
+	public function lockProxy(lock:Boolean):void
+	{
+		isLock = lock;
+		if(isLock) removeListenerProxy();
 	}
     
 	/*-----------------------------------------------------------------------------------------------------------
