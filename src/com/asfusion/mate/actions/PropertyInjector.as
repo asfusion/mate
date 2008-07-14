@@ -33,6 +33,22 @@ package com.asfusion.mate.actions
 			_targetKey = value;
 		}
 		
+		/*-.........................................targetId..........................................*/
+		private var _targetId:String;
+		/**
+		 * The name of the property that the injector will set in the target object
+		 * 
+		 * @default null
+		 * */
+		public function get targetId():String
+		{
+			return _targetId;
+		}
+		public function set targetId(value:String):void
+		{
+			_targetId = value;
+		}
+		
 		/*-.........................................source..........................................*/
 		private var _source:*;
 		/**
@@ -89,17 +105,23 @@ package com.asfusion.mate.actions
 		 */
 		override protected function prepare(scope:IScope):void
 		{
-			if(source is Class)
+			if(!scope.event is InjectorEvent) return;
+			
+			var event:InjectorEvent = InjectorEvent(scope.event);
+			if(targetId == null || targetId == event.uid)
 			{
-				currentInstance = createInstance(scope);
-			}
-			else if (source is ISmartObject)
-			{
-				currentInstance = ISmartObject(source).getValue(scope);
-			}
-			else
-			{
-				currentInstance = source;
+				if(source is Class)
+				{
+					currentInstance = createInstance(scope);
+				}
+				else if (source is ISmartObject)
+				{
+					currentInstance = ISmartObject(source).getValue(scope);
+				}
+				else
+				{
+					currentInstance = source;
+				}
 			}
 		}
 		
@@ -109,9 +131,11 @@ package com.asfusion.mate.actions
 		 */
 		override protected function run(scope:IScope):void
 		{
-			if(scope.event is InjectorEvent)
+			if(!scope.event is InjectorEvent) return;
+			
+			var event:InjectorEvent = InjectorEvent(scope.event);
+			if(targetId == null || targetId == event.uid)
 			{
-				var event:InjectorEvent  = InjectorEvent(scope.event);
 				var binder:Binder = new Binder();
 				
 				binder.bind(scope, event.injectorTarget, targetKey, currentInstance, sourceKey);
