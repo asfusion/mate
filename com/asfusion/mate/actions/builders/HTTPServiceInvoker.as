@@ -246,6 +246,10 @@ package com.asfusion.mate.actions.builders
 			}
 			if(request)
 			{
+				if(request is ISmartObject)
+				{
+					request = ISmartObject(request).getValue(scope);
+				}  
 				var realRequest:Object = new Object();
 				realRequest = Properties.smartCopy( request, realRequest, scope);
 				httpInstance.request = realRequest;
