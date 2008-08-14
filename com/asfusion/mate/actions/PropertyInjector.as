@@ -8,8 +8,8 @@ package com.asfusion.mate.actions
 
 	/**
 	 * PropertyInjector sets a value from an object (source) to a destination (target). 
-	 * If the source object is an IEventDispatcher, the PropertyInjector will bind  
-	 * the source with the target. Otherwise, it will only set the property once.
+	 * If the source key is bindable, the PropertyInjector will bind  
+	 * the source to the targetKey. Otherwise, it will only set the property once.
 	 */
 	public class PropertyInjector extends AbstractAction implements IAction
 	{
