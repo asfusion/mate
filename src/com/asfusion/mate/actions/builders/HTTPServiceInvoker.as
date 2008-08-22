@@ -249,10 +249,17 @@ package com.asfusion.mate.actions.builders
 				if(request is ISmartObject)
 				{
 					request = ISmartObject(request).getValue(scope);
-				}  
-				var realRequest:Object = new Object();
-				realRequest = Properties.smartCopy( request, realRequest, scope);
-				httpInstance.request = realRequest;
+				} 
+				if(request is XML || request is String)
+				{
+					httpInstance.request = request;
+				}
+				else
+				{
+					var realRequest:Object = new Object();
+					realRequest = Properties.smartCopy( request, realRequest, scope);
+					httpInstance.request = realRequest;
+				}
 			}
 			if(channelSet)				httpInstance.channelSet = channelSet;
 			if(contentType)				httpInstance.contentType = contentType;
