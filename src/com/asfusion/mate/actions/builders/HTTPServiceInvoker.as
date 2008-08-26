@@ -246,18 +246,23 @@ package com.asfusion.mate.actions.builders
 			}
 			if(request)
 			{
+				var smartRequest:Object;
 				if(request is ISmartObject)
 				{
-					request = ISmartObject(request).getValue(scope);
+					smartRequest = ISmartObject(request).getValue(scope);
 				} 
-				if(request is XML || request is String)
+				else
 				{
-					httpInstance.request = request;
+					smartRequest = request;
+				}
+				if(smartRequest is XML || smartRequest is String)
+				{
+					httpInstance.request = smartRequest;
 				}
 				else
 				{
 					var realRequest:Object = new Object();
-					realRequest = Properties.smartCopy( request, realRequest, scope);
+					realRequest = Properties.smartCopy( smartRequest, realRequest, scope);
 					httpInstance.request = realRequest;
 				}
 			}
