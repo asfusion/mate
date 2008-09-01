@@ -21,8 +21,11 @@ package com.asfusion.mate.actions
 {
 	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.core.*;
+	import com.asfusion.mate.events.ActionListEvent;
 	
 	import flash.events.IEventDispatcher;
+	
+	import mx.core.IMXMLObject;
 	
 	/**
 	 * AbstractServiceInvoker is the base class for all the <code>IAction</code> that have inner-handlers/actions.
@@ -45,6 +48,22 @@ package com.asfusion.mate.actions
 		 * @default EventHandlers
 		 */
 		protected var innerHandlersClass:Class = EventHandlers;
+		
+		/**
+		 * Index used to store groups of inner handlers.
+		 */
+		protected var currentIndex:int = 0;
+		
+		/**
+		 * When auto unregistration is true, all inner handlers will be
+   		 * unregistered after the first inner handlers fires.
+		 */
+		protected var autoUnregistration:Boolean = true;
+		
+		/**
+		 * Inner handlers list that stores all inner handlers indexed by the currentIndex.
+		 */
+		protected var innerHandlersList:Array = new Array();
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                         Public Setters and Getters
@@ -110,6 +129,17 @@ package com.asfusion.mate.actions
 			_debug = value;
 		}
 		
+		/*-----------------------------------------------------------------------------------------------------------
+		*                                          Override Methods
+		-------------------------------------------------------------------------------------------------------------*/
+		/*-.........................................prepare..........................................*/
+		/**
+		 * @inheritDoc
+		 */
+		override protected function prepare(scope:IScope):void
+		{
+			currentIndex++;
+		}
 
 		
 		/*-----------------------------------------------------------------------------------------------------------
@@ -132,11 +162,41 @@ package com.asfusion.mate.actions
 			innerHandlers.setDispatcher(innerHandlersDispatcher);
 			innerHandlers.actions = actionList;
 			innerHandlers.initialized(document, null);
+			
 			if(innerHandlers is EventHandlers)
+			{
 				EventHandlers(innerHandlers).type = innerType;
+			}
+			if(autoUnregistration)
+			{
+				var siblings:Array =  innerHandlersList[currentIndex];
+				if(siblings == null)
+				{
+					siblings = new Array();
+					innerHandlersList[currentIndex] = siblings;
+				}
+				innerHandlers.setGroupId(currentIndex);
+				innerHandlers.addEventListener(ActionListEvent.START, actionListStartHandler, false, 0, true);
+				siblings.push(innerHandlers);
+			}
 			innerHandlers.debug = debug;
 			return innerHandlers;
 		}
 		
+		
+		protected function actionListStartHandler(event:ActionListEvent):void
+		{
+			if(event.target is IActionList)
+			{
+				var innerHandlers:IActionList = IActionList(event.target);
+				var siblings:Array = innerHandlersList[innerHandlers.getGroupId()];
+				for each(var handlers:IActionList in siblings)
+				{
+					handlers.removeEventListener(ActionListEvent.START, actionListStartHandler);
+					handlers.clearReferences();
+				}
+				innerHandlersList[innerHandlers.getGroupId()] = null;
+			}
+		}
 	}
 }

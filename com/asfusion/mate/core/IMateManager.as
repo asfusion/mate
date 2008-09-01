@@ -22,7 +22,6 @@ package com.asfusion.mate.core
 	import com.asfusion.mate.utils.debug.IMateLogger;
 	
 	import flash.events.IEventDispatcher;
-	import flash.utils.Dictionary;
 	
 	import mx.core.Application;
 	import mx.logging.ILoggingTarget;
@@ -103,22 +102,16 @@ package com.asfusion.mate.core
 		 */
 		function addCachedInstance(template:Class, instance:Object):void
 		
-		/*-.........................................addEventAdapter..........................................*/
+		/*-.........................................clearCachedInstance..........................................*/
+		/**
+		 * Removes an instance from the cache.
+		 */
+		function clearCachedInstance(template:Class):void
+		
+		/*-.........................................addListenerProxy..........................................*/
 		/**
 		 * Adds a proxy listener for a specific type.
 		 */
-		function addListenerProxy(type:String = null):void
-		
-		/*-.........................................removeEventAdapter..........................................*/
-		/**
-		 * Removes a proxy listener for a specific type.
-		 */
-		function removeListenerProxy(type:String = null):void
-		
-		/**
-		 * Locks or unlocks the proxy listener.
-		 */
-		/*-.........................................lockProxy........................................*/
-		function lockProxy(lock:Boolean):void
+		function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
 	}
 }

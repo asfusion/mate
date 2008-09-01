@@ -2,9 +2,9 @@ package com.asfusion.mate.actionLists
 {
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.events.InjectorEvent;
-	import com.asfusion.mate.events.MateManagerEvent;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
+	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
 	
 	use namespace mate;
@@ -109,12 +109,24 @@ package com.asfusion.mate.actionLists
 		*/
 		override protected function commitProperties():void
 		{
+			if(dispatcherTypeChanged)
+			{
+				dispatcherTypeChanged = false;
+				if(targetRegistered)
+				{
+					unregister(target);
+				}
+				if(targetsRegistered)
+				{
+					unregister(targets);
+				}
+			}
 			if(!targetRegistered && target)
 			{
 				var type:String = getQualifiedClassName(target);
-				dispatcher.addEventListener(type,fireEvent);
+				dispatcher.addEventListener(type,fireEvent,false,0, true);
 				targetRegistered = true;
-				manager.addListenerProxy();
+				manager.addListenerProxy(dispatcher);
 			}
 			
 			if(!targetsRegistered && targets)
@@ -122,10 +134,10 @@ package com.asfusion.mate.actionLists
 				for each( var currentTarget:Class in targets)
 				{
 					var currentType:String = getQualifiedClassName(currentTarget);
-					dispatcher.addEventListener(currentType,fireEvent);
+					dispatcher.addEventListener(currentType,fireEvent,false,0, true);
 				}
 				targetsRegistered = true;
-				manager.addListenerProxy();
+				manager.addListenerProxy(dispatcher);
 			}
 		}
 		
@@ -136,7 +148,7 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:InjectorEvent):void
 		{
-			var currentScope:Scope = new Scope(event, debug, inheritedScope);
+			var currentScope:Scope = new Scope(event, debug, dispatcher, inheritedScope);
 			currentScope.owner = this;
 			setScope(currentScope);
 			runSequence(currentScope, actions);
@@ -144,7 +156,7 @@ package com.asfusion.mate.actionLists
 		
 		/*-.........................................unregister..........................................*/
 		/**
-		 * Unregisters a target/s. Used internally whenever a new target/s is set.
+		 * Unregisters a target or targets. Used internally whenever a new target/s is set or dispatcher changes.
 		*/
 		protected function unregister(obj:Object):void
 		{
@@ -152,6 +164,7 @@ package com.asfusion.mate.actionLists
 			{
 				var type:String = getQualifiedClassName(obj);
 				dispatcher.removeEventListener(type, fireEvent);
+				targetRegistered = false;
 			}
 			else if(obj is Array)
 			{
@@ -160,35 +173,27 @@ package com.asfusion.mate.actionLists
 					var currentType:String = getQualifiedClassName(currentTarget);
 					dispatcher.removeEventListener(currentType, fireEvent);
 				}
+				targetsRegistered = false;
 			}
 		}
-		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Event Handlers
-		-------------------------------------------------------------------------------------------------------------*/
-		
-		/*-.........................................handleDispatcherChange..........................................*/
+		/*-.........................................setDispatcher..........................................*/
 		/**
-		 * A handler for the mate dispatcher changed.
-		 * This method is called by <code>IMateManager</code> when the dispatcher changes.
-		*/
-		override protected function handleDispatcherChange(event:MateManagerEvent):void
+		 * @inheritDoc
+		 */ 
+		override public function setDispatcher(value:IEventDispatcher, local:Boolean = true):void
 		{
-			if(targetRegistered)
+			if(currentDispatcher && currentDispatcher != value)
 			{
-				var type:String = getQualifiedClassName(target);
-				event.oldDispatcher.removeEventListener(type, fireEvent);
-				dispatcher.addEventListener(type,fireEvent);
-			}
-			if(targetsRegistered)
-			{
-				for each( var currentTarget:Class in targets)
+				if(targetRegistered)
 				{
-					var currentType:String = getQualifiedClassName(currentTarget);
-					event.oldDispatcher.removeEventListener(currentType, fireEvent);
-					dispatcher.addEventListener(currentType,fireEvent);
+					unregister(target);
+				}
+				if(targetsRegistered)
+				{
+					unregister(targets);
 				}
 			}
+			super.setDispatcher(value,local);
 		}
 
 	}

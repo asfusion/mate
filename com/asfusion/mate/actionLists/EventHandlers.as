@@ -20,7 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.actionLists
 {
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.events.MateManagerEvent;
+	import com.asfusion.mate.events.DispatcherEvent;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
 	import flash.events.Event;
@@ -73,7 +73,10 @@ package com.asfusion.mate.actionLists
 	        if (oldValue !== value)
 	        {
 	        	_type = value;
-	         	unregister(oldValue, dispatcher);
+	        	if(oldValue)
+	        	{
+	         		unregister(oldValue, dispatcher, useCapture);
+	         	}
 	         	validateNow();
 	        }
 		}
@@ -99,38 +102,58 @@ package com.asfusion.mate.actionLists
 	        if (_priority !== value)
 	        {
 	        	_priority = value;
-	         	unregister(type, dispatcher);
+	         	unregister(type, dispatcher, useCapture);
 	         	validateNow();
 	        }
 		}
 		
-		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Mate Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................dispatcher........................................*/
-		private  var _dispatcher:IEventDispatcher;
+		/*-.........................................useWeakReference..........................................*/
+		private var _useWeakReference:Boolean = true;
 		/**
-		 * 	The <code>EventHandlers</code> registers itself as an event listener of the dispatcher specified in this property. 
-		 *  By the default, this dispatcher is the Application. dispatcher property only available when using mate namespace
+		 * (default = true) — Determines whether the reference to the listener is strong or weak. 
+		 * A strong reference (the default) prevents your listener from being garbage-collected. 
+		 * A weak reference does not.
+		 * When using modules, it is recomended to use weak references to garbage-collect unused modules
 		 * 
-		 *  @default Application.application
+		 *  @default true
+		 * */
+		public function get useWeakReference():Boolean
+		{
+			return _useWeakReference;
+		}
+		public function set useWeakReference(value:Boolean):void
+		{
+	        if (_useWeakReference !== value)
+	        {
+	        	unregister(type, dispatcher, useCapture);
+	        	_useWeakReference = value;
+	         	validateNow();
+	        }
+		}
+		
+		/*-.........................................useCapture..........................................*/
+		private var _useCapture:Boolean = false;
+		/**
+		 * (default = false) — Determines whether the listener works in the capture phase or the target and bubbling phases.
+		 * If useCapture is set to true, the listener processes the event only during the capture phase and not in the target 
+		 * or bubbling phase. If useCapture is false, the listener processes the event only during the target or bubbling phase. 
 		 * 
-		 */
-		override mate function get dispatcher():IEventDispatcher
+		 *  @default false
+		 * */
+		public function get useCapture():Boolean
 		{
-			return (_dispatcher == null ) ? manager.dispatcher : _dispatcher;
+			return _useCapture;
 		}
-		override mate function set dispatcher(value:IEventDispatcher):void
+		public function set useCapture(value:Boolean):void
 		{
-			var oldValue:IEventDispatcher = _dispatcher;
-			if(_dispatcher !== value)
-			{
-				_dispatcher = value;
-				unregister(type, oldValue);
-				validateNow();
-			}
+	        if (_useCapture !== value)
+	        {
+	        	unregister(type, dispatcher, _useCapture);
+	        	_useCapture = value;
+	         	validateNow();
+	        }
 		}
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Constructor
 		-------------------------------------------------------------------------------------------------------------*/	
@@ -147,6 +170,21 @@ package com.asfusion.mate.actionLists
 		*                                          Public Methods
 		-------------------------------------------------------------------------------------------------------------*/	
 		
+		/*-.........................................setDispatcher..........................................*/
+		/**
+		 * @inheritDoc
+		 */ 
+		override public function setDispatcher(value:IEventDispatcher, local:Boolean = true):void
+		{
+			if(value !== dispatcher)
+			{
+				if(registered)
+				{
+					unregister(type, dispatcher, useCapture);
+				}
+			}
+			super.setDispatcher(value,local);
+		}
 		
 		/*-.........................................errorString..........................................*/
 		/**
@@ -159,6 +197,15 @@ package com.asfusion.mate.actionLists
 			return str;
 		}
 		
+		/*-.........................................clearReferences..........................................*/
+		/**
+		 *  @inheritDoc
+		*/
+		override public function clearReferences():void
+		{
+			unregister(type, dispatcher, useCapture);
+		}
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Protected Methods
 		-------------------------------------------------------------------------------------------------------------*/	
@@ -169,9 +216,17 @@ package com.asfusion.mate.actionLists
 		*/
 		override protected function commitProperties():void
 		{
-			if(!registered && type)
+			if(dispatcherTypeChanged)
 			{
-				dispatcher.addEventListener(type,fireEvent,false, priority);
+				dispatcherTypeChanged = false;
+				if(registered)
+				{
+					unregister(type, currentDispatcher, useCapture);
+				}
+			}
+			if(!registered && type && dispatcher)
+			{
+				dispatcher.addEventListener(type, fireEvent, useCapture, priority, useWeakReference);
 				registered = true;
 			}
 		}
@@ -180,11 +235,11 @@ package com.asfusion.mate.actionLists
 		/**
 		*  Un-register as a listener of the event type provided.  
 		*/
-		protected function unregister(oldType:String, oldDispatcher:IEventDispatcher ):void
-		{
+		protected function unregister(oldType:String, oldDispatcher:IEventDispatcher, oldCapture:Boolean):void
+		{	
 			if(oldDispatcher && oldType)
 			{
-				oldDispatcher.removeEventListener(oldType, fireEvent);
+				oldDispatcher.removeEventListener(oldType, fireEvent, oldCapture);
 				registered = false;
 			}
 		}
@@ -196,31 +251,10 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:Event):void
 		{
-			var currentScope:Scope = new Scope(event, debug, inheritedScope);
+			var currentScope:Scope = new Scope(event, debug, dispatcher,inheritedScope);
 			currentScope.owner = this;
 			setScope(currentScope);
 			runSequence(currentScope, actions);
 		}
-		
-
-
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Event Handlers
-		-------------------------------------------------------------------------------------------------------------*/
-		
-		/*-.........................................handleDispatcherChange..........................................*/
-		/**
-		 * A handler for the mate dispatcher changed.
-		 * This method is called by <code>IMateManager</code> when the dispatcher changes.
-		*/
-		override protected function handleDispatcherChange(event:MateManagerEvent):void
-		{
-			if(_dispatcher == null)
-			{
-				unregister(type, event.oldDispatcher);
-				validateNow();
-			}
-		}
-		
 	}
 }

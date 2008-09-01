@@ -23,9 +23,9 @@ package com.asfusion.mate.events
 	import flash.events.IEventDispatcher;
 	
 	/**
-	 * Event that notifies when changes on the <code>IMateManager</code> occur.
+	 * Event that notifies when Dispatcher changes.
 	 */
-	public class MateManagerEvent extends Event
+	public class DispatcherEvent extends Event
 	{
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Static Constants
@@ -33,7 +33,7 @@ package com.asfusion.mate.events
 		/**
 		 * Type that indicates that the dispatcher has been changed.
 		 */
-		public static const DISPATCHER_CHANGE:String = "dispatcherChangeMateManagerEvent"
+		public static const CHANGE:String = "changeDispatcherEvent"
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Fields
@@ -54,10 +54,23 @@ package com.asfusion.mate.events
 		/**
 		 * Constructor
 		 */
-		public function MateManagerEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function DispatcherEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
 		}
 		
+		/**
+		 * Duplicates an instance of an Event subclass.
+		 * Returns a new Event object that is a copy of the original instance of the Event object. 
+		 * You do not normally call clone(); the EventDispatcher class calls it automatically when you 
+		 * redispatch an event—that is, when you call dispatchEvent(event) from a handler that is handling event.
+		 */
+		override public function clone():Event
+		{
+			var event:DispatcherEvent = new DispatcherEvent(type);
+			event.newDispatcher = newDispatcher;
+			event.oldDispatcher = oldDispatcher;
+			return event;
+		}
 	}
 }

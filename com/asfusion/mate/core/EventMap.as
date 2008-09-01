@@ -21,7 +21,9 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.ScopeProperties;
+	import com.asfusion.mate.events.DispatcherEvent;
 	import flash.events.EventDispatcher;
+	import flash.events.IEventDispatcher;
 	import mx.core.IMXMLObject;
 	
 	[Exclude(name="activate", kind="event")]
@@ -45,9 +47,17 @@ package com.asfusion.mate.core
 	 * &lt;/EventMap&gt;
      * </listing>
 	 */
-	public class EventMap extends EventDispatcher implements IMXMLObject
+	public class EventMap extends EventDispatcher implements IMXMLObject, IDispatcherProvider
 	{
-	    
+		/*-----------------------------------------------------------------------------------------------------------
+		*                                      Protected properties
+		-------------------------------------------------------------------------------------------------------------*/
+		/**
+		 * Local storage for the current dispatcher. 
+		 * This object can be accessed by calling getDispatcher method
+		 */
+		protected var currentDispatcher:IEventDispatcher;
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Public Getters (SmartObjects)
 		-------------------------------------------------------------------------------------------------------------*/
@@ -199,6 +209,20 @@ package com.asfusion.mate.core
 		public function getCached(template:Class):*
 		{
 			return new Cache(template);
+		}
+		
+		/*-.........................................getDispatcher..........................................*/
+		/**
+		 * @inheritDoc
+		 */ 
+		public function getDispatcher():IEventDispatcher
+		{
+			if(!currentDispatcher)
+			{
+				var manager:IMateManager = MateManager.instance;
+				currentDispatcher = manager.dispatcher;
+			}
+			return currentDispatcher;
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

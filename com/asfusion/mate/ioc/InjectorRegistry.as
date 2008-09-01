@@ -3,7 +3,6 @@ package com.asfusion.mate.ioc
 	import com.asfusion.mate.events.InjectorEvent;
 	import com.asfusion.mate.core.IMateManager;
 	import com.asfusion.mate.core.MateManager;
-	import flash.utils.getQualifiedClassName;
 	/**
 	 * InjectorRegistry registers a target instance to be used by the
 	 * <code>InjectorHandlers</code> to inject any properties on it.
@@ -19,10 +18,8 @@ package com.asfusion.mate.ioc
 		 */
 		public static function register(target:Object, uid:* = undefined):Boolean
 		{
-			var type:String = getQualifiedClassName(target);
 			var manager:IMateManager = MateManager.instance;
-			var event:InjectorEvent = new InjectorEvent(type);
-			event.injectorTarget = target;
+			var event:InjectorEvent = new InjectorEvent(target);
 			event.uid = uid;
 			return manager.dispatcher.dispatchEvent(event);
 		}

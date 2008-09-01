@@ -151,7 +151,7 @@ package com.asfusion.mate.actionLists
 		/**
 		 * Constructor
 		 */
-		 public function Scope(event:Event, active:Boolean, inheritScope:IScope = null)
+		 public function Scope(event:Event, active:Boolean, dispatcher:IEventDispatcher,inheritScope:IScope = null)
 		{
 			if(inheritScope)
 			{
@@ -169,7 +169,7 @@ package com.asfusion.mate.actionLists
 			
 			manager = MateManager.instance;
 			logger = manager.getLogger(active);
-			dispatcher = manager.dispatcher;
+			this.dispatcher = dispatcher;
 		}
 		
 		

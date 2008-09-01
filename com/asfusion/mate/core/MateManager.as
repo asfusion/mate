@@ -59,9 +59,11 @@ package com.asfusion.mate.core
 /******************************************************************************************************************
 *                                         Inner Class MateManagerInstance
 *******************************************************************************************************************/	
+import com.asfusion.mate.core.GlobalDispatcher;
 import com.asfusion.mate.core.IMateManager;
+import com.asfusion.mate.core.ListenerProxy;
+import com.asfusion.mate.events.DispatcherEvent;
 import com.asfusion.mate.events.InjectorEvent;
-import com.asfusion.mate.events.MateManagerEvent;
 import com.asfusion.mate.utils.SystemManagerFinder;
 import com.asfusion.mate.utils.debug.*;
 
@@ -79,17 +81,15 @@ import mx.managers.ISystemManager;
 class MateManagerInstance extends EventDispatcher implements IMateManager
 {
 	private var cacheInstances:Dictionary = new Dictionary();
-	private var listenerProxyRegistered:Boolean = false;
 	private var methodQueue:Dictionary = new Dictionary();
 	private var listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
-	private var isLock:Boolean;
+	private var listenerProxies:Dictionary = new Dictionary(true);
 	
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Public setters and Getters
      -------------------------------------------------------------------------------------------------------------*/
      
     /*-.........................................application..........................................*/
-    private var _application:Application;
 	public function get application():Application
 	{
 		return Application.application as Application;
@@ -124,14 +124,14 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	
 	/*-.........................................dispatcher........................................*/
-	private  var _dispatcher:IEventDispatcher;
+	private  var _dispatcher:IEventDispatcher = new GlobalDispatcher();
 	public function set dispatcher(value:IEventDispatcher):void
 	{
-		var oldDispatcher:IEventDispatcher = (_dispatcher == null ) ? application: _dispatcher;
+		var oldDispatcher:IEventDispatcher = _dispatcher;
 		if(oldDispatcher !== value)
 		{
 			_dispatcher = value;
-			var event:MateManagerEvent = new MateManagerEvent(MateManagerEvent.DISPATCHER_CHANGE);
+			var event:DispatcherEvent = new DispatcherEvent(DispatcherEvent.CHANGE);
 			event.oldDispatcher = oldDispatcher;
 			event.newDispatcher = _dispatcher;
 			dispatchEvent(event);
@@ -139,7 +139,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	public function get dispatcher():IEventDispatcher
 	{
-		return (_dispatcher == null ) ? application: _dispatcher;
+		return _dispatcher;
 	}
 	
 	/*-.........................................responseDispatcher........................................*/
@@ -173,54 +173,40 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     	}
     	return logger;
     }
+    
     /*-.........................................getCachedInstance........................................*/
     public function getCachedInstance(template:Class):Object
     {
     	return cacheInstances[template];
     }
+    
     /*-.........................................addCachedInstance........................................*/
     public function addCachedInstance(template:Class, instance:Object):void
     {
     	cacheInstances[template] = instance;
     }
     
-    /*-.........................................addListenerProxy........................................*/
-	public function addListenerProxy(type:String = null):void
-	{
-		type = (type == null) ? listenerProxyType : type;
-		
-		if(isLock) return;
-		
-		if(listenerProxyType != type && listenerProxyRegistered)
-		{
-			removeListenerProxy(listenerProxyType);
-		}
-		if(!listenerProxyRegistered)
-		{
-			application.addEventListener(type, listenerProxyHandler, true,1);
-			application.addEventListener(type, listenerProxyHandler, false,1);
-			systemManager.addEventListener(type, listenerProxyHandler, true,1);
-			listenerProxyType = type;
-			listenerProxyRegistered = true;
-		}
-	}
+    /*-.........................................clearCachedInstance........................................*/
+    public function clearCachedInstance(template:Class):void
+    {
+    	cacheInstances[template] = null;
+    }
     
-    /*-.........................................removeListenerProxy........................................*/
-	public function removeListenerProxy(type:String = null):void
+    /*-.........................................addListenerProxy........................................*/
+	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
 	{
 		type = (type == null) ? listenerProxyType : type;
-		application.removeEventListener(type, listenerProxyHandler, true);
-		application.removeEventListener(type, listenerProxyHandler, false);
-		systemManager.removeEventListener(type, listenerProxyHandler, true);
-		listenerProxyRegistered = false;
+		
+		var listenerProxy:ListenerProxy = listenerProxies[eventDispatcher];
+		
+		if(listenerProxy == null)
+		{
+			listenerProxy = new ListenerProxy(eventDispatcher);
+			listenerProxies[eventDispatcher] = listenerProxy;
+		}
+		listenerProxy.addListener(type);
 	}
 	
-	/*-.........................................unLockProxy........................................*/
-	public function lockProxy(lock:Boolean):void
-	{
-		isLock = lock;
-		if(isLock) removeListenerProxy();
-	}
     
 	/*-----------------------------------------------------------------------------------------------------------
      *                                          Private Methods
@@ -248,22 +234,4 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		methodQueue = new Dictionary();
 		removeListeners();
 	}
-	
-	/*-----------------------------------------------------------------------------------------------------------
-     *                                          Event Handlers
-     -------------------------------------------------------------------------------------------------------------*/
-	/*-.........................................listenerProxyHandler........................................*/
-	private function listenerProxyHandler(event:Event):void
-	{
-		var type:String = getQualifiedClassName(event.target);
-		if(dispatcher.hasEventListener(type))
-		{
-			var adapterEvent:InjectorEvent = new InjectorEvent(type);
-			adapterEvent.injectorTarget = event.target;
-			if(event.target.hasOwnProperty("id"))
-				adapterEvent.uid = event.target["id"];
-			dispatcher.dispatchEvent(adapterEvent);
-		}
-	}
-	
 }

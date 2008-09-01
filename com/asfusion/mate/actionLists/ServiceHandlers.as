@@ -130,7 +130,6 @@ package com.asfusion.mate.actionLists
 					faultEvent.messageId = FaultEvent(event).messageId;
 					inheritedScope.dispatcher.dispatchEvent(faultEvent);
 				}
-				dispatcher.removeEventListener(type,fireEvent);
 			}
 		}
 	}
