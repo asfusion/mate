@@ -49,7 +49,7 @@ package com.asfusion.mate.actionLists
 		 */
 		public function ServiceScope(event:Event, active:Boolean, inheritScope:IScope = null)
 		{
-			super(event, active, inheritScope);
+			super(event, active, inheritScope.dispatcher, inheritScope);
 		}
 
 	}

@@ -28,7 +28,7 @@ package com.asfusion.mate.actionLists
 	 * It contains an array of Actions of type <code>IAction</code> 
 	 * that will get called  when the IActionList run.
 	 */
-	public interface IActionList extends IMXMLObject
+	public interface IActionList extends IEventDispatcher, IMXMLObject
 	{
 		/**
 		 * 	An array of  Actions (IAction) contained in this IActionList.
@@ -66,7 +66,7 @@ package com.asfusion.mate.actionLists
 		 * A method that allows setting the dispatcher
 		 * that this IActionList will use to register to events.
 		 */
-		function setDispatcher(value:IEventDispatcher):void
+		function setDispatcher(value:IEventDispatcher, local:Boolean = true):void
 		
 		/**
 		 * Validate and update the properties of this object, if necessary.
@@ -94,5 +94,21 @@ package com.asfusion.mate.actionLists
 		 * Retuns an error String to be used by the debugger.
 		 */
 		function errorString():String;
+		
+		/**
+		 * Method to set the group id.
+		 * This property associates a group of handlers under the same id
+		*/
+		function setGroupId(id:int):void
+		
+		/**
+		 * Method to get the group id.
+		*/
+		function getGroupId():int;
+		
+		/**
+		 * Unregister as a listener and prepare to be garbage collected
+		*/
+		function clearReferences():void;
 	}
 }

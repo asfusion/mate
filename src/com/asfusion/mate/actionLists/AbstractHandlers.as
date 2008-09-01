@@ -22,7 +22,7 @@ package com.asfusion.mate.actionLists
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.events.ActionListEvent;
-	import com.asfusion.mate.events.MateManagerEvent;
+	import com.asfusion.mate.events.DispatcherEvent;
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
@@ -68,6 +68,11 @@ package com.asfusion.mate.actionLists
 		 * Parent scope that is passed to the IActionList when it is a sub-ActionList.
 		 */
 		protected var inheritedScope:IScope;
+		
+		/**
+		 * Flag indicating whether the <code>dispatcherType</code> has been changed and needs invalidation.
+		 */
+		protected var dispatcherTypeChanged:Boolean;
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
@@ -116,10 +121,49 @@ package com.asfusion.mate.actionLists
 			_debug = value;
 		}
 		
+		/*-.........................................dispatcherType..........................................*/
+		private var _dispatcherType:String = "inherit";
+		/**
+		 * @inheritDoc
+		 */
+		public function get dispatcherType():String
+		{
+			return _dispatcherType;
+		}
+		[Inspectable(enumeration="inherit,global")]
+		public function set dispatcherType(value:String):void
+		{
+			var oldValue:String = _dispatcherType;
+			if(oldValue != value)
+			{
+				if(oldValue == "global")
+				{
+					manager.removeEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false);
+				}
+				else if(oldValue == "inherit" && document && document is IDispatcherProvider)
+				{
+					IDispatcherProvider(document).removeEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false);
+				}
+				if(value == "global")
+				{
+					manager.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
+				}
+				else if(value == "inherit" && document && document is IDispatcherProvider)
+				{
+					var dispatcherClient:IDispatcherProvider = IDispatcherProvider(document);
+					dispatcherClient.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
+				}
+				_dispatcherType = value;
+				dispatcherTypeChanged = true;
+				validateNow();
+			}
+		}
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Mate Setters and Getters
 		-------------------------------------------------------------------------------------------------------------*/
 		/*-.........................................dispatcher........................................*/
+		protected var currentDispatcher:IEventDispatcher;
 		private  var _dispatcher:IEventDispatcher;
 		/**
 		 * 	The IActionList registers itself as an event listener of the dispatcher specified in this property. 
@@ -130,14 +174,30 @@ package com.asfusion.mate.actionLists
 		 */
 		mate function get dispatcher():IEventDispatcher
 		{
-			return (_dispatcher == null ) ? manager.dispatcher : _dispatcher;
+			if(_dispatcher)
+			{
+				currentDispatcher = _dispatcher;
+			}
+			else
+			{
+				if(dispatcherType == "global")
+				{
+					currentDispatcher = manager.dispatcher;
+				}
+				else if(dispatcherType == "inherit" && document && document is IDispatcherProvider)
+				{
+					currentDispatcher = IDispatcherProvider(document).getDispatcher();
+				}
+			}
+			return currentDispatcher;
 		}
 		mate function set dispatcher(value:IEventDispatcher):void
 		{
 			var oldValue:IEventDispatcher = _dispatcher;
 			if(_dispatcher !== value)
 			{
-				_dispatcher = value;
+				currentDispatcher = _dispatcher = value;
+				dispatcherType = "local";
 			}
 		}
 		
@@ -150,7 +210,6 @@ package com.asfusion.mate.actionLists
 		 public function AbstractHandlers()
 		 {
 		 	manager = MateManager.instance;
-			manager.addEventListener(MateManagerEvent.DISPATCHER_CHANGE, handleDispatcherChange);
 		 }
 		
 		/*-----------------------------------------------------------------------------------------------------------
@@ -161,9 +220,17 @@ package com.asfusion.mate.actionLists
 		/**
 		 * @inheritDoc
 		 */ 
-		public function setDispatcher(value:IEventDispatcher):void
+		public function setDispatcher(value:IEventDispatcher, local:Boolean = true):void
 		{
-			dispatcher = value;
+			if(local)
+			{
+				dispatcher = value;
+			}
+			else if(!_dispatcher)
+			{
+				currentDispatcher = value
+			}
+			validateNow();
 		}
 		
 		/*-.........................................invalidateProperties..........................................*/
@@ -203,6 +270,37 @@ package com.asfusion.mate.actionLists
 			return str;
 		}
 		
+		/**
+		 * Internal storage for a group id.
+		 */
+		private var _groupId:int = -1;
+		
+		/*-.........................................setGroupIndex..........................................*/
+		/**
+		 *  @inheritDoc
+		*/
+		public function setGroupId(id:int):void
+		{
+			_groupId = id;
+		}
+		
+		/*-.........................................clearReferences..........................................*/
+		/**
+		 *  @inheritDoc
+		*/
+		public function clearReferences():void
+		{
+			// this method is abstract it will be implemented by children
+		}
+		
+		/*-.........................................getGroupIndex..........................................*/
+		/**
+		 * @inheritDoc
+		*/
+		public function getGroupId():int
+		{
+			return _groupId;
+		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Protected Methods
 		-------------------------------------------------------------------------------------------------------------*/
@@ -230,6 +328,7 @@ package com.asfusion.mate.actionLists
 			
 			dispatchEvent(new ActionListEvent(ActionListEvent.END));
 			scope.getLogger().debug( LogTypes.SEQUENCE_END, new LogInfo(scope, null));
+			_scope = null;
 		}
 		
 		/*-.........................................commitProperties..........................................*/
@@ -243,7 +342,7 @@ package com.asfusion.mate.actionLists
 		
 		/*-.........................................setScope..........................................*/
 		/**
-		 * Processes the properties set on the component.
+		 * Set the scope on this IActionList.
 		*/
 		protected function setScope(scope:IScope):void
 		{
@@ -260,9 +359,9 @@ package com.asfusion.mate.actionLists
 		 * A handler for the mate dispatcher changed.
 		 * This method is called by <code>IMateManager</code> when the dispatcher changes.
 		*/
-		protected function handleDispatcherChange(event:MateManagerEvent):void
+		protected function dispatcherChangeHandler(event:DispatcherEvent):void
 		{
-			setDispatcher(event.newDispatcher);
+			setDispatcher(event.newDispatcher,false);
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------
@@ -290,6 +389,22 @@ package com.asfusion.mate.actionLists
 		public function initialized(document:Object, id:String):void
 		{
 			this.document = document;
+			if(dispatcherType == "inherit" && document is IDispatcherProvider)
+			{
+				var dispatcherClient:IDispatcherProvider = IDispatcherProvider(document);
+				var inheritDispatcher:IEventDispatcher = dispatcherClient.getDispatcher();
+				
+				dispatcherClient.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
+				if(inheritDispatcher)
+				{
+					setDispatcher(inheritDispatcher, false);
+				}
+			}
+			else if(dispatcherType == "global")
+			{
+				setDispatcher(manager.dispatcher,false);
+			}
+			trace("mxmmlObj handlers")
 		}
 	}
 }

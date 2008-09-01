@@ -1,6 +1,7 @@
 package com.asfusion.mate.events
 {
 	import flash.events.Event;
+	import flash.utils.getQualifiedClassName;
 	
 	/**
 	 * This event is used by the InjectorRegistry to register a target for Injection.
@@ -26,8 +27,14 @@ package com.asfusion.mate.events
 		/**
 		 * Constructor
 		 */
-		public function InjectorEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function InjectorEvent(target:Object, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
+			injectorTarget = target;
+			var type:String = getQualifiedClassName(target);
+			if(target.hasOwnProperty("id"))
+			{
+				uid = target["id"];
+			}
 			super(type, bubbles, cancelable);
 		}
 		

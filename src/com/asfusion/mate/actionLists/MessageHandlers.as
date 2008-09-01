@@ -199,8 +199,8 @@ package com.asfusion.mate.actionLists
 			if(!consumer)
 			{
 				consumer = new Consumer();
-				consumer.addEventListener(MessageEvent.MESSAGE, fireEvent);
-				consumer.addEventListener(MessageFaultEvent.FAULT,  fireFaultEvent);
+				consumer.addEventListener(MessageEvent.MESSAGE, fireEvent,false,0,true);
+				consumer.addEventListener(MessageFaultEvent.FAULT,  fireFaultEvent,false,0,true);
 			}
 			return consumer;
 		}
@@ -238,6 +238,17 @@ package com.asfusion.mate.actionLists
 							+ DebuggerUtil.getClassName(document);
 			return str;
 		}
+		
+		/*-.........................................clearReferences..........................................*/
+		/**
+		 *  @inheritDoc
+		*/
+		override public function clearReferences():void
+		{
+			consumer.unsubscribe();
+			consumer.removeEventListener(MessageEvent.MESSAGE, fireEvent);
+			consumer.removeEventListener(MessageFaultEvent.FAULT,  fireFaultEvent);
+		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Protected methods
 		-------------------------------------------------------------------------------------------------------------*/
@@ -250,7 +261,7 @@ package com.asfusion.mate.actionLists
 		{
 			if(faultHandlers && faultHandlers.length > 0)
 			{
-				var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
+				var currentScope:MessageScope = new MessageScope(event,debug, dispatcher, inheritedScope);
 				currentScope.owner = this;
 				currentScope.message = event.message;
 				currentScope.currentEvent = event;
@@ -275,7 +286,7 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:MessageEvent):void
 		{
-			var currentScope:MessageScope = new MessageScope(event,debug, inheritedScope);
+			var currentScope:MessageScope = new MessageScope(event,debug, dispatcher, inheritedScope);
 			currentScope.owner = this;
 			currentScope.message = event.message;
 			currentScope.currentEvent = event;

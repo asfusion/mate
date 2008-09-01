@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.actionLists
 {
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	
 	import mx.messaging.messages.IMessage;
 	
@@ -42,9 +43,9 @@ package com.asfusion.mate.actionLists
 		/**
 		 * Constructor
 		 */
-		public function MessageScope(event:Event, active:Boolean, inheritScope:IScope = null)
+		public function MessageScope(event:Event, active:Boolean, dispatcher:IEventDispatcher, inheritScope:IScope = null)
 		{
-			super(event, active, inheritScope);
+			super(event, active, dispatcher, inheritScope);
 		}
 		
 	}
