@@ -70,6 +70,13 @@ package com.asfusion.mate.core
 		function set debugger(value:ILoggingTarget):void
 		function get debugger():ILoggingTarget
 		
+		/*-.........................................listenerProxyType..........................................*/
+		/**
+		 * The default event type used by the injectors.
+		 */
+		function set listenerProxyType(value:String):void
+		function get listenerProxyType():String
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Methods
 		-------------------------------------------------------------------------------------------------------------*/

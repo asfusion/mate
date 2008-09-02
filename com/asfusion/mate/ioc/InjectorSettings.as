@@ -33,31 +33,8 @@ package com.asfusion.mate.ioc
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
 		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................autoWire..........................................*/
-		private var _autoWire:Boolean = true;
-		/**
-		 * If auto-wire is true, Mate will listen to events dispatched by the views in the application
-		 * to automatically find the target for the injection. The event type that it will listen to
-		 * is the one defined in the type attribute
-		 * 
-		 * @default true
-		 * */
-		public function get autoWire():Boolean
-		{
-			return _autoWire;
-		}
-		public function set autoWire(value:Boolean):void
-		{
-			if(value && eventType)
-			{
-				MateManager.instance.lockProxy(false);
-				MateManager.instance.addListenerProxy(eventType);
-			}
-			else MateManager.instance.lockProxy(true);
-		}
 		
 		/*-.........................................eventType..........................................*/
-		private var _eventType:String = FlexEvent.CREATION_COMPLETE;
 		/**
 		 * Event type that Mate will listen to that will be dispatched by the application views
 		 * 
@@ -65,11 +42,11 @@ package com.asfusion.mate.ioc
 		 * */
 		public function get eventType():String
 		{
-			return _eventType;
+			return MateManager.instance.listenerProxyType;
 		}
 		public function set eventType(value:String):void
 		{
-			if(autoWire) MateManager.instance.addListenerProxy(value);
+			MateManager.instance.listenerProxyType = value;
 		}
 	}
 }

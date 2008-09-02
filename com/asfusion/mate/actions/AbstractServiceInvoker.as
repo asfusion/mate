@@ -183,7 +183,10 @@ package com.asfusion.mate.actions
 			return innerHandlers;
 		}
 		
-		
+		/*-.........................................actionListStartHandler..........................................*/
+		/**
+		 * Handler that will be fired when the first of the innerHandlers starts executing.
+		 */
 		protected function actionListStartHandler(event:ActionListEvent):void
 		{
 			if(event.target is IActionList)
