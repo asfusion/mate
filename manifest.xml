@@ -23,6 +23,7 @@
 	<component class="com.asfusion.mate.actions.builders.WebServiceInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.MethodInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.serviceClasses.Request"/>
+	<component class="com.asfusion.mate.actions.builders.AsyncMethodInvoker"/>
 	
 	<component class="com.asfusion.mate.events.Listener"/>
 	<component class="com.asfusion.mate.responses.ResponseHandler"/>
