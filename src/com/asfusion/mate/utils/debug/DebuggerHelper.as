@@ -385,7 +385,7 @@ package com.asfusion.mate.utils.debug
 				message += "<"+getClassName(scope.owner)+" (started) ";
 				if(Object(scope.owner).hasOwnProperty('type'))
 				{
-					message += "   type=" + getEventType(scope.event);
+					message += "   type=" + getEventType(scope.currentEvent);
 				}
 				message += getAttributes(scope.owner, scope, {actions:true, faultHandlers:true, type:true, MXMLrequest:true, debug:true});
 				message += ">";
@@ -430,7 +430,7 @@ package com.asfusion.mate.utils.debug
 				var scope:Scope = Scope(info.loggerProvider);
 				message = '';
 				message += "</"+getClassName(scope.owner)+" (end) ";
-				if(Object(scope.owner).hasOwnProperty('type')) message += "   type=" + getEventType(scope.event);
+				if(Object(scope.owner).hasOwnProperty('type')) message += "   type=" + getEventType(scope.currentEvent);
 				if(Object(scope.owner).hasOwnProperty('target')) message += "   target=" + scope.owner["target"];
 				message += ">";
 			}
