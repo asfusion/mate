@@ -21,7 +21,6 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.ScopeProperties;
-	import com.asfusion.mate.events.DispatcherEvent;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import mx.core.IMXMLObject;
