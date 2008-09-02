@@ -123,7 +123,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		if(oldValue !== value)
 		{
 			_listenerProxyType = value;
-			var event:InjectorSettingsEvent = InjectorSettingsEvent(InjectorSettingsEvent.TYPE_CHANGE);
+			var event:InjectorSettingsEvent = new InjectorSettingsEvent(InjectorSettingsEvent.TYPE_CHANGE);
 			event.globalType = value;
 			dispatchEvent(event);
 		}
