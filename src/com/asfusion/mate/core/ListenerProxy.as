@@ -20,6 +20,8 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.events.InjectorEvent;
+	import com.asfusion.mate.events.InjectorSettingsEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -72,7 +74,7 @@ package com.asfusion.mate.core
 		 * If the dispatcher is a GlobalDispatcher, we also register to
 		 * listen events in the popup DiplayObject tree.
 		 */
-		public function addListener(type:String):void
+		public function addListener(type:String, typeWatcher:IEventDispatcher = null):void
 		{
 			if(this.type != type && registered)
 			{
@@ -87,6 +89,11 @@ package com.asfusion.mate.core
 			}
 			this.type = type;
 			registered = true;
+			
+			if(typeWatcher)
+			{
+				typeWatcher.addEventListener(InjectorSettingsEvent.TYPE_CHANGE, typeChangeHandler);
+			}
 		}
 		
 		 /*-.........................................removeListener........................................*/
@@ -113,7 +120,7 @@ package com.asfusion.mate.core
 		 * This handler will create a new InjectorEvent and will dispatch it from the dispatcher. 
 		 * That will make all the Injectors that are registered to listen for that class type run.
 		 */
-		private function listenerProxyHandler(event:Event):void
+		protected function listenerProxyHandler(event:Event):void
 		{
 			if(dispatcher.hasEventListener(type))
 			{
@@ -126,7 +133,7 @@ package com.asfusion.mate.core
 		 * Similar to the listenerProxyHandler with the difference that this handler will only run if
 		 * the dispatcher is a GlobalDispatcher and the event happens in the popup display tree.
 		 */
-		private function globalListenerProxyHandler(event:Event):void
+		protected function globalListenerProxyHandler(event:Event):void
 		{
 			if(dispatcher.hasEventListener(type))
 			{
@@ -141,6 +148,16 @@ package com.asfusion.mate.core
 					dispatcher.dispatchEvent(new InjectorEvent(event.target));
 				}
 			}
+		}
+		
+		/*-.........................................typeChangeHandler........................................*/
+		/**
+		 * Handler that will run every time the event type changes by calling the injectorSettings.
+		 */
+		protected function typeChangeHandler(event:InjectorSettingsEvent):void
+		{
+			removeListener(type);
+			addListener(event.globalType);
 		}
 	}
 }

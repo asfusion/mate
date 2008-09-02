@@ -63,7 +63,7 @@ import com.asfusion.mate.core.GlobalDispatcher;
 import com.asfusion.mate.core.IMateManager;
 import com.asfusion.mate.core.ListenerProxy;
 import com.asfusion.mate.events.DispatcherEvent;
-import com.asfusion.mate.events.InjectorEvent;
+import com.asfusion.mate.events.InjectorSettingsEvent;
 import com.asfusion.mate.utils.SystemManagerFinder;
 import com.asfusion.mate.utils.debug.*;
 
@@ -71,7 +71,6 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
-import flash.utils.getQualifiedClassName;
 
 import mx.core.Application;
 import mx.events.FlexEvent;
@@ -82,7 +81,6 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 {
 	private var cacheInstances:Dictionary = new Dictionary();
 	private var methodQueue:Dictionary = new Dictionary();
-	private var listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
 	private var listenerProxies:Dictionary = new Dictionary(true);
 	
 	/*-----------------------------------------------------------------------------------------------------------
@@ -103,28 +101,54 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	
 	/*-.........................................loggerClass........................................*/
 	private var _loggerClass:Class = Logger;
-	public function set loggerClass(value:Class):void
-	{
-		_loggerClass = value;
-	}
 	public function get loggerClass():Class
 	{
 		return _loggerClass;
 	}
+	public function set loggerClass(value:Class):void
+	{
+		_loggerClass = value;
+	}
+	
+	
+	/*-.........................................listenerProxyType........................................*/
+	private var _listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
+	public function get listenerProxyType():String
+	{
+		return _listenerProxyType;
+	}
+	public function set listenerProxyType(value:String):void
+	{
+		var oldValue:String = _listenerProxyType;
+		if(oldValue !== value)
+		{
+			_listenerProxyType = value;
+			var event:InjectorSettingsEvent = InjectorSettingsEvent(InjectorSettingsEvent.TYPE_CHANGE);
+			event.globalType = value;
+			dispatchEvent(event);
+		}
+		
+	}
+	
 	
 	/*-.........................................debugger........................................*/
 	private  var _debugger:ILoggingTarget;
-	public function set debugger(value:ILoggingTarget):void
-	{
-		_debugger = value;
-	}
 	public function get debugger():ILoggingTarget
 	{
 		return _debugger;
 	}
+	public function set debugger(value:ILoggingTarget):void
+	{
+		_debugger = value;
+	}
+	
 	
 	/*-.........................................dispatcher........................................*/
 	private  var _dispatcher:IEventDispatcher = new GlobalDispatcher();
+	public function get dispatcher():IEventDispatcher
+	{
+		return _dispatcher;
+	}
 	public function set dispatcher(value:IEventDispatcher):void
 	{
 		var oldDispatcher:IEventDispatcher = _dispatcher;
@@ -137,10 +161,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 			dispatchEvent(event);
 		}
 	}
-	public function get dispatcher():IEventDispatcher
-	{
-		return _dispatcher;
-	}
+	
 	
 	/*-.........................................responseDispatcher........................................*/
 	private var _responseDispatcher:IEventDispatcher = new EventDispatcher();
@@ -195,8 +216,6 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     /*-.........................................addListenerProxy........................................*/
 	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
 	{
-		type = (type == null) ? listenerProxyType : type;
-		
 		var listenerProxy:ListenerProxy = listenerProxies[eventDispatcher];
 		
 		if(listenerProxy == null)
@@ -204,7 +223,14 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 			listenerProxy = new ListenerProxy(eventDispatcher);
 			listenerProxies[eventDispatcher] = listenerProxy;
 		}
-		listenerProxy.addListener(type);
+		if(type == null)
+		{
+			listenerProxy.addListener(listenerProxyType, this);
+		}
+		else
+		{
+			listenerProxy.addListener(type);
+		}
 	}
 	
     

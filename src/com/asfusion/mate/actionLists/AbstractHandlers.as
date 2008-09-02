@@ -404,7 +404,6 @@ package com.asfusion.mate.actionLists
 			{
 				setDispatcher(manager.dispatcher,false);
 			}
-			trace("mxmmlObj handlers")
 		}
 	}
 }
