@@ -20,11 +20,13 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.utils.SystemManagerFinder;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventPhase;
 	import flash.events.IEventDispatcher;
+	
 	import mx.core.Application;
 	
 	/**
@@ -77,8 +79,8 @@ package com.asfusion.mate.core
 			{
 				if(!useCapture)
 				{
-					popupDispatcher.addEventListener(type, interceptorEventHandler, useCapture, 1000, useWeakReference);
-					popupDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
+					popupDispatcher.addEventListener(type, interceptorEventHandler, useCapture, -100, useWeakReference);
+					popupDispatcher.addEventListener(type, listener, useCapture, -101, useWeakReference);
 				}
 			}
 		}
@@ -145,7 +147,8 @@ package com.asfusion.mate.core
 		 */
 		protected function interceptorEventHandler(event:Event):void
 		{
-			if(event.target is DisplayObject && (applicationDispatcher as Sprite).contains(event.target as DisplayObject))
+			var isApplicationChild:Boolean = (event.target is DisplayObject && (applicationDispatcher as Sprite).contains(event.target as DisplayObject));
+			if(event.target == applicationDispatcher || isApplicationChild)
 			{
 				if(event.eventPhase == EventPhase.BUBBLING_PHASE)
 				{
