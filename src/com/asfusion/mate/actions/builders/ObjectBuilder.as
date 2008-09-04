@@ -23,7 +23,7 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.actions.BaseAction;
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.ioc.InjectorRegistry;
+	import com.asfusion.mate.events.InjectorEvent;
 	use namespace mate;
 	
 	/**
@@ -139,7 +139,8 @@ package com.asfusion.mate.actions.builders
 			}
 			if(registerTarget && currentInstance)
 			{
-				InjectorRegistry.register(currentInstance);
+				var event:InjectorEvent = new InjectorEvent(currentInstance);
+				scope.dispatcher.dispatchEvent(event);
 			}
 			return currentInstance;
 		}
