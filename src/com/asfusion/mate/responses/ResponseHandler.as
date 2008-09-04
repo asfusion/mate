@@ -110,7 +110,7 @@ package com.asfusion.mate.responses
 		public function addReponderListener(type:String, dispatcher:IEventDispatcher,  owner:Dispatcher):void
 		{
 			this.owner = owner;
-			dispatcher.addEventListener(type, response);
+			dispatcher.addEventListener(type, response, false, 0, true);
 		}
 		
 		/**

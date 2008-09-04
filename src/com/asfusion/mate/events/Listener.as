@@ -111,7 +111,7 @@ package com.asfusion.mate.events
 					{
 						dispatcher.removeEventListener(type, _method);
 					}
-					dispatcher.addEventListener(type, value, false, priority);
+					dispatcher.addEventListener(type, value, false, priority, useWeakReference);
 					methodRegistered = true;
 				}
 				_method = value;
@@ -136,6 +136,29 @@ package com.asfusion.mate.events
 		{
 			_priority = value;
 			updateListeners(type, type);
+		}
+		
+		/*-.........................................useWeakReference..........................................*/
+		private var _useWeakReference:Boolean = true;
+		/**
+		 * (default = true) — Determines whether the reference to the listener is strong or weak. 
+		 * A strong reference (the default) prevents your listener from being garbage-collected. 
+		 * A weak reference does not.
+		 * When using modules, it is recomended to use weak references to garbage-collect unused modules
+		 * 
+		 *  @default true
+		 * */
+		public function get useWeakReference():Boolean
+		{
+			return _useWeakReference;
+		}
+		public function set useWeakReference(value:Boolean):void
+		{
+	        if (_useWeakReference !== value)
+	        {
+	        	_useWeakReference = value;
+				updateListeners(type, type);
+	        }
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------
@@ -197,7 +220,7 @@ package com.asfusion.mate.events
 		 * Registers an event listener object with an EventDispatcher object so that the listener receives notification of an event. 
 		 * You can register event listeners on all nodes in the display list for a specific type of event, phase, and priority.
 		 */
-		public function addEventListener(eventType:String, listener:Function, useCapture:Boolean=false, priority:int=0.0, useWeakReference:Boolean=false):void
+		public function addEventListener(eventType:String, listener:Function, useCapture:Boolean=false, priority:int=0.0, useWeakReference:Boolean=true):void
 		{
 			if(eventType == tagEventType)
 			{
@@ -270,7 +293,7 @@ package com.asfusion.mate.events
 				*/
 				if(method != null)
 				{
-					dispatcher.addEventListener(newType, method,false, priority);
+					dispatcher.addEventListener(newType, method,false, priority, useWeakReference);
 					methodRegistered = true;
 				}
 				/*
@@ -278,7 +301,7 @@ package com.asfusion.mate.events
 				*/
 				if(mxmlFunction != null)
 				{
-					dispatcher.addEventListener(newType, mxmlFunction,false, priority);
+					dispatcher.addEventListener(newType, mxmlFunction,false, priority, useWeakReference);
 					mxmlRegistered = true;
 				}
 			}
