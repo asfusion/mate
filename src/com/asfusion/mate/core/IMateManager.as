@@ -22,6 +22,7 @@ package com.asfusion.mate.core
 	import com.asfusion.mate.utils.debug.IMateLogger;
 	
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	
 	import mx.core.Application;
 	import mx.logging.ILoggingTarget;
@@ -77,6 +78,12 @@ package com.asfusion.mate.core
 		function set listenerProxyType(value:String):void
 		function get listenerProxyType():String
 		
+		/*-.........................................getCacheCollection..........................................*/
+		/**
+		 * Global cache.
+		 */
+		function getCacheCollection():Dictionary
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Methods
 		-------------------------------------------------------------------------------------------------------------*/
@@ -96,24 +103,6 @@ package com.asfusion.mate.core
 		 * Similar to Flex <code>ILogger</code>
 		 */
 		function getLogger(active:Boolean):IMateLogger
-		
-		/*-.........................................getCachedInstance..........................................*/
-		/**
-		 * Retrieves an instance from the cache.
-		 */
-		function getCachedInstance(template:Class):Object
-		
-		/*-.........................................addCachedInstance..........................................*/
-		/**
-		 * Adds an instance to the cache.
-		 */
-		function addCachedInstance(template:Class, instance:Object):void
-		
-		/*-.........................................clearCachedInstance..........................................*/
-		/**
-		 * Removes an instance from the cache.
-		 */
-		function clearCachedInstance(template:Class):void
 		
 		/*-.........................................addListenerProxy..........................................*/
 		/**

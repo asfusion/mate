@@ -30,7 +30,7 @@ package com.asfusion.mate.actions.builders
 	* It will then call the function specified in the <code>method</code> attribute on the newly created object. 
 	* You can pass arguments to this function that come from a variety of sources, such as the event itself, 
 	* a server result object, or any other value. 
-	* Unless you specify cache="false", this <code>MethodInvoker</code> instance will be "cached" and not instantiated again.
+	* Unless you specify cache="none", this <code>MethodInvoker</code> instance will be "cached" and not instantiated again.
 	* 
     * 
 	* @mxml
@@ -43,7 +43,7 @@ package com.asfusion.mate.actions.builders
 	* properties="Properties"
 	* arguments="Object|Array"
 	* method="String"
-	* cache="false|true"
+	* cache="local|global|inherit|none"
  	* /&gt;
 	* </pre>
 	* 

@@ -65,6 +65,11 @@ package com.asfusion.mate.actionLists
 		protected var manager:IMateManager;
 		
 		/**
+		 * Internal instance of <code>IEventMap</code>.
+		 */
+		protected var map:IEventMap;
+		
+		/**
 		 * Parent scope that is passed to the IActionList when it is a sub-ActionList.
 		 */
 		protected var inheritedScope:IScope;
@@ -124,7 +129,9 @@ package com.asfusion.mate.actionLists
 		/*-.........................................dispatcherType..........................................*/
 		private var _dispatcherType:String = "inherit";
 		/**
-		 * @inheritDoc
+		 * String that defines whether the dispatcher used by this tag is <code>global</code> or 
+		 * <code>inherit</code>. If it is <code>inherit</code>, the dispatcher used is the 
+		 * dispatcher provided by the EventMap where this tag lives.
 		 */
 		public function get dispatcherType():String
 		{
@@ -140,18 +147,17 @@ package com.asfusion.mate.actionLists
 				{
 					manager.removeEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false);
 				}
-				else if(oldValue == "inherit" && document && document is IDispatcherProvider)
+				else if(oldValue == "inherit" && map)
 				{
-					IDispatcherProvider(document).removeEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false);
+					map.removeEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false);
 				}
 				if(value == "global")
 				{
 					manager.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
 				}
-				else if(value == "inherit" && document && document is IDispatcherProvider)
+				else if(value == "inherit" && map)
 				{
-					var dispatcherClient:IDispatcherProvider = IDispatcherProvider(document);
-					dispatcherClient.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
+					map.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
 				}
 				_dispatcherType = value;
 				dispatcherTypeChanged = true;
@@ -184,9 +190,9 @@ package com.asfusion.mate.actionLists
 				{
 					currentDispatcher = manager.dispatcher;
 				}
-				else if(dispatcherType == "inherit" && document && document is IDispatcherProvider)
+				else if(dispatcherType == "inherit" && map)
 				{
-					currentDispatcher = IDispatcherProvider(document).getDispatcher();
+					currentDispatcher = map.getDispatcher();
 				}
 			}
 			return currentDispatcher;
@@ -389,12 +395,15 @@ package com.asfusion.mate.actionLists
 		public function initialized(document:Object, id:String):void
 		{
 			this.document = document;
-			if(dispatcherType == "inherit" && document is IDispatcherProvider)
+			if(document is IEventMap)
 			{
-				var dispatcherClient:IDispatcherProvider = IDispatcherProvider(document);
-				var inheritDispatcher:IEventDispatcher = dispatcherClient.getDispatcher();
+				map = IEventMap(document);
+			}
+			if(dispatcherType == "inherit" && map)
+			{
+				var inheritDispatcher:IEventDispatcher = map.getDispatcher();
 				
-				dispatcherClient.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
+				map.addEventListener(DispatcherEvent.CHANGE, dispatcherChangeHandler, false, 0, true);
 				if(inheritDispatcher)
 				{
 					setDispatcher(inheritDispatcher, false);

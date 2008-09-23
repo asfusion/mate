@@ -31,7 +31,7 @@ package com.asfusion.mate.core
 		*                                          Protected Fields
 		-------------------------------------------------------------------------------------------------------------*/
 		/**
-		 * Instance of <code>IMateManager</code> used to get and set the cached objects created.
+		 * Instance of <code>IMateManager</code> used to get the logger object.
 		 */
 		protected var manager:IMateManager;
 		
@@ -54,11 +54,10 @@ package com.asfusion.mate.core
 		 * and logs any problem that may encounter.
 		 */
 		/*-.........................................create..........................................*/
-		public function create(template:Class, loggerProvider:ILoggerProvider,cache:Boolean, parameters:Array = null):Object
+		public function create(template:Class, loggerProvider:ILoggerProvider, parameters:Array = null):Object
 		{
 			var logger:IMateLogger = ( loggerProvider ) ? loggerProvider.getLogger(): manager.getLogger(true);
 			var instance:Object;
-			var cachedInstance:Object;
 			var logInfo:LogInfo;
 			var reTry:Boolean;
 			
@@ -66,14 +65,6 @@ package com.asfusion.mate.core
 			{
 				logger.error(LogTypes.GENERATOR_NOT_FOUND, new LogInfo(loggerProvider,null));
 				return null;
-			}
-			if(cache)
-			{
-				cachedInstance = manager.getCachedInstance(template);
-				if(cachedInstance)
-				{
-					return cachedInstance;
-				}
 			}
 			if(parameters && parameters.length > 15)
 			{
@@ -102,10 +93,6 @@ package com.asfusion.mate.core
 					instance = createInstance(template, parameters);
 				}
 			}
-			if(cache)
-			{
-				manager.addCachedInstance(template, instance);
-			}
 			return instance;
 		}
 		
@@ -115,10 +102,10 @@ package com.asfusion.mate.core
 		 */
 		public function createInstance(template:Class, p:Array):Object
 		{
-			var newInstantce:Object;
+			var newInstance:Object;
 			if(!p || p.length == 0)
 			{
-				newInstantce = new template();
+				newInstance = new template();
 				
 			}
 			else
@@ -127,24 +114,19 @@ package com.asfusion.mate.core
 				// if someone knows a better way please let me know (nahuel at asfusion dot com).
 				switch(p.length)
 				{
-					case 1:	newInstantce = new template(p[0]); break;
-					case 2:	newInstantce = new template(p[0], p[1]); break;
-					case 3:	newInstantce = new template(p[0], p[1], p[2]); break;
-					case 4:	newInstantce = new template(p[0], p[1], p[2], p[3]); break;
-					case 5:	newInstantce = new template(p[0], p[1], p[2], p[3], p[4]); break;
-					case 6:	newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5]); break;
-					case 7:	newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6]); break;
-					case 8:	newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]); break;
-					case 9:	newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]); break;
-					case 10:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]); break;
-					case 11:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]); break;
-					case 12:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11]); break;
-					case 13:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12]); break;
-					case 14:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13]); break;
-					case 15:newInstantce = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14]); break;
+					case 1:	newInstance = new template(p[0]); break;
+					case 2:	newInstance = new template(p[0], p[1]); break;
+					case 3:	newInstance = new template(p[0], p[1], p[2]); break;
+					case 4:	newInstance = new template(p[0], p[1], p[2], p[3]); break;
+					case 5:	newInstance = new template(p[0], p[1], p[2], p[3], p[4]); break;
+					case 6:	newInstance = new template(p[0], p[1], p[2], p[3], p[4], p[5]); break;
+					case 7:	newInstance = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6]); break;
+					case 8:	newInstance = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]); break;
+					case 9:	newInstance = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]); break;
+					case 10:newInstance = new template(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]); break;
 				}
 			}
-			return newInstantce;
+			return newInstance;
 		}
 	}
 }

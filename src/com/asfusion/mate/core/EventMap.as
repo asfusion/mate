@@ -21,8 +21,11 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.ScopeProperties;
+	
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
+	
 	import mx.core.IMXMLObject;
 	
 	[Exclude(name="activate", kind="event")]
@@ -46,16 +49,8 @@ package com.asfusion.mate.core
 	 * &lt;/EventMap&gt;
      * </listing>
 	 */
-	public class EventMap extends EventDispatcher implements IMXMLObject, IDispatcherProvider
+	public class EventMap extends EventDispatcher implements IMXMLObject, IEventMap
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Protected properties
-		-------------------------------------------------------------------------------------------------------------*/
-		/**
-		 * Local storage for the current dispatcher. 
-		 * This object can be accessed by calling getDispatcher method
-		 */
-		protected var currentDispatcher:IEventDispatcher;
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Public Getters (SmartObjects)
@@ -198,6 +193,35 @@ package com.asfusion.mate.core
 			return _scope;
 		}
 		
+		
+		/*-.........................................cache..........................................*/
+		protected var _cache:String = Cache.GLOBAL;
+		/**
+		  * @inheritDoc
+		 */
+		public function get cache():String
+		{
+			return _cache;
+		}
+		[Inspectable(enumeration="local,global")]
+		public function set cache(value:String):void
+		{
+			if(_cache !== value)
+			{
+				_cache = value;
+			}
+		}
+		
+		/*-.........................................getCacheCollection..........................................*/
+		protected var cacheCollection:Dictionary = new Dictionary();
+		/**
+		 *  @inheritDoc
+		 */
+		public function getCacheCollection():Dictionary
+		{
+			return cacheCollection;
+		}
+		
 		/*-.........................................getCached..........................................*/
 		/**
 		 * Function to get cached instances from the framework.
@@ -205,10 +229,20 @@ package com.asfusion.mate.core
 		 * 
 		 * @see com.asfusion.mate.core.Cache
 		 */
-		public function getCached(template:Class):*
+		public function getCached(template:Class,
+								cacheType:String = Cache.INHERIT, 
+								autoCreate:Boolean = true,
+								registerTarget:Boolean = false, 
+								constructorArguments:Array = null ):*
 		{
-			return new Cache(template);
+			return new Cache(template, cacheType, autoCreate, registerTarget, constructorArguments);
 		}
+		
+		/*-.........................................currentDispatcher..........................................*/
+		/**
+		 * Local storage for the current dispatcher. 
+		 */
+		private var _dispatcher:IEventDispatcher;
 		
 		/*-.........................................getDispatcher..........................................*/
 		/**
@@ -216,12 +250,12 @@ package com.asfusion.mate.core
 		 */ 
 		public function getDispatcher():IEventDispatcher
 		{
-			if(!currentDispatcher)
+			if(!_dispatcher)
 			{
 				var manager:IMateManager = MateManager.instance;
-				currentDispatcher = manager.dispatcher;
+				_dispatcher = manager.dispatcher;
 			}
-			return currentDispatcher;
+			return _dispatcher;
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

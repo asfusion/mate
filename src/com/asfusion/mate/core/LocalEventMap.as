@@ -22,23 +22,25 @@ package com.asfusion.mate.core
 	import com.asfusion.mate.events.DispatcherEvent;
 	
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	
 	public class LocalEventMap extends EventMap
-	{
+	{	
 		/*-.........................................dispatcher..........................................*/
+		private var _dispatcher:IEventDispatcher;
 		/**
 		 * The event dispatcher that will be used in the EventMap.
 		 */
 		public function get dispatcher():IEventDispatcher
 		{
-			return currentDispatcher;
+			return _dispatcher;
 		}
 		public function set dispatcher(value:IEventDispatcher):void
 		{
-			var oldValue:IEventDispatcher = currentDispatcher;
+			var oldValue:IEventDispatcher = _dispatcher;
 			if(oldValue !== value)
 			{
-				currentDispatcher = value;
+				_dispatcher = value;
 				var event:DispatcherEvent = new DispatcherEvent(DispatcherEvent.CHANGE);
 				event.newDispatcher = value;
 				event.oldDispatcher = oldValue;
@@ -51,7 +53,7 @@ package com.asfusion.mate.core
 		 */ 
 		override public function getDispatcher():IEventDispatcher
 		{
-			return currentDispatcher;
+			return dispatcher;
 		}
 	}
 }

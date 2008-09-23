@@ -148,7 +148,7 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:InjectorEvent):void
 		{
-			var currentScope:Scope = new Scope(event, debug, dispatcher, inheritedScope);
+			var currentScope:Scope = new Scope(event, debug, map, inheritedScope);
 			currentScope.owner = this;
 			setScope(currentScope);
 			runSequence(currentScope, actions);

@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.actions
 {
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.core.Cache;
 	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
@@ -35,7 +36,8 @@ package com.asfusion.mate.actions
 		/*-.........................................destinationKey..........................................*/
 		private var _destinationKey:String;
 		/**
-		*  If you want to set the value of a property of the destination object, instead of the destination itself, you need to specify this attribute.
+		*  If you want to set the value of a property of the destination object, instead of the destination itself,
+		 * you need to specify this attribute.
 		*/
 		public function get destinationKey():String
 		{
@@ -97,6 +99,39 @@ package com.asfusion.mate.actions
 			_source = value;
 		}
 		
+		/*-.........................................destinationCache..........................................*/
+		private var _destinationCache:String = "inherit";
+		/**
+		 * The destinationCache is only useful when the destination is a class. 
+		 * This attribute defines which cache we will look up for a created object.
+		*/
+		public function get destinationCache():String
+		{
+			return _destinationCache;
+		}
+		
+		[Inspectable(enumeration="local,global,inherit")]
+		public function set destinationCache(value:String):void
+		{
+			_destinationCache = value;
+		}
+		
+		/*-.........................................sourceCache..........................................*/
+		private var _sourceCache:String = "inherit";
+		/**
+		 * The sourceCache is only useful when the source is a class. 
+		 * This attribute defines which cache we will look up for a created object.  
+		*/
+		public function get sourceCache():String
+		{
+			return _sourceCache;
+		}
+		
+		[Inspectable(enumeration="local,global,inherit")]
+		public function set sourceCache(value:String):void
+		{
+			_sourceCache = value;
+		}
 		
 		/*-.........................................run..........................................*/
 		/**
@@ -104,8 +139,8 @@ package com.asfusion.mate.actions
 		 */ 
 		override protected function run(scope:IScope):void
 		{
-			var realSource:* 		= getRealObject(source, scope);
-			var realDestination:* 	= getRealObject(destination, scope);
+			var realSource:* 		= getRealObject(source, scope, sourceCache);
+			var realDestination:* 	= getRealObject(destination, scope, destinationCache);
 			var logInfo:LogInfo;
 			if(realSource)
 			{
@@ -146,10 +181,12 @@ package com.asfusion.mate.actions
 		*  Helper function to get the source or destination objects
 		 * from either a String value, a SmartObject or other.
 		*/
-		protected function getRealObject(obj:*, scope:IScope):*
+		protected function getRealObject(obj:*, scope:IScope, cache:String):*
 		{
 			var realObject:* = obj;
 			if(obj is Function ) obj = obj();
+			
+			if(obj is Class) realObject = Cache.getCachedInstance(obj, cache, scope);
 			
 			if(obj is ISmartObject)
 			{

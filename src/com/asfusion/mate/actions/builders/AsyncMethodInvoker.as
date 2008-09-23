@@ -31,7 +31,7 @@ package com.asfusion.mate.actions.builders
 	 * Because the method is asynchronous, we register to a success and falut events in this object and run the 
 	 * successHandlers or faultHandlers depending of the result. When you are making the asynchronous call, 
 	 * you can pass arguments to this function that come from a variety of sources, such as the event itself, 
-	 * a server result object, or any other value.Unless you specify cache="false", this <code>AsyncMethodInvoker</code> 
+	 * a server result object, or any other value.Unless you specify cache="none", this <code>AsyncMethodInvoker</code> 
 	 * instance will be "cached" and not instantiated again. If you are using an instace we never generate the 
 	 * object and use the same instance.
 	 */
