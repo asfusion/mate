@@ -237,6 +237,7 @@ package com.asfusion.mate.actions.builders
 		 */
 		override protected function prepare(scope:IScope):void
 		{
+			super.prepare(scope);
 			if(!currentInstance) currentInstance = new HTTPService();
 			var httpInstance:HTTPService = currentInstance;
 			if(url)
