@@ -19,11 +19,13 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actionLists
 {
+	import com.asfusion.mate.core.IEventMap;
 	import com.asfusion.mate.core.IMateManager;
 	import com.asfusion.mate.utils.debug.*;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	/**
 	 * Scope is an object created by the <code>IActionList</code>.
 	 * <p>It represents the running scope of a that <code>IActionList</code>. 
@@ -70,6 +72,13 @@ package com.asfusion.mate.actionLists
 		 */
 		function get dispatcher():IEventDispatcher
 		function set dispatcher(value:IEventDispatcher):void
+		
+		
+		/**
+		 * Instance of the <code>EventMap</code> where this scope lives.
+		 */
+		function get eventMap():IEventMap
+		function set eventMap(value:IEventMap):void
 		
 		/**
 		 * Stops the <code>IActionList</code> flow.

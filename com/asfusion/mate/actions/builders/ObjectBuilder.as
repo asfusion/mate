@@ -73,20 +73,20 @@ package com.asfusion.mate.actions.builders
 		}
 		
 		/*-.........................................cache..........................................*/
-		private var _cache:Boolean = true;
+		private var _cache:String = "inherit";
 		/**
 		 * The cache attribute lets you specify whether this newly created object should be kept live 
-		 * so that the next time an instance of this class is requested, 
-		 * this already created object is returned instead.
+		 * so that the next time an instance of this class is requested, this already created object 
+		 * is returned instead.
 		 * 
-		 *  @default true
+		 *  @default local
 		 */
-		public function get cache():Boolean
+		public function get cache():String
 		{
 			return _cache;
 		}
-		[Inspectable(enumeration="true,false")]
-		public function set cache(value:Boolean):void
+		[Inspectable(enumeration="local,global,inherit,none")]
+		public function set cache(value:String):void
 		{
 			_cache = value;
 		}
@@ -94,7 +94,7 @@ package com.asfusion.mate.actions.builders
 		/*-.........................................registerTarget..........................................*/
 		private var _registerTarget:Boolean = true;
 		/**
-		 * Registers the newly created object has an injector target. If true, this allows this object to be injected
+		 * Registers the newly created object as an injector target. If true, this allows this object to be injected
 		 * with properties using the <code>Injectors</code> tags.
 		 */
 		 public function get registerTarget():Boolean
@@ -122,25 +122,33 @@ package com.asfusion.mate.actions.builders
 		*/
 		protected function createInstance(scope:IScope):Object
 		{
-			if(currentInstance && cache)
+			if(currentInstance && cache != Cache.NONE)
 			{
 				return currentInstance;
 			}
 			
-			var creator:Creator = new Creator();
-			if(constructorArguments !== undefined)
+			if(cache != Cache.NONE)
 			{
-				var realParams:Array = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-				currentInstance = creator.create(generator, scope, cache, realParams);
+				currentInstance = Cache.getCachedInstance(generator, cache, scope);
 			}
-			else
+			
+			if(!currentInstance)
 			{
-				currentInstance = creator.create(generator, scope, cache);
-			}
-			if(registerTarget && currentInstance)
-			{
-				var event:InjectorEvent = new InjectorEvent(currentInstance);
-				scope.dispatcher.dispatchEvent(event);
+				var realParams:Array;
+				var creator:Creator = new Creator();
+				
+				if(constructorArguments !== undefined)
+				{
+					realParams = (new SmartArguments()).getRealArguments(scope, constructorArguments);
+				}
+				currentInstance = creator.create(generator, scope, realParams);
+				Cache.addCachedInstance(generator, currentInstance, cache, scope);
+				
+				if(registerTarget && currentInstance)
+				{
+					var event:InjectorEvent = new InjectorEvent(currentInstance);
+					scope.dispatcher.dispatchEvent(event);
+				}
 			}
 			return currentInstance;
 		}

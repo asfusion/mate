@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <componentPackage>    
 	<component class="com.asfusion.mate.core.EventMap"/>
+	<component class="com.asfusion.mate.core.LocalEventMap"/>
 	<component class="com.asfusion.mate.core.SmartObject"/>
 	<component class="com.asfusion.mate.core.Properties"/>
 	<component class="com.asfusion.mate.ioc.InjectorSettings"/>

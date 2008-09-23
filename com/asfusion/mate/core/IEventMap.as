@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	
 	/**
 	 * Interface that provides an event dispatcher.
@@ -28,8 +29,24 @@ package com.asfusion.mate.core
 	 * to get a local dispatcher.
 	 * This allows us to have a different dispatcher per EventMap
 	 */
-	public interface IDispatcherProvider extends IEventDispatcher
+	public interface IEventMap extends IEventDispatcher
 	{
+		/**
+		 * String that indicates whether the event maps will use a global or a local cache. 
+		 * Each individual tag (ex: ObjectBuilder) is using this setting by default. 
+		 * Their default is inherit, which means that it will use the value that is 
+		 * defined in the event map. But each tag can override that to local, global or none.
+		 */
+		function get cache():String
+		function set cache(value:String):void
+		
+		/**
+		 * Method that returns of the local cache dictionary that will be used to store objects
+		 * created by the mate framework.
+		 */
+		function getCacheCollection():Dictionary;
+
+		
 		/**
 		 * Returns an event dispatcher.
 		 */		

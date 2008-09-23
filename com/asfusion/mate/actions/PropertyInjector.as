@@ -2,6 +2,7 @@ package com.asfusion.mate.actions
 {
 	import com.asfusion.mate.actionLists.IScope;
 	import com.asfusion.mate.core.Binder;
+	import com.asfusion.mate.core.Cache;
 	import com.asfusion.mate.core.Creator;
 	import com.asfusion.mate.core.ISmartObject;
 	import com.asfusion.mate.events.InjectorEvent;
@@ -54,7 +55,7 @@ package com.asfusion.mate.actions
 		/**
 		 * An object that contains the data that the injector will use to set the target object
 		 * 
-		 * @default nulle
+		 * @default null
 		 * */
 		public function get source():*
 		{
@@ -80,6 +81,24 @@ package com.asfusion.mate.actions
 		{
 			_sourceKey = value
 		}
+		
+		/*-.........................................sourceCache..........................................*/
+		private var _sourceCache:String = "inherit";
+		/**
+		 * If the source is a class we will try to get an instance of that class from the cache. 
+		 * This property defines whether the cache is local, global, or inherit.
+		 * 
+		 * @default inherit
+		 */
+		public function get sourceCache():String
+		{
+			return _sourceCache;
+		}
+		[Inspectable(enumeration="local,global,inherit")]
+		public function set sourceCache(value:String):void
+		{
+			_sourceCache = value;
+		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Protected methods
 		-------------------------------------------------------------------------------------------------------------*/
@@ -90,9 +109,13 @@ package com.asfusion.mate.actions
 		*/
 		protected function createInstance(scope:IScope):Object
 		{
-			var creator:Creator = new Creator();
-			var sourceObject:Object = creator.create(source, scope, true);
-		
+			var sourceObject:Object = Cache.getCachedInstance(source, sourceCache, scope);
+			if(!sourceObject)
+			{
+				var creator:Creator = new Creator();
+				sourceObject = creator.create(source, scope);
+				Cache.addCachedInstance(source, sourceObject, sourceCache, scope);
+			}
 			return sourceObject;
 		}
 		/*-----------------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ package com.asfusion.mate.actions.builders
 	* It only allows specifying the <code>generator</code> class to instantiate. 
 	* It will always call the method <code>execute</code> and pass the current event as its only argument. 
 	* This tag is very useful when reusing Cairngorm commands.
-	* Unless you specify cache="false", this <code>CommandInvoker</code> instance will be "cached" and not instantiated again.
+	* Unless you specify cache="none", this <code>CommandInvoker</code> instance will be "cached" and not instantiated again.
 	* 
     * 
 	* @mxml
@@ -41,7 +41,7 @@ package com.asfusion.mate.actions.builders
  	* <b>Properties</b>
 	* generator="Class"
 	* constructorArguments="Object|Array"
-	* cache="false|true"
+	* cache="local|global|inherit|none"
  	* /&gt;
 	* </pre>
 	* 

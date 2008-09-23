@@ -261,7 +261,7 @@ package com.asfusion.mate.actionLists
 		{
 			if(faultHandlers && faultHandlers.length > 0)
 			{
-				var currentScope:MessageScope = new MessageScope(event,debug, dispatcher, inheritedScope);
+				var currentScope:MessageScope = new MessageScope(event,debug, map, inheritedScope);
 				currentScope.owner = this;
 				currentScope.message = event.message;
 				currentScope.currentEvent = event;
@@ -286,7 +286,7 @@ package com.asfusion.mate.actionLists
 		*/
 		protected function fireEvent(event:MessageEvent):void
 		{
-			var currentScope:MessageScope = new MessageScope(event,debug, dispatcher, inheritedScope);
+			var currentScope:MessageScope = new MessageScope(event,debug, map, inheritedScope);
 			currentScope.owner = this;
 			currentScope.message = event.message;
 			currentScope.currentEvent = event;

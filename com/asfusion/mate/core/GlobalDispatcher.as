@@ -79,6 +79,10 @@ package com.asfusion.mate.core
 			{
 				if(!useCapture)
 				{
+					// We register also the same listener function in the popupDispatcher. 
+					// The popupDispatcher is systemManager itself and has the applicationDispatcher as one of its children. 
+					// Because we don't want to fire the listener twice, we have an extra listener that will stop the event 
+					// if the event was already handled in the applicationDispatcher.
 					popupDispatcher.addEventListener(type, interceptorEventHandler, useCapture, -100, useWeakReference);
 					popupDispatcher.addEventListener(type, listener, useCapture, -101, useWeakReference);
 				}
@@ -147,12 +151,17 @@ package com.asfusion.mate.core
 		 */
 		protected function interceptorEventHandler(event:Event):void
 		{
-			var isApplicationChild:Boolean = (event.target is DisplayObject && (applicationDispatcher as Sprite).contains(event.target as DisplayObject));
-			if(event.target == applicationDispatcher || isApplicationChild)
+			var target:DisplayObject = (event.target is DisplayObject) ? event.target as DisplayObject : null;
+			
+			if(target)
 			{
-				if(event.eventPhase == EventPhase.BUBBLING_PHASE)
+				var isApplicationChild:Boolean = (applicationDispatcher as Sprite).contains(target);
+				if(event.target == applicationDispatcher || isApplicationChild || target.parent == null)
 				{
-					event.stopImmediatePropagation();
+					if(event.eventPhase == EventPhase.BUBBLING_PHASE)
+					{
+						event.stopImmediatePropagation();
+					}
 				}
 			}
 		}

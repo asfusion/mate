@@ -24,6 +24,7 @@ package com.asfusion.mate.actionLists
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	
 	use namespace mate;
 	
@@ -145,13 +146,27 @@ package com.asfusion.mate.actionLists
 			_currentTarget = value;
 		}
 		
+		/*-.........................................eventMap..........................................*/
+		private var _eventMap:IEventMap;
+		/**
+		 * @inheritDoc
+		 */
+		public function get eventMap():IEventMap
+		{
+			return _eventMap;
+		}
+		public function set eventMap(value:IEventMap):void
+		{
+			_eventMap = value;
+		}
+		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                      Constructor
 		-------------------------------------------------------------------------------------------------------------*/
 		/**
 		 * Constructor
 		 */
-		 public function Scope(event:Event, active:Boolean, dispatcher:IEventDispatcher,inheritScope:IScope = null)
+		 public function Scope(event:Event, active:Boolean, map:IEventMap,inheritScope:IScope = null)
 		{
 			if(inheritScope)
 			{
@@ -166,10 +181,10 @@ package com.asfusion.mate.actionLists
 				currentEvent = event;
 				data = new Object();
 			}
-			
+			eventMap = map;
 			manager = MateManager.instance;
 			logger = manager.getLogger(active);
-			this.dispatcher = dispatcher;
+			dispatcher = map.getDispatcher();
 		}
 		
 		

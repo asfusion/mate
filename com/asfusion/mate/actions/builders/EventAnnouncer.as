@@ -25,6 +25,7 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.utils.debug.*;
 	
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	
 	import mx.events.DynamicEvent;
 	use namespace mate;
@@ -148,15 +149,38 @@ package com.asfusion.mate.actions.builders
 		}
 		
 		/*-.........................................cache..........................................*/
-		override public function get cache():Boolean
+		/**
+		 * @inheritDoc
+		 */
+		override public function get cache():String
 		{
-			return false;
+			return "none";
 		}
-		override public function set cache(value:Boolean):void
+		override public function set cache(value:String):void
 		{
 			throw(new Error("Events and reponses cannot be cached"));
 		}
 		
+		/*-.........................................dispatcherType..........................................*/
+		private var _dispatcherType:String = "inherit";
+		/**
+		 * String that defines whether the dispatcher used by this tag is <code>global</code> or 
+		 * <code>inherit</code>. If it is <code>inherit</code>, the dispatcher used is the 
+		 * dispatcher provided by the EventMap where this tag lives.
+		 */
+		public function get dispatcherType():String
+		{
+			return _dispatcherType;
+		}
+		[Inspectable(enumeration="inherit,global")]
+		public function set dispatcherType(value:String):void
+		{
+			var oldValue:String = _dispatcherType;
+			if(oldValue != value)
+			{
+				_dispatcherType = value;
+			}
+		}
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Override protected methods
@@ -173,13 +197,13 @@ package com.asfusion.mate.actions.builders
 			if(constructorArguments !== undefined)
 			{
 				var realParams:Array = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-				currentInstance = creator.create(generator, scope, false, realParams);
+				currentInstance = creator.create(generator, scope, realParams);
 			}
 			else
 			{
 				if(type)
 				{
-					currentInstance = creator.create(generator, scope, false, [type, bubbles, cancelable]);
+					currentInstance = creator.create(generator, scope, [type, bubbles, cancelable]);
 				}
 				else
 				{
@@ -197,7 +221,8 @@ package com.asfusion.mate.actions.builders
 		{
 			if(currentInstance is Event)
 			{
-				scope.lastReturn = scope.dispatcher.dispatchEvent(currentInstance as Event);
+				var dispatcher:IEventDispatcher = (dispatcherType == "inherit") ? scope.dispatcher : scope.getManager().dispatcher;
+				scope.lastReturn = dispatcher.dispatchEvent(currentInstance as Event);
 			}
 			else
 			{

@@ -22,7 +22,8 @@ package com.asfusion.mate.events
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.responses.IResponseHandler;
 	import com.asfusion.mate.utils.debug.*;
-
+	
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	
@@ -226,12 +227,26 @@ package com.asfusion.mate.events
 		-------------------------------------------------------------------------------------------------------------*/
 		/*-.........................................dispatchEvent..........................................*/
 		/**
-		 * Dispatches the given event into the event flow. The event target is the EventDispatcher object, the default is Application.application
+		 * Dispatches the given event into the event flow. The event target is the EventDispatcher object.
+		 * If bubble is false the default is the global mate dispatcher.
+		 * If bubble is true wil try to use the document(parent) as a dispatcher.
 		 */
 		public function dispatchEvent(event:Event):Boolean
 		{
 			addReponders(event);
-			return dispatcher.dispatchEvent(event);
+			var success:Boolean;
+			if(!bubbles)
+			{
+				success = dispatcher.dispatchEvent(event);
+			}
+			else
+			{
+				if(document && document is DisplayObject)
+				{
+					success = DisplayObject(document).dispatchEvent(event);
+				}
+			}
+			return success;
 		}
 		
 		/*-.........................................createAndDispatchEvent..........................................*/
@@ -248,13 +263,13 @@ package com.asfusion.mate.events
 			if(constructorArguments !== undefined)
 			{
 				var realParams:Array = (constructorArguments is Array) ? constructorArguments as Array : [constructorArguments];
-				instance = creator.create(generator, null, false, realParams);
+				instance = creator.create(generator, null, realParams);
 			}
 			else
 			{
 				if(type)
 				{
-					instance= creator.create(generator, this, false, [type, bubbles, cancelable]);
+					instance= creator.create(generator, this, [type, bubbles, cancelable]);
 				}
 				else
 				{

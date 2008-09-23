@@ -79,7 +79,7 @@ import mx.managers.ISystemManager;
 
 class MateManagerInstance extends EventDispatcher implements IMateManager
 {
-	private var cacheInstances:Dictionary = new Dictionary();
+	
 	private var methodQueue:Dictionary = new Dictionary();
 	private var listenerProxies:Dictionary = new Dictionary(true);
 	
@@ -87,6 +87,13 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
      *                                          Public setters and Getters
      -------------------------------------------------------------------------------------------------------------*/
      
+     /*-.........................................getCacheCollection..........................................*/
+    private var _cache:Dictionary = new Dictionary();
+	public function getCacheCollection():Dictionary
+	{
+		return _cache;
+	}
+	
     /*-.........................................application..........................................*/
 	public function get application():Application
 	{
@@ -193,24 +200,6 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     		logger = new loggerClass(false);
     	}
     	return logger;
-    }
-    
-    /*-.........................................getCachedInstance........................................*/
-    public function getCachedInstance(template:Class):Object
-    {
-    	return cacheInstances[template];
-    }
-    
-    /*-.........................................addCachedInstance........................................*/
-    public function addCachedInstance(template:Class, instance:Object):void
-    {
-    	cacheInstances[template] = instance;
-    }
-    
-    /*-.........................................clearCachedInstance........................................*/
-    public function clearCachedInstance(template:Class):void
-    {
-    	cacheInstances[template] = null;
     }
     
     /*-.........................................addListenerProxy........................................*/

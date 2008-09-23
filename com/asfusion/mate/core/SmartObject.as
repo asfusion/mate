@@ -40,14 +40,15 @@ package com.asfusion.mate.core
 	public class SmartObject extends Proxy implements IEventDispatcher, ISmartObject
 	{
 		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected Fields
+		*                                          Protected Properties
 		-------------------------------------------------------------------------------------------------------------*/
+		/**
+		 * A list of properties that has been accessed using the dot operator. 
+		 * For example, if you a access an inner property like this: 
+		 * myObject.property1.property2, the chain is equivalent to an array 
+		 * with 2 items [property1,property2]
+		 */
 		protected var chain:Array = null;
-		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Private Fields
-		-------------------------------------------------------------------------------------------------------------*/
-		private var dispatcher:EventDispatcher = new EventDispatcher(IEventDispatcher(this));
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Setters and Getters
@@ -194,6 +195,7 @@ package com.asfusion.mate.core
 		/*-----------------------------------------------------------------------------------------------------------
 		*                             Implementation of IEventDispatcher interface 
 		-------------------------------------------------------------------------------------------------------------*/
+		private var dispatcher:EventDispatcher = new EventDispatcher(IEventDispatcher(this));
 		/**
 		 * Registers an event listener object with an EventDispatcher object so that the listener receives notification of an event. 
 		 * You can register event listeners on all nodes in the display list for a specific type of event, phase, and priority.
