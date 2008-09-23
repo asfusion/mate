@@ -168,6 +168,7 @@ package com.asfusion.mate.actions.builders
 		 */
 		override protected function prepare(scope:IScope):void
 		{
+			super.prepare(scope);
 			if(!currentInstance) currentInstance = new RemoteObject();
 			var remoteObjectInstance:RemoteObject = currentInstance;
 			
