@@ -26,7 +26,7 @@ package com.asfusion.mate.core
 	
 	public class LocalEventMap extends EventMap
 	{	
-		//.........................................dispatcher..........................................
+		//.........................................Contructor..........................................
 		public function LocalEventMap()
 		{
 			_cache = Cache.LOCAL;
