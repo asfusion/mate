@@ -26,7 +26,13 @@ package com.asfusion.mate.core
 	
 	public class LocalEventMap extends EventMap
 	{	
-		/*-.........................................dispatcher..........................................*/
+		//.........................................dispatcher..........................................
+		public function LocalEventMap()
+		{
+			_cache = Cache.LOCAL;
+		}
+		
+		//.........................................dispatcher..........................................
 		private var _dispatcher:IEventDispatcher;
 		/**
 		 * The event dispatcher that will be used in the EventMap.
@@ -47,7 +53,7 @@ package com.asfusion.mate.core
 				dispatchEvent(event);
 			}
 		}
-		/*-.........................................getDispatcher..........................................*/
+		//.........................................getDispatcher..........................................
 		/**
 		 * @inheritDoc
 		 */ 
