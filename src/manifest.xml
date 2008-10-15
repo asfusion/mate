@@ -34,7 +34,11 @@
 	
 	<component class="com.asfusion.mate.utils.debug.Debugger"/>
 	
-	
 	<component class="com.asfusion.mate.actions.PropertyInjector"/>
+	
+	<component class="com.asfusion.mate.testing.MockRemoteObject"/>
+	<component class="com.asfusion.mate.testing.MockWebService"/>
+	<component class="com.asfusion.mate.testing.MockMethod"/>
+	
 	
 </componentPackage>
