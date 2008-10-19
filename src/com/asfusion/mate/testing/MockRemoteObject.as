@@ -8,6 +8,17 @@ package com.asfusion.mate.testing
 	import mx.rpc.remoting.mxml.RemoteObject;
 
 	[DefaultProperty("methods")]
+	[Exclude(name="destination", kind="property")]
+	[Exclude(name="channelSet", kind="property")]
+	[Exclude(name="concurrency", kind="property")]
+	[Exclude(name="endpoint", kind="property")]
+	[Exclude(name="makeObjectsBindable", kind="property")]
+	[Exclude(name="operations", kind="property")]
+	[Exclude(name="requestTimeout", kind="property")]
+	[Exclude(name="source", kind="property")]
+	[Exclude(name="showBusyCursor", kind="property")]
+	[Exclude(name="invoke", kind="event")]
+	
 	
 	public class MockRemoteObject extends RemoteObject
 	{

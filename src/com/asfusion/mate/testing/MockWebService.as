@@ -8,6 +8,25 @@ package com.asfusion.mate.testing
 	import mx.rpc.soap.mxml.WebService;
 
 	[DefaultProperty("methods")]
+	[Exclude(name="destination", kind="property")]
+	[Exclude(name="channelSet", kind="property")]
+	[Exclude(name="concurrency", kind="property")]
+	[Exclude(name="endpointURI", kind="property")]
+	[Exclude(name="makeObjectsBindable", kind="property")]
+	[Exclude(name="operations", kind="property")]
+	[Exclude(name="requestTimeout", kind="property")]
+	[Exclude(name="description", kind="property")]
+	[Exclude(name="showBusyCursor", kind="property")]
+	[Exclude(name="httpHeaders", kind="property")]
+	[Exclude(name="port", kind="property")]
+	[Exclude(name="rootURL", kind="property")]
+	[Exclude(name="service", kind="property")]
+	[Exclude(name="useProxy", kind="property")]
+	[Exclude(name="wsdl", kind="property")]
+	[Exclude(name="xmlSpecialCharsFilter", kind="property")]
+	[Exclude(name="invoke", kind="event")]
+	[Exclude(name="load", kind="event")]
+	
 	
 	public class MockWebService extends WebService
 	{
