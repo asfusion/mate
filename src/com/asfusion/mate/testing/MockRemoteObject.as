@@ -16,7 +16,6 @@ package com.asfusion.mate.testing
 	[Exclude(name="operations", kind="property")]
 	[Exclude(name="requestTimeout", kind="property")]
 	[Exclude(name="source", kind="property")]
-	[Exclude(name="showBusyCursor", kind="property")]
 	[Exclude(name="invoke", kind="event")]
 	
 	
@@ -59,7 +58,7 @@ package com.asfusion.mate.testing
 		// -------------------------------
 		override public function getOperation(name:String):AbstractOperation
 	    {   
-	    	var operation:MockOperation = new MockOperation(name, getMethod(name));
+	    	var operation:MockOperation = new MockOperation(name, getMethod(name), showBusyCursor);
 	    	//add fault and result listeners
 	    	operation.addEventListener(ResultEvent.RESULT, dispatchResult, false, 0, true);
 	    	operation.addEventListener(FaultEvent.FAULT, dispatchFault, false, 0, true);

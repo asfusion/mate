@@ -7,6 +7,7 @@ package com.asfusion.mate.testing
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
+	import mx.managers.CursorManager;
 	import mx.rpc.AbstractOperation;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.Fault;
@@ -18,18 +19,25 @@ package com.asfusion.mate.testing
 		private var method:MockMethod;
 		private var token:AsyncToken;
 		private var mock:Object;
+		private var showCursor:Boolean;
 		
-		public function MockOperation(name:String, method:MockMethod)
+		public function MockOperation(name:String, method:MockMethod, showBusyCursor:Boolean)
 		{
 			this.method = method;
 			var generator:Class = method.mockGenerator;
-			this.mock = new generator();
+			mock = new generator();
+			showCursor = showBusyCursor;
+			
 			super(service, name);
 		}
 		
 		// --------------------------------------------------------------
 		// The function that gets called when the service should be called
 		override public function send(... args:Array):AsyncToken {
+			if (showCursor) {
+				CursorManager.setBusyCursor();
+			}
+			
 			token = new AsyncToken(null);
 			
 			if (args.length > 0) {
@@ -154,13 +162,17 @@ package com.asfusion.mate.testing
 		// These two functions dispatch the result and fault events
 		// -------------------------------
 		private function dispatchResult(result:*):void {
-		
+			if (showCursor) {
+				CursorManager.removeBusyCursor();
+			}
 			dispatchEvent(ResultEvent.createEvent(result, token));
 		}
 		
 		// -------------------------------
 		private function dispatchFault(fault:Fault):void {
-			
+			if (showCursor) {
+				CursorManager.removeBusyCursor();
+			}
 			dispatchEvent(FaultEvent.createEvent(fault, token));
 	
 		}
