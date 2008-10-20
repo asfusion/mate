@@ -52,6 +52,9 @@ package com.asfusion.mate.testing
 					//set parent's default delay
 					method.delay = delay;
 				}
+				if (method.mockGeneratorMethod == null) {
+					method.mockGeneratorMethod = method.name;
+				}
 				_methodsDictionary[method.name] = method;
 			}
 		}
