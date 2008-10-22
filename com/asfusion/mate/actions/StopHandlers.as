@@ -118,7 +118,7 @@ package com.asfusion.mate.actions
 		 */
 		override protected function run(scope:IScope):void
 		{
-			var isStopped:Boolean;
+			var isStopped:Boolean = false;
 			
 			if(stopFunction != null)
 			{
