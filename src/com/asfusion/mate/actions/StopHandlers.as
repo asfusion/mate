@@ -118,19 +118,26 @@ package com.asfusion.mate.actions
 		 */
 		override protected function run(scope:IScope):void
 		{
+			var isStopped:Boolean;
+			
 			if(stopFunction != null)
 			{
-				if(stopFunction(scope)) scope.stopRunning();
+				if(stopFunction(scope))
+				{
+					scope.stopRunning();
+					isStopped = true;
+				}
 			}
 			else if(lastReturnEquals != null)
 			{
 				if(lastReturnEquals == scope.lastReturn)
 				{
 					scope.stopRunning();
+					isStopped = true;
 				}
 			}
 			
-			if(eventPropagation != "noStop" && scope.event != null)
+			if(isStopped && eventPropagation != "noStop" && scope.event != null)
 			{
 				if(eventPropagation == "stopImmediatePropagation")
 				{
