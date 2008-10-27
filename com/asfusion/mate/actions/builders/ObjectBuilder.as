@@ -132,7 +132,7 @@ package com.asfusion.mate.actions.builders
 				currentInstance = Cache.getCachedInstance(generator, cache, scope);
 			}
 			
-			if(!currentInstance)
+			if(!currentInstance || cache == Cache.NONE)
 			{
 				var realParams:Array;
 				var creator:Creator = new Creator();
