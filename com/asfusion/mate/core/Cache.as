@@ -156,7 +156,7 @@ package com.asfusion.mate.core
 			{
 				cacheCollection =  scope.getManager().getCacheCollection();
 			}
-			cacheCollection[key] = instance;
+			delete cacheCollection[key];
 		}
 		
 		/*-.........................................getCachedInstance..........................................*/
