@@ -202,7 +202,7 @@ package com.asfusion.mate.core
 			{
 				cacheCollection =  scope.getManager().getCacheCollection();
 			}
-			cacheCollection[key] = null;
+			delete cacheCollection[key];
 		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          flash_proxy Methods
