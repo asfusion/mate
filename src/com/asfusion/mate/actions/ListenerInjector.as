@@ -6,6 +6,9 @@ package com.asfusion.mate.actions
 	import mx.core.EventPriority;
 	import flash.events.IEventDispatcher;
 	
+	/**
+	 * Registers an event listener object with an EventDispatcher object so that the listener receives notification of an event.
+	 */
 	public class ListenerInjector extends AbstractAction implements IAction
 	{
 		//-----------------------------------------------------------------------------------------------------------
@@ -15,7 +18,8 @@ package com.asfusion.mate.actions
 		//.........................................dispatcher..........................................
 		private var _dispatcher:Object;
 		/**
-		 * @TODO
+		 * Event Dispatcher to which we will register to listen to events.
+		 * It can be an ISmartObject or an IEventDispatcher.
 		 */
 		public function get dispatcher():Object
 		{
@@ -29,7 +33,7 @@ package com.asfusion.mate.actions
 		//.........................................eventType..........................................
 		private var _eventType:String;
 		/**
-		 * @TODO
+		 * The type of event that we want to register to listen to.
 		 */
 		public function get eventType():String
 		{
@@ -43,7 +47,8 @@ package com.asfusion.mate.actions
 		//.........................................method..........................................
 		private var _method:String;
 		/**
-		 * @TODO
+		 * The listener function that processes the event. This function must accept an Event object
+		 * as its only parameter and must return nothing
 		 */
 		public function get method():String
 		{
@@ -57,7 +62,10 @@ package com.asfusion.mate.actions
 		//.........................................useCapture..........................................
 		private var _useCapture:Boolean;
 		/**
-		 * @TODO
+		 * Determines whether the listener works in the capture phase or the target and bubbling phases. 
+		 * If useCapture is set to true, the listener processes the event only during the capture phase 
+		 * and not in the target or bubbling phase. If useCapture is false, the listener processes the 
+		 * event only during the target or bubbling phase.
 		 */
 		public function get useCapture():Boolean
 		{
@@ -71,7 +79,10 @@ package com.asfusion.mate.actions
 		//.........................................useWeakReference..........................................
 		private var _useWeakReference:Boolean = true;
 		/**
-		 * @todo
+		 * Determines whether the reference to the listener is strong or weak. A strong reference 
+		 * prevents your listener from being garbage-collected. A weak reference does not.
+		 * 
+		 *  @default true
 		 */
 		public function get useWeakReference():Boolean
 		{
@@ -85,7 +96,10 @@ package com.asfusion.mate.actions
 		//.........................................priority..........................................
 		private var _priority:int = EventPriority.DEFAULT;
 		/**
-		 * @TODO
+		 * The priority level of the event listener. The priority is designated by a signed 32-bit integer. 
+		 * The higher the number, the higher the priority. All listeners with priority n are processed 
+		 * before listeners of priority n-1. If two or more listeners share the same priority, they 
+		 * are processed in the order in which they were added. The default priority is 0.
 		 */
 		public function get priority():int
 		{
@@ -99,7 +113,11 @@ package com.asfusion.mate.actions
 		//........................................targetId..........................................
 		private var _targetId:String;
 		/**
-		 * @TODO
+		 * This tag will run if any of the following statements is true:
+		 * If the targetId is null.
+		 * If the id of the target matches the targetId.
+		 * 
+		 * Note:Target is the instance of the target class.
 		 * 
 		 * @default null
 		 * */
