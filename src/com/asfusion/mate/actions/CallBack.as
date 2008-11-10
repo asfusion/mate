@@ -5,6 +5,12 @@ package com.asfusion.mate.actions
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
+	/**
+	 *  When placed inside a <code>IActionList</code> tag and the list is executed, 
+	 * <code>CallBack</code>  will call the function specified in the <code>method</code> attribute on the target of the event. 
+	 * You can pass arguments to this function that come from a variety of sources, such as the event itself, 
+	 * a server result object, or any other value.
+	 */
 	public class CallBack extends BaseAction implements IAction
 	{
 		//-----------------------------------------------------------------------------------------------------------
