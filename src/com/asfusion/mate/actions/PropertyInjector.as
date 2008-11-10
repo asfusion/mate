@@ -15,10 +15,11 @@ package com.asfusion.mate.actions
 	public class PropertyInjector extends AbstractAction implements IAction
 	{
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................targetKey..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
+		
+		//.........................................targetKey..........................................
 		private var _targetKey:String;
 		/**
 		 * The name of the property that the injector will set in the target object
@@ -34,10 +35,14 @@ package com.asfusion.mate.actions
 			_targetKey = value;
 		}
 		
-		/*-.........................................targetId..........................................*/
+		//.........................................targetId..........................................
 		private var _targetId:String;
 		/**
-		 * The name of the property that the injector will set in the target object
+		 * This tag will run if any of the following statements is true:
+		 * If the targetId is null.
+		 * If the id of the target matches the targetId.
+		 * 
+		 * Note:Target is the instance of the target class.
 		 * 
 		 * @default null
 		 * */
@@ -50,7 +55,7 @@ package com.asfusion.mate.actions
 			_targetId = value;
 		}
 		
-		/*-.........................................source..........................................*/
+		//........................................source..........................................
 		private var _source:*;
 		/**
 		 * An object that contains the data that the injector will use to set the target object
@@ -66,7 +71,7 @@ package com.asfusion.mate.actions
 			_source = value
 		}
 		
-		/*-.........................................sourceKey..........................................*/
+		//.........................................sourceKey..........................................
 		private var _sourceKey:String;
 		/**
 		 * The name of the property on the source object that the injector will use to read and set on the target object
@@ -82,7 +87,7 @@ package com.asfusion.mate.actions
 			_sourceKey = value
 		}
 		
-		/*-.........................................sourceCache..........................................*/
+		//.........................................sourceCache..........................................
 		private var _sourceCache:String = "inherit";
 		/**
 		 * If the source is a class we will try to get an instance of that class from the cache. 
@@ -99,10 +104,11 @@ package com.asfusion.mate.actions
 		{
 			_sourceCache = value;
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................createInstance..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Protected methods
+		//-----------------------------------------------------------------------------------------------------------
+		
+		//.........................................createInstance..........................................
 		/**
 		* Creates an instance of the <code>source</code> class.
 		* 
@@ -123,11 +129,11 @@ package com.asfusion.mate.actions
 			}
 			return sourceObject;
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Override protected methods
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................prepare..........................................*/
+		//.........................................prepare..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -153,7 +159,7 @@ package com.asfusion.mate.actions
 			}
 		}
 		
-		/*-.........................................run..........................................*/
+		//........................................run..........................................
 		/**
 		 * @inheritDoc
 		 */
