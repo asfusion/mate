@@ -36,7 +36,7 @@ package com.asfusion.mate.actions
 		//.........................................method..........................................
 		private var _method:String;
 		/**
-		 * The function to call on the created object.
+		 * The function to call on the target object. Target is the <code>event.target</code> object.
 		 *
 		 *  @default null
 		 */
@@ -53,7 +53,13 @@ package com.asfusion.mate.actions
 		//.........................................targetId..........................................
 		private var _targetId:String;
 		/**
-		 * @TODO
+		 * This tag will run if any of the following statements is true:
+		 * If the id of the target is null.
+		 * If the target does not have a property id.
+		 * If the targetId is null.
+		 * If the id of the target (<code>event.target.id</code>) matches the targetId.
+		 * 
+		 * Note:Target is the <code>event.target</code> object.
 		 * 
 		 * @default null
 		 * */
