@@ -238,6 +238,13 @@ package com.asfusion.mate.core
 			return new Cache(template, cacheType, autoCreate, registerTarget, constructorArguments);
 		}
 		
+		
+		//.........................................globalDispatcher..........................................
+		public function get globalDispatcher():IEventDispatcher
+		{
+			return MateManager.instance.dispatcher;
+		}
+		
 		/*-.........................................currentDispatcher..........................................*/
 		/**
 		 * Local storage for the current dispatcher. 
@@ -252,8 +259,7 @@ package com.asfusion.mate.core
 		{
 			if(!_dispatcher)
 			{
-				var manager:IMateManager = MateManager.instance;
-				_dispatcher = manager.dispatcher;
+				_dispatcher = globalDispatcher;
 			}
 			return _dispatcher;
 		}
