@@ -22,39 +22,40 @@ import flash.utils.Timer;
  */
 public class AsyncDispatcher
 {
+	//--------------------------------------------------------------------------
+    // Variables
+    //--------------------------------------------------------------------------
+
+    private var method:Function;
+    private var args:Array;
+    private var timer:Timer;
+    
+    //--------------------------------------------------------------------------
+    // Contructor
+    //--------------------------------------------------------------------------
     public function AsyncDispatcher(method:Function, args:Array, delay:Number)
     {
         super();
-        _method = method;
-        _args = args;
-        _timer = new Timer(delay);
-        _timer.addEventListener(TimerEvent.TIMER, timerEventHandler);
-        _timer.start();
+        this.method = method;
+        this.args = args;
+        timer = new Timer(delay);
+        timer.addEventListener(TimerEvent.TIMER, timerEventHandler);
+        timer.start();
     }
 
     //--------------------------------------------------------------------------
-    //
     // Private Methods
-    //
     //--------------------------------------------------------------------------
 
     private function timerEventHandler(event:TimerEvent):void
     {
-        _timer.stop();
-        _timer.removeEventListener(TimerEvent.TIMER, timerEventHandler);
+        timer.stop();
+        timer.removeEventListener(TimerEvent.TIMER, timerEventHandler);
         // This call may throw so do not put code after it
-        _method.apply(null, _args);
+        method.apply(null, args);
     }
 
-    //--------------------------------------------------------------------------
-    //
-    // Variables
-    //
-    //--------------------------------------------------------------------------
 
-    private var _method:Function;
-    private var _args:Array;
-    private var _timer:Timer;
 }
 
 }

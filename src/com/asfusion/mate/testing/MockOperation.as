@@ -33,24 +33,29 @@ package com.asfusion.mate.testing
 		
 		// --------------------------------------------------------------
 		// The function that gets called when the service should be called
-		override public function send(... args:Array):AsyncToken {
-			if (showCursor) {
+		override public function send(... args:Array):AsyncToken 
+		{
+			if (showCursor) 
+			{
 				CursorManager.setBusyCursor();
 			}
 			
 			token = new AsyncToken(null);
 			
-			if (args.length > 0) {
+			if (args.length > 0) 
+			{
 				this.arguments = args;
 			}
 			
 			// check whether we need to load data
-			if (method.dataUrl != null) {
+			if (method.dataUrl != null) 
+			{
 				//load data before calling helper method
 				// and pass that loaded data as the last argument of the method call
 				loadData();	
 			}
-			else {
+			else 
+			{
 				//otherwise, call directly
 				makeCall();
 			}
@@ -59,29 +64,34 @@ package com.asfusion.mate.testing
 		}
 		
 		// -------------------------------
-		private function loadData():void {
-			
+		private function loadData():void 
+		{
 			var loader:URLLoader = new URLLoader();
 			
 			loader.addEventListener(Event.COMPLETE, dataLoaded);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, dataLoadError);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, dataLoadError);
 			
-			try {
+			try 
+			{
 		       loader.load(new URLRequest(method.dataUrl));
 			} 
-			catch (error:Error) {
+			catch (error:Error) 
+			{
 				startFault(new Fault(error.name, error.name, error.message));
 			}
 		}
 		
 		// -------------------------------
-		private function dataLoaded(event:Event):void {
+		private function dataLoaded(event:Event):void 
+		{
 			//save the result as the last argument
-			if (this.arguments is Array) {
+			if (this.arguments is Array) 
+			{
 				this.arguments.push(event.target.data);
 			}
-			else { 
+			else 
+			{ 
 				this.arguments = [event.target.data];
 			}
 			
@@ -91,21 +101,26 @@ package com.asfusion.mate.testing
 		
 		
 		// --------------------------------
-		private function makeCall():void {
-			try {
-	    		if (method.async) {
+		private function makeCall():void 
+		{
+			try 
+			{
+	    		if (method.async) 
+	    		{
 	    			//add listeners for asynchronous method calls
 	    			mock.addEventListener(ResultEvent.RESULT, handleAsyncResult);
 	    			mock.addEventListener(FaultEvent.FAULT, handleAsyncFault);
 	    		}
 	    		
 				var result:Object = callMockHelperMethod();
-				if (!method.async) {
+				if (!method.async) 
+				{
 					startResult(result);
 				}
 			}
 			
-			catch (error:Error) {
+			catch (error:Error) 
+			{
 				startFault(new Fault(error.name, error.name, error.message));
 			}
 		}
@@ -113,13 +128,16 @@ package com.asfusion.mate.testing
 		// --------------------------------
 		// call the mock generator, which may return a result, or it might be an async request
 		// -------------------------------
-		private function callMockHelperMethod():Object {
+		private function callMockHelperMethod():Object 
+		{
 			var result:Object;
 				
-			if (this.arguments is Array) {
+			if (this.arguments is Array) 
+			{
 				result = mock[method.mockGeneratorMethod].apply(null, this.arguments);
 			}
-			else {
+			else 
+			{
 				result = mock[method.mockGeneratorMethod].apply(null);
 			}
 				
@@ -129,30 +147,31 @@ package com.asfusion.mate.testing
 		// -------------------------------
 		// Used to add a delay when we already have a result that we 
 		// need to dispatch
-		private function startResult(result:*):void {
-
+		private function startResult(result:*):void 
+		{
 			new AsyncDispatcher(dispatchResult, [result], method.delay * 1000);
 		}
 		
 		// -------------------------------
 		// Used to add a delay when we already have a fault that we 
 		// need to dispatch
-		private function startFault(fault:Fault):void {
-			
+		private function startFault(fault:Fault):void 
+		{
 			new AsyncDispatcher(dispatchFault, [fault], method.delay * 1000);
 		}
 		
 		// -------------------------------
-		private function handleAsyncResult(event:ResultEvent):void {
+		private function handleAsyncResult(event:ResultEvent):void 
+		{
 			startResult(event.result);
 			
 			mock.removeEventListener(ResultEvent.RESULT, handleAsyncResult);
 	    	mock.removeEventListener(FaultEvent.FAULT, handleAsyncFault);
-			
 		}
 		
 		// -------------------------------
-		private function handleAsyncFault(event:FaultEvent):void {
+		private function handleAsyncFault(event:FaultEvent):void 
+		{
 			startFault(event.fault);
 			
 			mock.removeEventListener(ResultEvent.RESULT, handleAsyncResult);
@@ -161,16 +180,20 @@ package com.asfusion.mate.testing
 		
 		// These two functions dispatch the result and fault events
 		// -------------------------------
-		private function dispatchResult(result:*):void {
-			if (showCursor) {
+		private function dispatchResult(result:*):void 
+		{
+			if (showCursor) 
+			{
 				CursorManager.removeBusyCursor();
 			}
 			dispatchEvent(ResultEvent.createEvent(result, token));
 		}
 		
 		// -------------------------------
-		private function dispatchFault(fault:Fault):void {
-			if (showCursor) {
+		private function dispatchFault(fault:Fault):void 
+		{
+			if (showCursor) 
+			{
 				CursorManager.removeBusyCursor();
 			}
 			dispatchEvent(FaultEvent.createEvent(fault, token));
@@ -179,7 +202,8 @@ package com.asfusion.mate.testing
 		
 		// -------------------------------
 		// errors
-		private function dataLoadError(event:ErrorEvent):void {
+		private function dataLoadError(event:ErrorEvent):void 
+		{
 			startFault(new Fault(event.type, event.text, event.text));
 		}
 	}

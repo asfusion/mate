@@ -22,13 +22,13 @@ package com.asfusion.mate.testing
 	public class MockRemoteObject extends RemoteObject
 	{
 		public var mockGenerator:Class;
-		
 		public var delay:uint = 0;
 		
-		private var _methods:Array;
-		private var _methodsDictionary:Dictionary;
+		
+		private var methodsDictionary:Dictionary;
 		
 		// -------------------------------
+		private var _methods:Array;
 		public function get methods():Array
 		{
 			return _methods;
@@ -47,7 +47,7 @@ package com.asfusion.mate.testing
 				if (method.mockGeneratorMethod == null) {
 					method.mockGeneratorMethod = method.name;
 				}
-				_methodsDictionary[method.name] = method;
+				methodsDictionary[method.name] = method;
 			}
 		}
 		
@@ -55,7 +55,7 @@ package com.asfusion.mate.testing
 		public function MockRemoteObject(destination:String=null)
 		{
 			super(destination);
-			_methodsDictionary = new Dictionary();
+			methodsDictionary = new Dictionary();
 		}
 			
 		// -------------------------------
@@ -88,17 +88,17 @@ package com.asfusion.mate.testing
 		// -------------------------------
 		private function getMethod(name:String):MockMethod {
 			
-			if (_methodsDictionary[name] == null ) {
+			if (methodsDictionary[name] == null ) {
 				
 				var newMethod:MockMethod = new MockMethod();
 				newMethod.name = name;
 				newMethod.delay = delay;
 				newMethod.mockGeneratorMethod = name;
 				newMethod.mockGenerator = mockGenerator;
-				_methodsDictionary[name] = newMethod;
+				methodsDictionary[name] = newMethod;
 			}
 			
-			var method:MockMethod = _methodsDictionary[name];
+			var method:MockMethod = methodsDictionary[name];
 			
 			//we need to do this here and not in the methods() 
 			// setter because it seems that the mockGenerator
