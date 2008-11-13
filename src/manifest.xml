@@ -14,6 +14,9 @@
 	<component class="com.asfusion.mate.actions.DataCopier"/>
 	<component class="com.asfusion.mate.actions.StopHandlers"/>
 	<component class="com.asfusion.mate.actions.InlineInvoker"/>
+	<component class="com.asfusion.mate.actions.PropertyInjector"/>
+	<component class="com.asfusion.mate.actions.ListenerInjector"/>
+	<component class="com.asfusion.mate.actions.CallBack"/>
 	<component class="com.asfusion.mate.actions.builders.ObjectBuilder"/>
 	<component class="com.asfusion.mate.actions.builders.CommandInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.EventAnnouncer"/>
@@ -25,6 +28,8 @@
 	<component class="com.asfusion.mate.actions.builders.MethodInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.serviceClasses.Request"/>
 	<component class="com.asfusion.mate.actions.builders.AsyncMethodInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.AsyncCommandInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.PropertySetter"/>
 	
 	<component class="com.asfusion.mate.events.Listener"/>
 	<component class="com.asfusion.mate.responses.ResponseHandler"/>
@@ -33,8 +38,6 @@
 	<component class="com.asfusion.mate.events.EventProperties"/>
 	
 	<component class="com.asfusion.mate.utils.debug.Debugger"/>
-	
-	<component class="com.asfusion.mate.actions.PropertyInjector"/>
 	
 	<component class="com.asfusion.mate.testing.MockRemoteObject"/>
 	<component class="com.asfusion.mate.testing.MockWebService"/>
