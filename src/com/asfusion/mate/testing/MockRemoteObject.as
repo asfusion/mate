@@ -21,7 +21,14 @@ package com.asfusion.mate.testing
 	
 	public class MockRemoteObject extends RemoteObject
 	{
+		/**
+		 * @todo
+		 */
 		public var mockGenerator:Class;
+		
+		/**
+		 * @todo
+		 */
 		public var delay:uint = 0;
 		
 		
@@ -29,6 +36,9 @@ package com.asfusion.mate.testing
 		
 		// -------------------------------
 		private var _methods:Array;
+		/**
+		 * @todo
+		 */
 		public function get methods():Array
 		{
 			return _methods;
@@ -51,7 +61,9 @@ package com.asfusion.mate.testing
 			}
 		}
 		
-		// -------------------------------
+		//--------------------------------------------------------------------------
+	    // Contructor
+	    //--------------------------------------------------------------------------
 		public function MockRemoteObject(destination:String=null)
 		{
 			super(destination);
@@ -59,6 +71,9 @@ package com.asfusion.mate.testing
 		}
 			
 		// -------------------------------
+		/**
+		 * @todo
+		 */
 		override public function getOperation(name:String):AbstractOperation
 	    {   
 	    	var operation:MockOperation = new MockOperation(name, getMethod(name), showBusyCursor);
@@ -72,23 +87,24 @@ package com.asfusion.mate.testing
 		// These two functions dispatch the result and fault events
 		// that trigger the inner handlers
 		// -------------------------------
-		private function dispatchResult(event:ResultEvent):void {
-		
+		private function dispatchResult(event:ResultEvent):void 
+		{
 			dispatchEvent(ResultEvent.createEvent(event.result, event.token));
 		}
 		
 		// -------------------------------
-		private function dispatchFault(event:FaultEvent):void {
-			
+		private function dispatchFault(event:FaultEvent):void 
+		{
 			dispatchEvent(FaultEvent.createEvent(event.fault, event.token));
-			
 		}
 		
 		
 		// -------------------------------
-		private function getMethod(name:String):MockMethod {
+		private function getMethod(name:String):MockMethod 
+		{
 			
-			if (methodsDictionary[name] == null ) {
+			if (methodsDictionary[name] == null ) 
+			{
 				
 				var newMethod:MockMethod = new MockMethod();
 				newMethod.name = name;
@@ -103,7 +119,8 @@ package com.asfusion.mate.testing
 			//we need to do this here and not in the methods() 
 			// setter because it seems that the mockGenerator
 			// variables has not been set by then
-			if (method.mockGenerator == null) {
+			if (method.mockGenerator == null) 
+			{
 				method.mockGenerator = mockGenerator;
 			}
 			return method;

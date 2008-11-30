@@ -33,6 +33,9 @@ package com.asfusion.mate.testing
 		 * this data as the last argument of the function call **/
 		public var dataUrl:String;
 		
+		//--------------------------------------------------------------------------
+   		// Contructor
+    	//--------------------------------------------------------------------------
 		public function MockMethod()
 		{
 		}

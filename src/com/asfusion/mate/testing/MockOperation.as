@@ -21,6 +21,9 @@ package com.asfusion.mate.testing
 		private var mock:Object;
 		private var showCursor:Boolean;
 		
+		//--------------------------------------------------------------------------
+	    // Contructor
+	    //--------------------------------------------------------------------------
 		public function MockOperation(name:String, method:MockMethod, showBusyCursor:Boolean)
 		{
 			this.method = method;
