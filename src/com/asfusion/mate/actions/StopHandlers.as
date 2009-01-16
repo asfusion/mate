@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.actions
 {
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.core.ISmartObject;
 	
 	/**
 	 * The <code>StopHandlers</code> tag lets you stop a certain <code>IActionList</code>
@@ -124,7 +125,8 @@ package com.asfusion.mate.actions
 			}
 			else if(lastReturnEquals != null)
 			{
-				if(lastReturnEquals == scope.lastReturn)
+				var realReturn:* = (lastReturnEquals is ISmartObject) ? ISmartObject(lastReturnEquals).getValue(scope) : lastReturnEquals;
+				if(realReturn == scope.lastReturn)
 				{
 					scope.stopRunning();
 				}
