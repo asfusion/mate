@@ -1,3 +1,23 @@
+/*
+Copyright 2008 Nahuel Foronda/AsFusion
+
+Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License. Y
+ou may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, s
+oftware distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and limitations under the License
+
+Author: Laura Arguello, Principal Architect
+        http://www.asfusion.com/
+                
+@ignore
+*/
+
 package com.asfusion.mate.testing
 {
 	import flash.events.ErrorEvent;
@@ -11,6 +31,7 @@ package com.asfusion.mate.testing
 	import mx.rpc.AbstractOperation;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.Fault;
+	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
@@ -189,7 +210,13 @@ package com.asfusion.mate.testing
 			{
 				CursorManager.removeBusyCursor();
 			}
-			dispatchEvent(ResultEvent.createEvent(result, token));
+			
+			var resultEvent:ResultEvent = ResultEvent.createEvent(result, token);
+			for each ( var responder:IResponder in token.responders )
+			{
+				responder.result( resultEvent );
+			}
+			dispatchEvent( resultEvent );
 		}
 		
 		// -------------------------------
@@ -199,7 +226,12 @@ package com.asfusion.mate.testing
 			{
 				CursorManager.removeBusyCursor();
 			}
-			dispatchEvent(FaultEvent.createEvent(fault, token));
+			var faultEvent:FaultEvent = FaultEvent.createEvent(fault, token);
+			for each ( var responder:IResponder in token.responders )
+			{
+				responder.fault( faultEvent );
+			}
+			dispatchEvent( faultEvent );
 	
 		}
 		
