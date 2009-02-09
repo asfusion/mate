@@ -19,8 +19,8 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions
 {
-	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.core.*;
 	
 	[DefaultProperty("properties")]
 	/**
@@ -29,8 +29,8 @@ package com.asfusion.mate.actions
 	public class BaseAction extends AbstractAction
 	{
 		
-		/*-.........................................properties..........................................*/
-		private var _properties:Properties;
+		//.........................................properties..........................................
+		private var _properties:Array;
 		/**
 		 *  <code>Properties</code> allows you to add properties to the <code>currentInstance</code>.
 		 *  These properties will be set before performing any action
@@ -38,27 +38,28 @@ package com.asfusion.mate.actions
 		 *  These properties must be public.
 		 * 	<p>The <code>Properties</code> property is usually specified by using the <em>Properties</em> tag.</p>
 		*/
-		public function get properties():Properties
+		public function get properties():Array
 		{
 			return _properties;
 		}
-		public function set properties(value:Properties):void
+		[ArrayElementType("com.asfusion.mate.core.IProperty")]
+		public function set properties(value:Array):void
 		{	
 			_properties = value;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Override protected methods
+		//-------------------------------------------------------------------------------------------------------------
 		/**
 		 * @inheritDoc
 		 */
 		override protected function setProperties(scope:IScope):void
 		{
 			super.setProperties(scope);
-			if(properties)
+			for each(var propertySetter:IProperty in properties)
 			{
-				properties.injectProperties(currentInstance , scope);
+				propertySetter.setProperties(currentInstance , scope);
 			}
 		}
 

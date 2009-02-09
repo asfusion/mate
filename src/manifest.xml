@@ -4,6 +4,7 @@
 	<component class="com.asfusion.mate.core.LocalEventMap"/>
 	<component class="com.asfusion.mate.core.SmartObject"/>
 	<component class="com.asfusion.mate.core.Properties"/>
+	<component class="com.asfusion.mate.core.Property"/>
 	<component class="com.asfusion.mate.ioc.InjectorSettings"/>
 	
 	<component class="com.asfusion.mate.actionLists.EventHandlers"/>
@@ -28,6 +29,9 @@
 	<component class="com.asfusion.mate.actions.builders.MethodInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.serviceClasses.Request"/>
 	<component class="com.asfusion.mate.actions.builders.AsyncMethodInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.AsyncCommandInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.PropertySetter"/>
+	<component class="com.asfusion.mate.actions.builders.DelegateInvoker"/>
 	
 	<component class="com.asfusion.mate.events.Listener"/>
 	<component class="com.asfusion.mate.responses.ResponseHandler"/>
@@ -36,5 +40,10 @@
 	<component class="com.asfusion.mate.events.EventProperties"/>
 	
 	<component class="com.asfusion.mate.utils.debug.Debugger"/>
+	
+	<component class="com.asfusion.mate.testing.MockRemoteObject"/>
+	<component class="com.asfusion.mate.testing.MockWebService"/>
+	<component class="com.asfusion.mate.testing.MockMethod"/>
+	<component class="com.asfusion.mate.testing.MockDelegate"/>
 	
 </componentPackage>

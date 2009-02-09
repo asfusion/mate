@@ -17,27 +17,29 @@ Author: Nahuel Foronda, Principal Architect
                 
 @ignore
 */
+
 package com.asfusion.mate.actions.builders
 {
 	import com.asfusion.mate.actionLists.IScope;
-	import com.asfusion.mate.actions.BaseAction;
-	import com.asfusion.mate.actions.IAction;
-	import com.asfusion.mate.core.*;
+	import com.asfusion.mate.actions.AbstractServiceInvoker;
+	import com.asfusion.mate.core.Cache;
+	import com.asfusion.mate.core.Creator;
+	import com.asfusion.mate.core.SmartArguments;
 	import com.asfusion.mate.events.InjectorEvent;
-	use namespace mate;
 	
 	/**
-	 * ObjectBuilder is the base class for all the classes that use the <code>generator</code> property
-	 * to create instances. The <code>generator</code> is the class template to use to instantiate new objects.
-	 * 
+	 * This base <code>ServiceInvokerBuilder</code> class is very similar 
+	 * to <code>AbstractServiceInvoker</code> with the difference that it 
+	 * also supports the <code>IBuilder</code> interface that will allow 
+	 * creating an object using a <code>generator</code> class.
 	 */
-	public class ObjectBuilder extends BaseAction implements IAction, IBuilder
+	public class ServiceInvokerBuilder extends AbstractServiceInvoker implements IBuilder
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                        Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                        Public Setters and Getters
+		//------------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................generator..........................................*/
+		//.........................................generator..........................................
 		private var _generator:Class;
 		/**
 		 * @inheritDoc
@@ -53,7 +55,7 @@ package com.asfusion.mate.actions.builders
 		
 		
 		
-		/*-.........................................constructorArguments..........................................*/
+		//.........................................constructorArguments..........................................
 		private var _constructorArguments:* = undefined;
 		/**
 		*  The constructorArgs allows you to pass an Object or an Array of objects to the contructor 
@@ -72,7 +74,7 @@ package com.asfusion.mate.actions.builders
 	 		_constructorArguments = value;
 		}
 		
-		/*-.........................................cache..........................................*/
+		//.........................................cache..........................................
 		private var _cache:String = "inherit";
 		/**
 		 * The cache attribute lets you specify whether this newly created object should be kept live 
@@ -91,7 +93,7 @@ package com.asfusion.mate.actions.builders
 			_cache = value;
 		}
 		
-		/*-.........................................registerTarget..........................................*/
+		//.........................................registerTarget..........................................
 		private var _registerTarget:Boolean = true;
 		/**
 		 * Registers the newly created object as an injector target. If true, this allows this object to be injected
@@ -107,13 +109,11 @@ package com.asfusion.mate.actions.builders
 			_registerTarget = value;
 		}
 		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Protected methods
+		//------------------------------------------------------------------------------------------------------------
 		
-		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
-		
-		/*-.........................................createInstance..........................................*/
+		//.........................................createInstance..........................................
 		/**
 		* Where the currentInstance is created using the 
 		* <code>generator</code> class as the template, passing arguments to the constructor
@@ -132,7 +132,7 @@ package com.asfusion.mate.actions.builders
 				currentInstance = Cache.getCachedInstance(generator, cache, scope);
 			}
 			
-			if(!currentInstance || cache == Cache.NONE)
+			if(!currentInstance)
 			{
 				var realParams:Array;
 				var creator:Creator = new Creator();
@@ -153,21 +153,21 @@ package com.asfusion.mate.actions.builders
 			return currentInstance;
 		}
 		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Override Protected methods
+		//------------------------------------------------------------------------------------------------------------
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
-		
-		/*-.........................................prepare..........................................*/
+		//........................................prepare..........................................
 		/**
 		 * @inheritDoc
 		 */
 		override protected function prepare(scope:IScope):void
 		{
-			createInstance(scope);
+			super.prepare( scope );
+			createInstance( scope );
 		}
 		
-		/*-.........................................run..........................................*/
+		//.........................................run..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -175,6 +175,5 @@ package com.asfusion.mate.actions.builders
 		{
 			scope.lastReturn = currentInstance;
 		}
-		
 	}
 }

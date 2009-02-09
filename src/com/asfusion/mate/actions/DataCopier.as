@@ -142,7 +142,7 @@ package com.asfusion.mate.actions
 			var realSource:* 		= getRealObject(source, scope, sourceCache);
 			var realDestination:* 	= getRealObject(destination, scope, destinationCache);
 			var logInfo:LogInfo;
-			if(realSource)
+			if(realDestination != null || realDestination != undefined)
 			{
 				try
 				{

@@ -31,7 +31,7 @@ package com.asfusion.mate.core
 	 * All the <code>SmartObject</code>s will be parsed before the properties are set.
 	 * These properties must be public.</p>
 	 */
-	public dynamic class Properties
+	public dynamic class Properties implements IProperty
 	{
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Public Fields
@@ -57,6 +57,10 @@ package com.asfusion.mate.core
 			for( var propertyName:String in source)
 			{
 				var realValue:* = source[propertyName];
+				if(realValue is Class)
+				{
+					realValue = new Cache(realValue); 
+				}
 				if(realValue is ISmartObject)
 				{
 					realValue = ISmartObject(realValue).getValue(scope); 
@@ -90,7 +94,7 @@ package com.asfusion.mate.core
 		 * to the target object. 
 		 * The difference is that it will copy its own properties to the target.
 		 */
-		public function injectProperties(target:Object, scope:IScope):Object
+		public function setProperties(target:Object, scope:IScope):Object
 		{
 			return smartCopy(this,target,scope);
 		}
