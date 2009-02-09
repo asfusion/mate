@@ -54,7 +54,8 @@ package com.asfusion.mate.core
 		//.........................................sourceKey..........................................
 		private var _sourceKey:String;
 		/**
-		 * The name of the property on the source object that the Property tag will use to read and set on the target object
+		 * The name of the property on the source object that the Property tag will use to 
+		 * read and set on the target object
 		 * 
 		 * @default null
 		 * */
@@ -70,7 +71,7 @@ package com.asfusion.mate.core
 		//........................................source..........................................
 		private var _source:*;
 		/**
-		 * An object that contains the data that the Property tag will use to set the target object
+		 * An object that contains the data that the Property tag will use to set the target object.
 		 * 
 		 * @default null
 		 * */
@@ -87,7 +88,7 @@ package com.asfusion.mate.core
 		private var _sourceCache:String = "inherit";
 		/**
 		 * The sourceCache is only useful when the source is a class. 
-		 * This attribute defines which cache we will look up for a created object.  
+		 * This attribute defines which cache we will look up for a created object.
 		*/
 		public function get sourceCache():String
 		{
@@ -158,7 +159,7 @@ package com.asfusion.mate.core
 		
 		//-.........................................getRealObject..........................................
 		/**
-		* Helper function to get the source  object
+		* Helper function to get the source object
 		* from either a Cache or a SmartObject.
 		*/
 		protected function getRealObject(obj:*, scope:IScope, cache:String):*

@@ -79,7 +79,7 @@ package com.asfusion.mate.actions.builders
 		 * so that the next time an instance of this class is requested, this already created object 
 		 * is returned instead.
 		 * 
-		 *  @default local
+		 *  @default inherit
 		 */
 		public function get cache():String
 		{
@@ -132,7 +132,7 @@ package com.asfusion.mate.actions.builders
 				currentInstance = Cache.getCachedInstance(generator, cache, scope);
 			}
 			
-			if(!currentInstance)
+			if(!currentInstance || cache == Cache.NONE)
 			{
 				var realParams:Array;
 				var creator:Creator = new Creator();

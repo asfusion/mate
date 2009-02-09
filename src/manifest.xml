@@ -31,6 +31,7 @@
 	<component class="com.asfusion.mate.actions.builders.AsyncMethodInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.AsyncCommandInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.PropertySetter"/>
+	<component class="com.asfusion.mate.actions.builders.DelegateInvoker"/>
 	
 	<component class="com.asfusion.mate.events.Listener"/>
 	<component class="com.asfusion.mate.responses.ResponseHandler"/>
@@ -43,6 +44,6 @@
 	<component class="com.asfusion.mate.testing.MockRemoteObject"/>
 	<component class="com.asfusion.mate.testing.MockWebService"/>
 	<component class="com.asfusion.mate.testing.MockMethod"/>
-	
+	<component class="com.asfusion.mate.testing.MockDelegate"/>
 	
 </componentPackage>

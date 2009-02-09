@@ -25,6 +25,13 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
+	/**
+	 * <code>PropertySetter</code> will create an object of the class specified
+	 *  in the <code>generator</code> attribute. After that, it will set a 
+	 * property in the <code>key</code> attribute on the newly created object. 
+	 * The value to set can be the <code>source</code> object or a property of 
+	 * the source object that is specified in the <code>sourceKey</code> attribute.
+	 */
 	public class PropertySetter extends ObjectBuilder
 	{
 		
@@ -36,7 +43,7 @@ package com.asfusion.mate.actions.builders
 		private var _key:* = undefined;
 		
 		/**
-		 * The name of the property that will set in the target object
+		 * he name of the property that will be set in the generated object.
 		 * 
 		 * @default null
 		 * */
@@ -52,9 +59,9 @@ package com.asfusion.mate.actions.builders
 		/*-.........................................source..........................................*/
 		private var _source:*;
 		/**
-		 * An object that contains the data that the injector will use to set the target object
+		 * An object that contains the data that will be used to set the target object.
 		 * 
-		 * @default null
+		 * @default undefined
 		 * */
 		public function get source():*
 		{
@@ -68,7 +75,8 @@ package com.asfusion.mate.actions.builders
 		/*-.........................................sourceKey..........................................*/
 		private var _sourceKey:String;
 		/**
-		 * The name of the property on the source object that the injector will use to read and set on the target object
+		 * The name of the property on the source object that will be used to read
+		 * the value to be set the generated object.
 		 * 
 		 * @default null
 		 * */
@@ -134,8 +142,8 @@ package com.asfusion.mate.actions.builders
 		
 		/*-.........................................getRealObject..........................................*/
 		/**
-		*  Helper function to get the source or destination objects
-		 * from either a String value, a SmartObject or other.
+		* Helper function to get the source or destination objects
+		* from either a String value, a SmartObject or other.
 		*/
 		protected function getRealObject(obj:*, scope:IScope, cache:String):*
 		{

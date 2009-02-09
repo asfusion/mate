@@ -21,6 +21,12 @@ package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.IScope;
 	
+	/**
+	 * The <code>IProperty</code> interface allows to set properties in an Object. 
+	 * The <code>BaseAction</code> class uses this interface as a type of the 
+	 * <code>properties</code> attribute. That allows any action to have properties 
+	 * defined in mxml.
+	 */
 	public interface IProperty
 	{
 		function setProperties(target:Object, scope:IScope):Object

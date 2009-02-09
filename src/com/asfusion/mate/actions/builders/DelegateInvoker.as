@@ -38,7 +38,11 @@ package com.asfusion.mate.actions.builders
 	import mx.rpc.events.ResultEvent;
 	
 	/**
-	 * 
+	 * The DelegateInvoker can be used with any method that returns an AsyncToken. 
+	 * Behind the scenes, the DelegateInvoker attaches a responder to the AsyncToken
+	 * returned by the method. The responder listens for success/failure and triggers 
+	 * the inner handlers when the method call returns. If the method does not return 
+	 * an AsyncToken to attach a responder to a runtime error is logged.
 	 */
 	public class DelegateInvoker extends ServiceInvokerBuilder implements IAction
 	{
@@ -94,10 +98,10 @@ package com.asfusion.mate.actions.builders
 		
 		private var _arguments:* = undefined;
 		/**
-		*  The property <code>arguments</code> allows you to pass an Object or an Array of objects
-		 * when calling the function defined in the property <code>method</code>. 
-		*  You can use an array to pass multiple arguments or use a simple Object if the 
-		 * signature of the <code>method</code> has only one parameter.
+		* The property <code>arguments</code> allows you to pass an Object or an Array of objects
+		* when calling the function defined in the property <code>method</code>. 
+		* You can use an array to pass multiple arguments or use a simple Object if the 
+		* signature of the <code>method</code> has only one parameter.
 		* 
 		*  @default undefined
 		*/ 
@@ -122,7 +126,7 @@ package com.asfusion.mate.actions.builders
 		public var showBusyCursor:Boolean = false;
 		
 		/**
-		 * 
+		 * Contructor
 		 */
 		public function DelegateInvoker()
 		{

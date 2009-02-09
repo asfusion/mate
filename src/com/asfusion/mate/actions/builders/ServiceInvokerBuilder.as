@@ -26,7 +26,13 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.core.Creator;
 	import com.asfusion.mate.core.SmartArguments;
 	import com.asfusion.mate.events.InjectorEvent;
-
+	
+	/**
+	 * This base <code>ServiceInvokerBuilder</code> class is very similar 
+	 * to <code>AbstractServiceInvoker</code> with the difference that it 
+	 * also supports the <code>IBuilder</code> interface that will allow 
+	 * creating an object using a <code>generator</code> class.
+	 */
 	public class ServiceInvokerBuilder extends AbstractServiceInvoker implements IBuilder
 	{
 		//-----------------------------------------------------------------------------------------------------------
@@ -75,7 +81,7 @@ package com.asfusion.mate.actions.builders
 		 * so that the next time an instance of this class is requested, this already created object 
 		 * is returned instead.
 		 * 
-		 *  @default local
+		 *  @default inherit
 		 */
 		public function get cache():String
 		{
