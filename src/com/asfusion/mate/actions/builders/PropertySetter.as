@@ -25,6 +25,7 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
+	[Exclude(name="properties", kind="property")]
 	/**
 	 * <code>PropertySetter</code> will create an object of the class specified
 	 *  in the <code>generator</code> attribute. After that, it will set a 
@@ -63,6 +64,7 @@ package com.asfusion.mate.actions.builders
 		 * 
 		 * @default undefined
 		 * */
+		 [Inspectable(enumeration="event,data,result,fault,lastReturn,message,scope")]
 		public function get source():*
 		{
 			return _source;
@@ -91,6 +93,7 @@ package com.asfusion.mate.actions.builders
 		
 		/*-.........................................sourceCache..........................................*/
 		private var _sourceCache:String = "inherit";
+		
 		/**
 		 * The sourceCache is only useful when the source is a class. 
 		 * This attribute defines which cache we will look up for a created object.  
@@ -99,6 +102,13 @@ package com.asfusion.mate.actions.builders
 		{
 			return _sourceCache;
 		}
+		
+		[Inspectable(enumeration="local,global,inherit,none")]
+		public function set sourceCache( value:String ):void
+		{
+			_sourceCache = value;
+		}
+		
 		//-----------------------------------------------------------------------------------------------------------
 		//                                          Override protected methods
 		//-----------------------------------------------------------------------------------------------------------
