@@ -41,17 +41,26 @@ package com.asfusion.mate.testing
 	public class MockRemoteObject extends RemoteObject
 	{
 		/**
-		 * @todo
+		 * Class to instantiate that will generate the mock result.
+		 * This attribute needs to be supplied here or in the individual MockMethod tags. 
 		 */
 		public var mockGenerator:Class;
 		
 		/**
-		 * @todo
+		 * Number of seconds to take to return the result or fault after making the call. This helps making
+		 * the illusion that the service is taking time to respond. Default is 0 (no delay). 
 		 */
 		public var delay:uint = 0;
 		
+		/**
+		 * @todo
+		 */
+		public var cache:Boolean =  true;
 		
-		private var methodsDictionary:Dictionary;
+		/**
+		 * @todo
+		 */
+		protected var methodsDictionary:Dictionary;
 		
 		// -------------------------------
 		private var _methods:Array;
@@ -83,6 +92,9 @@ package com.asfusion.mate.testing
 		//--------------------------------------------------------------------------
 	    // Contructor
 	    //--------------------------------------------------------------------------
+	    /**
+	    * Contructor
+	    */
 		public function MockRemoteObject(destination:String=null)
 		{
 			super(destination);
@@ -106,20 +118,20 @@ package com.asfusion.mate.testing
 		// These two functions dispatch the result and fault events
 		// that trigger the inner handlers
 		// -------------------------------
-		private function dispatchResult(event:ResultEvent):void 
+		protected function dispatchResult(event:ResultEvent):void 
 		{
 			dispatchEvent(ResultEvent.createEvent(event.result, event.token));
 		}
 		
 		// -------------------------------
-		private function dispatchFault(event:FaultEvent):void 
+		protected function dispatchFault(event:FaultEvent):void 
 		{
 			dispatchEvent(FaultEvent.createEvent(event.fault, event.token));
 		}
 		
 		
 		// -------------------------------
-		private function getMethod(name:String):MockMethod 
+		protected function getMethod(name:String):MockMethod 
 		{
 			
 			if (methodsDictionary[name] == null ) 
@@ -130,6 +142,7 @@ package com.asfusion.mate.testing
 				newMethod.delay = delay;
 				newMethod.mockGeneratorMethod = name;
 				newMethod.mockGenerator = mockGenerator;
+				newMethod.cache = cache;
 				methodsDictionary[name] = newMethod;
 			}
 			

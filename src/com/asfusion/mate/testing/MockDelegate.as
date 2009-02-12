@@ -37,20 +37,37 @@ package com.asfusion.mate.testing
 	public class MockDelegate extends Proxy implements IEventDispatcher
 	{
 		/**
-		 * @todo
+		 * Class to instantiate that will generate the mock result.
+		 * This attribute needs to be supplied here or in the individual MockMethod tags. 
 		 */
 		public var mockGenerator:Class;
 		
 		/**
-		 * @todo
+		 * Number of seconds to take to return the result or fault after making the call. This helps making
+		 * the illusion that the service is taking time to respond. Default is 0 (no delay).
 		 */
 		public var delay:uint = 0;
 		
-		private var operationsDictionary:Dictionary;
+		/**
+		 * @todo
+		 */
+		public var cache:Boolean =  true;
 		
+		/**
+		 * If true, a busy cursor is displayed while a service is executing.
+		 */
 		public var showBusyCursor:Boolean = false;
 		
-		private var eventDispatcher:EventDispatcher;
+		/**
+		 * @todo
+		 */
+		protected var operationsDictionary:Dictionary;
+		
+		/**
+		 * @todo
+		 */
+		protected var eventDispatcher:EventDispatcher;
+		
 		
 		//---------------------------------
 		//   Proxy methods
@@ -95,7 +112,8 @@ package com.asfusion.mate.testing
 		 * @private
 		 */
 		public function addEventListener( type:String, listener:Function,
-			useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false ):void
+											useCapture:Boolean = false, priority:int = 0, 
+											useWeakReference:Boolean = false ):void
 		{
 			eventDispatcher.addEventListener( type, listener, useCapture, priority, useWeakReference );
 		}
@@ -142,6 +160,9 @@ package com.asfusion.mate.testing
 			operationsDictionary = new Dictionary();
 		}
 		
+		/**
+		 * @todo
+		 */
 		public function getOperation( name:String ):AbstractOperation
 		{   
 			if ( operationsDictionary[ name ] == null )
@@ -157,12 +178,16 @@ package com.asfusion.mate.testing
 			return AbstractOperation( operationsDictionary[ name ] );
 		}
 		
-		private function getMethod( name:String ):MockMethod
+		/**
+		 * @todo
+		 */
+		protected function getMethod( name:String ):MockMethod
 		{
 			var method:MockMethod = new MockMethod();
 			method.name = name;
 			method.delay = delay;
 			method.mockGeneratorMethod = name;
+			method.cache = cache;
 			method.mockGenerator = mockGenerator;
 			
 			return method;
@@ -171,13 +196,13 @@ package com.asfusion.mate.testing
 		// These two functions dispatch the result and fault events
 		// that trigger the inner handlers
 		// -------------------------------
-		private function dispatchResult( event:ResultEvent ):void 
+		protected function dispatchResult( event:ResultEvent ):void 
 		{
 			dispatchEvent( ResultEvent.createEvent( event.result, event.token ) );
 		}
 		
 		// -------------------------------
-		private function dispatchFault( event:FaultEvent ):void 
+		protected function dispatchFault( event:FaultEvent ):void 
 		{
 			dispatchEvent( FaultEvent.createEvent( event.fault, event.token ) );
 		}
