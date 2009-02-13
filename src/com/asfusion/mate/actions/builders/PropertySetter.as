@@ -41,20 +41,20 @@ package com.asfusion.mate.actions.builders
 		-------------------------------------------------------------------------------------------------------------*/
 		
 		/*-.........................................key..........................................*/
-		private var _key:* = undefined;
+		private var _targetKey:* = undefined;
 		
 		/**
-		 * he name of the property that will be set in the generated object.
+		 * The name of the property that will be set in the generated object.
 		 * 
 		 * @default null
 		 * */
-		public function get key():String
+		public function get targetKey():String
 		{
-			return _key;
+			return _targetKey;
 		}
-		public function set key(value:String):void
+		public function set targetKey(value:String):void
 		{
-			_key = value;
+			_targetKey = value;
 		}
 		
 		/*-.........................................source..........................................*/
@@ -64,11 +64,12 @@ package com.asfusion.mate.actions.builders
 		 * 
 		 * @default undefined
 		 * */
-		 [Inspectable(enumeration="event,data,result,fault,lastReturn,message,scope")]
 		public function get source():*
 		{
 			return _source;
 		}
+		
+		[Inspectable(enumeration="event,data,result,fault,lastReturn,message,scope")]
 		public function set source(value:*):void
 		{
 			_source = value
@@ -122,29 +123,29 @@ package com.asfusion.mate.actions.builders
 			var realSource:* = getRealObject(source, scope, sourceCache);
 			var logInfo:LogInfo;
 			
-			if(currentInstance.hasOwnProperty(key))
+			if(currentInstance.hasOwnProperty(targetKey))
 			{
 				try
 				{
 					if(sourceKey)
 					{
-						currentInstance[key] = realSource[sourceKey];
+						currentInstance[targetKey] = realSource[sourceKey];
 					}
 					else
 					{
-						currentInstance[key] = realSource;
+						currentInstance[targetKey] = realSource;
 					}
-					scope.lastReturn = currentInstance[key];
+					scope.lastReturn = currentInstance[targetKey];
 				}
 				catch(error:ReferenceError)
 				{
-					logInfo = new LogInfo(scope, currentInstance, error, null, null, key)
+					logInfo = new LogInfo(scope, currentInstance, error, null, null, targetKey)
 					scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo);
 				}
 				catch(error:TypeError)
 				{
-					logInfo = new LogInfo(scope, currentInstance, error, null, null, key)
-					logInfo.data = {target:currentInstance, targetKey:key, source:realSource, sourceKey:sourceKey};
+					logInfo = new LogInfo(scope, currentInstance, error, null, null, targetKey)
+					logInfo.data = {target:currentInstance, targetKey:targetKey, source:realSource, sourceKey:sourceKey};
 					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
 				}
 			}
@@ -168,7 +169,16 @@ package com.asfusion.mate.actions.builders
 			}
 			else if(obj is String)
 			{
-				realObject = scope[obj];
+				switch(obj)
+				{
+					case 'event':
+					case 'data':
+					case 'result':
+					case 'fault':
+					case 'lastReturn':
+					case 'message':
+					case 'scope': realObject = scope[obj]; break;
+				}
 			}
 
 			return realObject;

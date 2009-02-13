@@ -79,6 +79,8 @@ package com.asfusion.mate.core
 		{
 			return _source;
 		}
+		
+		[Inspectable(enumeration="event,data,result,fault,lastReturn,message,scope")]
 		public function set source(value:*):void
 		{
 			_source = value
@@ -175,6 +177,19 @@ package com.asfusion.mate.core
 			if(obj is ISmartObject)
 			{
 				realObject = ISmartObject(obj).getValue(scope);
+			}
+			else if(obj is String)
+			{
+				switch(obj)
+				{
+					case 'event':
+					case 'data':
+					case 'result':
+					case 'fault':
+					case 'lastReturn':
+					case 'message':
+					case 'scope': realObject = scope[obj]; break;
+				}
 			}
 
 			return realObject;
