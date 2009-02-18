@@ -1,6 +1,7 @@
 package com.asfusion.mate.actions
 {
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.core.Cache;
 	
 	public class ClearCache extends AbstractAction implements IAction
 	{
@@ -49,7 +50,7 @@ package com.asfusion.mate.actions
 		 */ 
 		override protected function run(scope:IScope):void
 		{
-			scope.lastReturn = currentInstance;
+			scope.lastReturn = Cache.clearCachedInstance( cacheKey, cache, scope );
 		}
 	}
 }
