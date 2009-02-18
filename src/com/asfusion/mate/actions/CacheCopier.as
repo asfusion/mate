@@ -29,6 +29,11 @@ package com.asfusion.mate.actions
 	 */
 	public class CacheCopier extends AbstractAction implements IAction
 	{
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Public Getters and Setters
+		//-----------------------------------------------------------------------------------------------------------
+		
+		//.........................................cacheKey..........................................
 		private var _cacheKey:Object;
 		/**
 		 * The key to use for the cache
@@ -41,7 +46,8 @@ package com.asfusion.mate.actions
 		{
 			_cacheKey = value;
 		}
-
+		
+		//.........................................instance..........................................
 		private var _instance:Object;
 		/**
 		 * The instance to set in the cache
@@ -55,7 +61,7 @@ package com.asfusion.mate.actions
 			_instance = value;
 		}
 
-		
+		//.........................................cache..........................................
 		private var _cache:String = "inherit";
 		/**
 		 * The cache atribute is only useful when the destination is a class.
@@ -72,7 +78,11 @@ package com.asfusion.mate.actions
 			_cache = value;
 		}
 		
+		//------------------------------------------------------------------------------------------------------------
+		//                                          Override protected methods
+		//------------------------------------------------------------------------------------------------------------
 		
+		//.........................................prepare..........................................
 		/**
 		 * @inheritDoc
 		 */ 
@@ -85,6 +95,7 @@ package com.asfusion.mate.actions
            	Cache.addCachedInstance(cacheKey, currentInstance, cache, scope);
 		}
 		
+		//.........................................run..........................................
 		/**
 		 * @inheritDoc
 		 */ 
