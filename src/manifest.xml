@@ -18,7 +18,7 @@
 	<component class="com.asfusion.mate.actions.PropertyInjector"/>
 	<component class="com.asfusion.mate.actions.ListenerInjector"/>
 	<component class="com.asfusion.mate.actions.CallBack"/>
-	<component class="com.asfusion.mate.actions.CacheSetterr"/>
+	<component class="com.asfusion.mate.actions.CacheSetter"/>
 	<component class="com.asfusion.mate.actions.builders.ObjectBuilder"/>
 	<component class="com.asfusion.mate.actions.builders.CommandInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.EventAnnouncer"/>
