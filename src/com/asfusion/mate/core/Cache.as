@@ -187,8 +187,9 @@ package com.asfusion.mate.core
 		 * Removes an instance from the cache. The cache can be local, global or inherit. 
 		 * The key used is the class of the object that we want to removed.
 		 */
-		public static function clearCachedInstance(key:*, type:String, scope:IScope):void
+		public static function clearCachedInstance(key:*, type:String, scope:IScope):*
 		{
+			var instance:*;
 			if(type == INHERIT)
 			{
 				type = scope.eventMap.cache;
@@ -202,7 +203,10 @@ package com.asfusion.mate.core
 			{
 				cacheCollection =  scope.getManager().getCacheCollection();
 			}
+			instance = cacheCollection[key];
 			delete cacheCollection[key];
+			
+			return instance;
 		}
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          flash_proxy Methods

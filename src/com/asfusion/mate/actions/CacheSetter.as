@@ -27,7 +27,7 @@ package com.asfusion.mate.actions
 	 * 
 	 * <mate:CacheCopier cacheKey="{AbstractClassName}" instance="{concreteInstance}" destinationCache="whatever" />
 	 */
-	public class CacheCopier extends AbstractAction implements IAction
+	public class CacheSetter extends AbstractAction implements IAction
 	{
 		//-----------------------------------------------------------------------------------------------------------
 		//                                         Public Getters and Setters
@@ -90,9 +90,18 @@ package com.asfusion.mate.actions
 		{
 			//Get the actual concrete instance
             currentInstance = ( instance  is ISmartObject) ? ISmartObject(instance).getValue(scope) : instance;
-
-            //Add it to the cache
-           	Cache.addCachedInstance(cacheKey, currentInstance, cache, scope);
+			
+			if( currentInstance == null || currentInstance == undefined )
+			{
+				//Remove it from the cache
+				currentInstance = Cache.clearCachedInstance( cacheKey, cache, scope );
+			}
+			else
+			{
+				//Add it to the cache
+           		Cache.addCachedInstance(cacheKey, currentInstance, cache, scope);
+			}
+           
 		}
 		
 		//.........................................run..........................................
