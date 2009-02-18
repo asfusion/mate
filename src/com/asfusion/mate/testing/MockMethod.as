@@ -52,9 +52,15 @@ package com.asfusion.mate.testing
 		 * this data as the last argument of the function call **/
 		public var dataUrl:String;
 		
-		//--------------------------------------------------------------------------
-   		// Contructor
-    	//--------------------------------------------------------------------------
+		/**
+		 * @todo
+		 */
+		public var cache:Boolean =  true;
+		
+    	//---------------------------------Contructor----------------------------------------
+    	/**
+    	 * Constructor
+    	 */
 		public function MockMethod()
 		{
 		}

@@ -36,20 +36,41 @@ package com.asfusion.mate.testing
 	import mx.rpc.events.ResultEvent;
 
 	public class MockOperation extends AbstractOperation
-	{
-		private var method:MockMethod;
-		private var token:AsyncToken;
-		private var mock:Object;
-		private var showCursor:Boolean;
+	{	
+		
+		/**
+		 * @todo
+		 */
+		protected var method:MockMethod;
+		
+		/**
+		 * @todo
+		 */
+		protected var token:AsyncToken;
+		
+		/**
+		 * @todo
+		 */
+		protected var mock:Object;
+		
+		/**
+		 * @todo
+		 */
+		protected var showCursor:Boolean;
+		
+
 		
 		//--------------------------------------------------------------------------
 	    // Contructor
 	    //--------------------------------------------------------------------------
+	    /**
+	    * Contructor
+	    */
 		public function MockOperation(name:String, method:MockMethod, showBusyCursor:Boolean)
 		{
 			this.method = method;
 			var generator:Class = method.mockGenerator;
-			mock = new generator();
+			mock = MockCache.getInstance( generator, method.cache )
 			showCursor = showBusyCursor;
 			
 			super(service, name);
@@ -88,7 +109,7 @@ package com.asfusion.mate.testing
 		}
 		
 		// -------------------------------
-		private function loadData():void 
+		protected function loadData():void 
 		{
 			var loader:URLLoader = new URLLoader();
 			
@@ -107,7 +128,7 @@ package com.asfusion.mate.testing
 		}
 		
 		// -------------------------------
-		private function dataLoaded(event:Event):void 
+		protected function dataLoaded(event:Event):void 
 		{
 			//save the result as the last argument
 			if (this.arguments is Array) 
@@ -125,7 +146,7 @@ package com.asfusion.mate.testing
 		
 		
 		// --------------------------------
-		private function makeCall():void 
+		protected function makeCall():void 
 		{
 			try 
 			{
@@ -152,7 +173,7 @@ package com.asfusion.mate.testing
 		// --------------------------------
 		// call the mock generator, which may return a result, or it might be an async request
 		// -------------------------------
-		private function callMockHelperMethod():Object 
+		protected function callMockHelperMethod():Object 
 		{
 			var result:Object;
 				
@@ -171,7 +192,7 @@ package com.asfusion.mate.testing
 		// -------------------------------
 		// Used to add a delay when we already have a result that we 
 		// need to dispatch
-		private function startResult(result:*):void 
+		protected function startResult(result:*):void 
 		{
 			new AsyncDispatcher(dispatchResult, [result], method.delay * 1000);
 		}
@@ -179,13 +200,13 @@ package com.asfusion.mate.testing
 		// -------------------------------
 		// Used to add a delay when we already have a fault that we 
 		// need to dispatch
-		private function startFault(fault:Fault):void 
+		protected function startFault(fault:Fault):void 
 		{
 			new AsyncDispatcher(dispatchFault, [fault], method.delay * 1000);
 		}
 		
 		// -------------------------------
-		private function handleAsyncResult(event:ResultEvent):void 
+		protected function handleAsyncResult(event:ResultEvent):void 
 		{
 			startResult(event.result);
 			
@@ -194,7 +215,7 @@ package com.asfusion.mate.testing
 		}
 		
 		// -------------------------------
-		private function handleAsyncFault(event:FaultEvent):void 
+		protected function handleAsyncFault(event:FaultEvent):void 
 		{
 			startFault(event.fault);
 			
@@ -204,7 +225,7 @@ package com.asfusion.mate.testing
 		
 		// These two functions dispatch the result and fault events
 		// -------------------------------
-		private function dispatchResult(result:*):void 
+		protected function dispatchResult(result:*):void 
 		{
 			if (showCursor) 
 			{
@@ -220,7 +241,7 @@ package com.asfusion.mate.testing
 		}
 		
 		// -------------------------------
-		private function dispatchFault(fault:Fault):void 
+		protected function dispatchFault(fault:Fault):void 
 		{
 			if (showCursor) 
 			{
@@ -237,7 +258,7 @@ package com.asfusion.mate.testing
 		
 		// -------------------------------
 		// errors
-		private function dataLoadError(event:ErrorEvent):void 
+		protected function dataLoadError(event:ErrorEvent):void 
 		{
 			startFault(new Fault(event.type, event.text, event.text));
 		}
