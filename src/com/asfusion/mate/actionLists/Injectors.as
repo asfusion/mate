@@ -45,30 +45,8 @@ package com.asfusion.mate.actionLists
 			var oldValue:Class = _target;
 	        if (oldValue !== value)
 	        {
-	        	if(targetRegistered) unregister();
+	        	if(targetRegistered) unregister(oldValue);
 	        	_target = value;
-	        	validateNow();
-	        }
-		}
-		
-		//.........................................lazyTarget..........................................*/
-		private var _lazyTarget:String;
-		/**
-		 * The whole string path class that, when an object is created, should trigger the <code>InjectorHandlers</code> to run. 
-		 * 
-		 *  @default null
-		 * */
-		public function get lazyTarget():String
-		{
-			return _lazyTarget;
-		}
-		public function set lazyTarget(value:String):void
-		{
-			var oldValue:String = _lazyTarget;
-	        if (oldValue !== value)
-	        {
-	        	if(targetRegistered) unregister();
-	        	_lazyTarget = value;
 	        	validateNow();
 	        }
 		}
@@ -89,7 +67,7 @@ package com.asfusion.mate.actionLists
 			var oldValue:Array = _targets;
 	        if (oldValue !== value)
 	        {
-	        	if(targetRegistered) unregister();
+	        	if(targetRegistered) unregister(oldValue);
 	        	_targets = value;
 	        	validateNow()
 	        }
@@ -131,23 +109,24 @@ package com.asfusion.mate.actionLists
 		*/
 		override protected function commitProperties():void
 		{
-			if(!dispatcher) return;
-			
 			if(dispatcherTypeChanged)
 			{
 				dispatcherTypeChanged = false;
-				unregister();
-			}
-			if(!targetRegistered)
-			{
-				var type:String;
-				type = (target) ? getQualifiedClassName(target) : lazyTarget;
-				if(type)
+				if(targetRegistered)
 				{
-					dispatcher.addEventListener(type,fireEvent,false,0, true);
-					targetRegistered = true;
-					manager.addListenerProxy(dispatcher);				
-				}				
+					unregister(target);
+				}
+				if(targetsRegistered)
+				{
+					unregister(targets);
+				}
+			}
+			if(!targetRegistered && target)
+			{
+				var type:String = getQualifiedClassName(target);
+				dispatcher.addEventListener(type,fireEvent,false,0, true);
+				targetRegistered = true;
+				manager.addListenerProxy(dispatcher);
 			}
 			
 			if(!targetsRegistered && targets)
@@ -179,30 +158,22 @@ package com.asfusion.mate.actionLists
 		/**
 		 * Unregisters a target or targets. Used internally whenever a new target/s is set or dispatcher changes.
 		*/
-		protected function unregister():void
+		protected function unregister(obj:Object):void
 		{
-			if(!dispatcher) return;
-			
-			if(target || lazyTarget)
+			if(obj is Class)
 			{
-				if(targetRegistered)
-				{
-					var type:String = (target) ? getQualifiedClassName(target) : lazyTarget;
-					dispatcher.removeEventListener(type, fireEvent);
-					targetRegistered = false;
-				}
+				var type:String = getQualifiedClassName(obj);
+				dispatcher.removeEventListener(type, fireEvent);
+				targetRegistered = false;
 			}
-			if(targets && targetsRegistered)
+			else if(obj is Array)
 			{
-				if(targetsRegistered)
+				for each( var currentTarget:Class in targets)
 				{
-					for each( var currentTarget:Class in targets)
-					{
-						var currentType:String = getQualifiedClassName(currentTarget);
-						dispatcher.removeEventListener(currentType, fireEvent);
-					}
-					targetsRegistered = false;
+					var currentType:String = getQualifiedClassName(currentTarget);
+					dispatcher.removeEventListener(currentType, fireEvent);
 				}
+				targetsRegistered = false;
 			}
 		}
 		/*-.........................................setDispatcher..........................................*/
@@ -215,11 +186,11 @@ package com.asfusion.mate.actionLists
 			{
 				if(targetRegistered)
 				{
-					unregister();
+					unregister(target);
 				}
 				if(targetsRegistered)
 				{
-					unregister();
+					unregister(targets);
 				}
 			}
 			super.setDispatcher(value,local);
