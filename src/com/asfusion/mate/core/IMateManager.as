@@ -108,6 +108,6 @@ package com.asfusion.mate.core
 		/**
 		 * Adds a proxy listener for a specific type.
 		 */
-		function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
+		function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):ListenerProxy
 	}
 }

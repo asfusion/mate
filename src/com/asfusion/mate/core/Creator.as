@@ -54,7 +54,7 @@ package com.asfusion.mate.core
 		 * and logs any problem that may encounter.
 		 */
 		/*-.........................................create..........................................*/
-		public function create(template:Class, loggerProvider:ILoggerProvider, parameters:Array = null):Object
+		public function create(template:Class, loggerProvider:ILoggerProvider, parameters:Array = null, notify:Boolean = true):Object
 		{
 			var logger:IMateLogger = ( loggerProvider ) ? loggerProvider.getLogger(): manager.getLogger(true);
 			var instance:Object;

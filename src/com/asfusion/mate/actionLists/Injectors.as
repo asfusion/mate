@@ -4,8 +4,10 @@ package com.asfusion.mate.actionLists
 	import com.asfusion.mate.events.InjectorEvent;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
+	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
+	import flash.utils.getDefinitionByName;
 	
 	use namespace mate;
 	
@@ -26,10 +28,20 @@ package com.asfusion.mate.actionLists
 		 */
 		protected var targetsRegistered:Boolean;
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................target..........................................*/
+		/**
+		 * @todo
+		 */
+		 protected var includeDerivativesChanged:Boolean;
+		 
+		 /**
+		 * @todo
+		 */
+		 protected var listenerProxy:ListenerProxy;
+		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................target..........................................
 		private var _target:Class;
 		/**
 		 * The class that, when an object is created, should trigger the <code>InjectorHandlers</code> to run. 
@@ -45,18 +57,18 @@ package com.asfusion.mate.actionLists
 			var oldValue:Class = _target;
 	        if (oldValue !== value)
 	        {
-	        	if(targetRegistered) unregister(oldValue);
+	        	if(targetRegistered) unregister();
 	        	_target = value;
 	        	validateNow();
 	        }
 		}
 		
-		/*-.........................................targets..........................................*/
+		//.........................................targets..........................................
 		private var _targets:Array;
 		/**
 		 * An array of classes that, when an object is created, should trigger the <code>InjectorHandlers</code> to run. 
 		 * 
-		 *  @default null
+		 *  @default true
 		 * */
 		public function get targets():Array
 		{
@@ -67,15 +79,37 @@ package com.asfusion.mate.actionLists
 			var oldValue:Array = _targets;
 	        if (oldValue !== value)
 	        {
-	        	if(targetRegistered) unregister(oldValue);
+	        	if(targetRegistered) unregister();
 	        	_targets = value;
 	        	validateNow()
 	        }
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Constructor
-		-------------------------------------------------------------------------------------------------------------*/	
+		//.........................................includeDerivatives..........................................
+		private var _includeDerivatives:Boolean = false;
+		/**
+		 * @todo 
+		 * 
+		 *  @default true
+		 * */
+		public function get includeDerivatives():Boolean
+		{
+			return _includeDerivatives;
+		}
+		public function set includeDerivatives(value:Boolean):void
+		{
+			var oldValue:Boolean = _includeDerivatives;
+	        if (oldValue !== value)
+	        {
+	        	_includeDerivatives = value;
+	        	includeDerivativesChanged = true;
+	        	validateNow()
+	        }
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Constructor
+		//------------------------------------------------------------------------------------------------------------	
 		/**
 		 * Constructor
 		 */
@@ -83,12 +117,12 @@ package com.asfusion.mate.actionLists
 		 {
 		 	super();
 		 }
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Public Methods
-		-------------------------------------------------------------------------------------------------------------*/	
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Public Methods
+		//-------------------------------------------------------------------------------------------------------------
 		
 		
-		/*-.........................................errorString..........................................*/
+		//.........................................errorString..........................................
 		/**
 		 * @inheritDoc
 		 */ 
@@ -99,49 +133,55 @@ package com.asfusion.mate.actionLists
 			return str;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected Methods
-		-------------------------------------------------------------------------------------------------------------*/	
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Protected Methods
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................commitProperties..........................................*/
+		//.........................................commitProperties..........................................
 		/**
 		 * Processes the properties set on the component.
 		*/
 		override protected function commitProperties():void
 		{
+			if(!dispatcher) return;
+			
 			if(dispatcherTypeChanged)
 			{
 				dispatcherTypeChanged = false;
-				if(targetRegistered)
-				{
-					unregister(target);
-				}
-				if(targetsRegistered)
-				{
-					unregister(targets);
-				}
+				unregister();
 			}
+			
+			
 			if(!targetRegistered && target)
 			{
 				var type:String = getQualifiedClassName(target);
 				dispatcher.addEventListener(type,fireEvent,false,0, true);
 				targetRegistered = true;
-				manager.addListenerProxy(dispatcher);
 			}
 			
 			if(!targetsRegistered && targets)
 			{
-				for each( var currentTarget:Class in targets)
+				for each( var currentTarget:* in targets)
 				{
-					var currentType:String = getQualifiedClassName(currentTarget);
+					var currentType:String = ( currentTarget is Class) ? getQualifiedClassName(currentTarget) : currentTarget;
 					dispatcher.addEventListener(currentType,fireEvent,false,0, true);
 				}
 				targetsRegistered = true;
-				manager.addListenerProxy(dispatcher);
+			}
+			
+			if( !listenerProxy ) 
+			{
+				listenerProxy = manager.addListenerProxy( dispatcher );
+			}
+			
+			if( includeDerivativesChanged && (targets || target) )
+			{
+				includeDerivativesChanged = false;
+				if( includeDerivatives ) listenerProxy.addExternalListener( listenerProxyHandler );
 			}
 		}
 		
-		/*-.........................................fireEvent..........................................*/
+		//.........................................fireEvent..........................................
 		/**
 		 * Called by the dispacher when the event gets triggered.
 		 * This method creates a scope and then runs the sequence.
@@ -154,29 +194,32 @@ package com.asfusion.mate.actionLists
 			runSequence(currentScope, actions);
 		}
 		
-		/*-.........................................unregister..........................................*/
+		//.........................................unregister..........................................
 		/**
 		 * Unregisters a target or targets. Used internally whenever a new target/s is set or dispatcher changes.
 		*/
-		protected function unregister(obj:Object):void
+		protected function unregister():void
 		{
-			if(obj is Class)
+			if(!dispatcher) return;
+			
+			if( targetRegistered && target )
 			{
-				var type:String = getQualifiedClassName(obj);
+				var type:String = getQualifiedClassName(target);
 				dispatcher.removeEventListener(type, fireEvent);
 				targetRegistered = false;
 			}
-			else if(obj is Array)
+			
+			if( targets && targetsRegistered )
 			{
-				for each( var currentTarget:Class in targets)
+				for each( var currentTarget:* in targets)
 				{
-					var currentType:String = getQualifiedClassName(currentTarget);
+					var currentType:String = ( currentTarget is Class) ? getQualifiedClassName(currentTarget) : currentTarget;
 					dispatcher.removeEventListener(currentType, fireEvent);
 				}
 				targetsRegistered = false;
 			}
 		}
-		/*-.........................................setDispatcher..........................................*/
+		//.........................................setDispatcher..........................................
 		/**
 		 * @inheritDoc
 		 */ 
@@ -184,17 +227,36 @@ package com.asfusion.mate.actionLists
 		{
 			if(currentDispatcher && currentDispatcher != value)
 			{
-				if(targetRegistered)
-				{
-					unregister(target);
-				}
-				if(targetsRegistered)
-				{
-					unregister(targets);
-				}
+				unregister();
 			}
 			super.setDispatcher(value,local);
 		}
-
+		
+		//.........................................listenerProxyHandler..........................................
+		/**
+		 * @todo
+		 */ 
+		public function listenerProxyHandler( event:Event ):void
+		{
+			var injectorEvent:InjectorEvent;
+			
+			if( target && event.target is target )
+			{
+				injectorEvent = new InjectorEvent( event.target );
+				fireEvent( injectorEvent );
+			}
+			else if( targets )
+			{
+				for each( var currentTarget:* in targets)
+				{
+					var currentClass:Class = ( currentTarget is Class) ? currentTarget : getDefinitionByName( currentTarget ) as Class;
+					if( event.target is currentClass )
+					{
+						injectorEvent = new InjectorEvent( event.target );
+						fireEvent( injectorEvent );
+					}
+				}
+			}
+		}
 	}
 }

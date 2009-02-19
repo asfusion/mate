@@ -121,12 +121,7 @@ package com.asfusion.mate.actions.builders
 		* 
 		*/
 		protected function createInstance(scope:IScope):Object
-		{
-			if(currentInstance && cache != Cache.NONE)
-			{
-				return currentInstance;
-			}
-			
+		{	
 			if(cache != Cache.NONE)
 			{
 				currentInstance = Cache.getCachedInstance(generator, cache, scope);

@@ -203,7 +203,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     }
     
     /*-.........................................addListenerProxy........................................*/
-	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
+	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):ListenerProxy
 	{
 		var listenerProxy:ListenerProxy = listenerProxies[eventDispatcher];
 		
@@ -220,6 +220,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		{
 			listenerProxy.addListener(type);
 		}
+		return listenerProxy;
 	}
 	
     
