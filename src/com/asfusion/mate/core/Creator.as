@@ -84,47 +84,45 @@ package com.asfusion.mate.core
 				logger.error(LogTypes.GENERATOR_NOT_FOUND, new LogInfo(loggerProvider,null));
 				return null;
 			}
-			if( constructorArguments)
+			if( constructorArguments )
 			{
-				
 				realArguments = (new SmartArguments()).getRealArguments(scope, constructorArguments);
 				if( realArguments && realArguments.length > 15 )
 				{
 					logger.error(LogTypes.TOO_MANY_ARGUMENTS, new LogInfo(loggerProvider,null));
 				}
 			}
-			else
+			
+			try
 			{
-				try
+				instance = createInstance(generator, realArguments);
+				if(notify && dispatcher)
 				{
-					instance = createInstance(generator, realArguments);
-					if(notify && dispatcher)
-					{
-						dispatcher.dispatchEvent( new InjectorEvent( null, instance ) );
-						dispatcher.dispatchEvent( new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, instance ) );
-					}
-					if( cache != Cache.NONE && scope)
-					{
-						Cache.addCachedInstance( generator, instance, cache, scope );
-					}
+					dispatcher.dispatchEvent( new InjectorEvent( null, instance ) );
+					dispatcher.dispatchEvent( new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, instance ) );
 				}
-				catch(error:ArgumentError)
+				if( cache != Cache.NONE && scope)
 				{
-					logInfo =  new LogInfo(loggerProvider, generator, error, "constructor", realArguments);
-					logger.error(LogTypes.ARGUMENT_ERROR,logInfo);
-					reTry = !logInfo.foundProblem;
-				}
-				catch(error:TypeError)
-				{
-					logInfo = new LogInfo(loggerProvider, generator, error, "constructor", realArguments)
-					logger.error(LogTypes.TYPE_ERROR, logInfo);
-					reTry = !logInfo.foundProblem;
-				}
-				if(reTry)
-				{
-					instance = createInstance(generator, realArguments);
+					Cache.addCachedInstance( generator, instance, cache, scope );
 				}
 			}
+			catch(error:ArgumentError)
+			{
+				logInfo =  new LogInfo(loggerProvider, generator, error, "constructor", realArguments);
+				logger.error(LogTypes.ARGUMENT_ERROR,logInfo);
+				reTry = !logInfo.foundProblem;
+			}
+			catch(error:TypeError)
+			{
+				logInfo = new LogInfo(loggerProvider, generator, error, "constructor", realArguments)
+				logger.error(LogTypes.TYPE_ERROR, logInfo);
+				reTry = !logInfo.foundProblem;
+			}
+			if(reTry)
+			{
+				instance = createInstance(generator, realArguments);
+			}
+			
 			return instance;
 		}
 		
