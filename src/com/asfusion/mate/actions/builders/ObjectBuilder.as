@@ -23,7 +23,6 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.actions.BaseAction;
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.events.InjectorEvent;
 	use namespace mate;
 	
 	/**
@@ -33,11 +32,11 @@ package com.asfusion.mate.actions.builders
 	 */
 	public class ObjectBuilder extends BaseAction implements IAction, IBuilder
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                        Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                        Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................generator..........................................*/
+		//.........................................generator..........................................
 		private var _generator:Class;
 		/**
 		 * @inheritDoc
@@ -53,7 +52,7 @@ package com.asfusion.mate.actions.builders
 		
 		
 		
-		/*-.........................................constructorArguments..........................................*/
+		//.........................................constructorArguments..........................................
 		private var _constructorArguments:* = undefined;
 		/**
 		*  The constructorArgs allows you to pass an Object or an Array of objects to the contructor 
@@ -72,7 +71,7 @@ package com.asfusion.mate.actions.builders
 	 		_constructorArguments = value;
 		}
 		
-		/*-.........................................cache..........................................*/
+		//.........................................cache..........................................
 		private var _cache:String = "inherit";
 		/**
 		 * The cache attribute lets you specify whether this newly created object should be kept live 
@@ -91,7 +90,7 @@ package com.asfusion.mate.actions.builders
 			_cache = value;
 		}
 		
-		/*-.........................................registerTarget..........................................*/
+		//.........................................registerTarget..........................................
 		private var _registerTarget:Boolean = true;
 		/**
 		 * Registers the newly created object as an injector target. If true, this allows this object to be injected
@@ -109,11 +108,11 @@ package com.asfusion.mate.actions.builders
 		
 		
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Protected methods
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................createInstance..........................................*/
+		//.........................................createInstance..........................................
 		/**
 		* Where the currentInstance is created using the 
 		* <code>generator</code> class as the template, passing arguments to the constructor
@@ -129,31 +128,18 @@ package com.asfusion.mate.actions.builders
 			
 			if(!currentInstance || cache == Cache.NONE)
 			{
-				var realParams:Array;
-				var creator:Creator = new Creator();
-				
-				if(constructorArguments !== undefined)
-				{
-					realParams = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-				}
-				currentInstance = creator.create(generator, scope, realParams);
-				Cache.addCachedInstance(generator, currentInstance, cache, scope);
-				
-				if(registerTarget && currentInstance)
-				{
-					var event:InjectorEvent = new InjectorEvent(currentInstance);
-					scope.dispatcher.dispatchEvent(event);
-				}
+				var creator:Creator = new Creator( generator, scope.dispatcher );
+				currentInstance = creator.create( scope, registerTarget, constructorArguments, cache );
 			}
 			return currentInstance;
 		}
 		
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Override Protected methods
+		//------------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................prepare..........................................*/
+		//.........................................prepare..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -162,7 +148,7 @@ package com.asfusion.mate.actions.builders
 			createInstance(scope);
 		}
 		
-		/*-.........................................run..........................................*/
+		//.........................................run..........................................
 		/**
 		 * @inheritDoc
 		 */

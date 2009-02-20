@@ -28,9 +28,9 @@ package com.asfusion.mate.core
 	public class SmartArguments
 	{	
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Public Methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Public Methods
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * Parses the arguments and removes all ISmartObjects.
 		 * It returns an array with the actual objects.
@@ -40,16 +40,19 @@ package com.asfusion.mate.core
 			var realArguments:Array;
 			if(parameters is Array)
 			{
-				realArguments = new Array();
-				for each(var argument:Object in parameters)
+				if( scope )
 				{
-					argument = (argument is ISmartObject) ? ISmartObject(argument).getValue(scope) : argument;	
-					realArguments.push(argument);
+					realArguments = new Array();
+					for each( var argument:Object in parameters )
+					{
+						argument = ( argument is ISmartObject ) ? ISmartObject( argument ).getValue( scope ) : argument;	
+						realArguments.push( argument );
+					}
 				}
 			}
 			else if (parameters !== undefined)
 			{
-				var soloArgument:Object = (parameters is ISmartObject) ? ISmartObject(parameters).getValue(scope) : parameters;
+				var soloArgument:Object = ( scope && parameters is ISmartObject ) ? ISmartObject(parameters).getValue(scope) : parameters;
 				realArguments =[soloArgument];
 			}
 			return realArguments;

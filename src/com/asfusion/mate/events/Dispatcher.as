@@ -80,10 +80,10 @@ package com.asfusion.mate.events
 		 */
 		protected var logger:IMateLogger;
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                         Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................eventProperties..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                        Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................eventProperties..........................................
 		private var _eventProperties:EventProperties;
 		/**
 		 *  <code>eventProperties</code> allows you to add properties to the event that will be created by the
@@ -102,7 +102,7 @@ package com.asfusion.mate.events
 		}
 		
 		
-		/*-.........................................generator..........................................*/
+		//.........................................generator..........................................
 		private var _generator:Class = DynamicEvent;
 		/**
 		*  The generator attribute specifies what class should be used to instantiate the 
@@ -119,7 +119,7 @@ package com.asfusion.mate.events
 	        _generator = value;
 		}
 		
-		/*-.........................................type..........................................*/
+		//.........................................type..........................................
 		private var _type:String;
 		/**
 		*  The type attribute specifies the event type you want to dispatch.
@@ -136,7 +136,7 @@ package com.asfusion.mate.events
 			_type = value;
 		}
 		
-		/*-.........................................bubbles..........................................*/
+		//.........................................bubbles..........................................
 		private var _bubbles:Boolean;
 		/**
 		* Property of the event to create when using <code>createAndDispatchEvent</code> method.
@@ -155,7 +155,7 @@ package com.asfusion.mate.events
 		}
 		
 		
-		/*-.........................................cancelable..........................................*/
+		//.........................................cancelable..........................................
 		private var _cancelable:Boolean = true;
 		/**
 		* Indicates whether the behavior associated with the event can be prevented.
@@ -171,7 +171,7 @@ package com.asfusion.mate.events
 			_cancelable = value;
 		}
 		
-		/*-.........................................constructorArguments..........................................*/
+		//.........................................constructorArguments..........................................
 		private var _constructorArguments:* = undefined;
 		/**
 		*  The constructorArgs allows you to pass an Object or an Array of objects to the contructor 
@@ -190,7 +190,7 @@ package com.asfusion.mate.events
 	 		_constructorArguments = value;
 		}
 		
-		/*-.........................................responseHandlers..........................................*/
+		//.........................................responseHandlers..........................................
 		private var _responseHandlers:Array = [];
 		/**
 		 * Array <code>IResponseListeners</code> that are interested in listening to responses
@@ -208,9 +208,9 @@ package com.asfusion.mate.events
 		}
 		
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Constructor
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Constructor
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * Constructor
 		 */
@@ -222,10 +222,10 @@ package com.asfusion.mate.events
 			responseDispatcher = MateManager.instance.responseDispatcher;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Public methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................dispatchEvent..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Public methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................dispatchEvent..........................................
 		/**
 		 * Dispatches the given event into the event flow. The event target is the EventDispatcher object.
 		 * If bubble is false the default is the global mate dispatcher.
@@ -249,7 +249,7 @@ package com.asfusion.mate.events
 			return success;
 		}
 		
-		/*-.........................................createAndDispatchEvent..........................................*/
+		//.........................................generateEvent..........................................
 		/**
 		 * Creates an event with the <code>generator</code> template and dispatches it into the event flow.
 		 * All the eventProperties and the Object of name-value pairs passed in this method are copied 
@@ -259,17 +259,17 @@ package com.asfusion.mate.events
 		{
 			
 			var instance:Object;
-			var creator:Creator = new Creator();
+			var creator:Creator = new Creator( generator );
 			if(constructorArguments !== undefined)
 			{
 				var realParams:Array = (constructorArguments is Array) ? constructorArguments as Array : [constructorArguments];
-				instance = creator.create(generator, null, realParams);
+				instance = creator.create( null, false, realParams);
 			}
 			else
 			{
 				if(type)
 				{
-					instance= creator.create(generator, this, [type, bubbles, cancelable]);
+					instance= creator.create( this, false, [type, bubbles, cancelable]);
 				}
 				else
 				{
@@ -288,7 +288,7 @@ package com.asfusion.mate.events
 			return wasSuccessful;
 		}
 		
-		/*-.........................................getCurrentTarget..........................................*/
+		//.........................................getCurrentTarget..........................................
 		/**
 		*  @private
 		*  No documentation about this yet
@@ -297,7 +297,7 @@ package com.asfusion.mate.events
 		{
 			return this;
 		}
-		/*-.........................................getLogger..........................................*/
+		//.........................................getLogger..........................................
 		/**
 		*  @private
 		*  No documentation about this yet
@@ -307,7 +307,7 @@ package com.asfusion.mate.events
 			return logger;
 		}
 		
-		/*-.........................................getDocument..........................................*/
+		//........................................getDocument..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -316,7 +316,7 @@ package com.asfusion.mate.events
 			return document;
 		}
 		
-		/*-.........................................errorString..........................................*/
+		//.........................................errorString..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -326,7 +326,7 @@ package com.asfusion.mate.events
 							+ DebuggerUtil.getClassName( document);
 			return str;
 		}
-		/*-.........................................removeReponders..........................................*/
+		//.........................................removeReponders..........................................
 		/**
 		*  After a response is back, this method removes all the reponders for a specific event.
 		*/
@@ -341,11 +341,11 @@ package com.asfusion.mate.events
 			}
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Protected methods
+		//------------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................addReponders..........................................*/
+		//.........................................addReponders..........................................
 		/**
 		* Before dispatching the event, this method is called to add all the responders for that specific event.
 		*/
@@ -361,7 +361,7 @@ package com.asfusion.mate.events
 			}
 		}
 		
-		/*-.........................................copyProperties..........................................*/
+		//.........................................copyProperties..........................................
 		/**
 		* Copies the properties from an  Object of name-value pairs to the destination.
 		* The destination is the new <code>event</code> instance.
@@ -377,16 +377,16 @@ package com.asfusion.mate.events
 			}
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Implementation of IMXMLObject interface
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................document..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                      Implementation of IMXMLObject interface
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................document..........................................
 		/**
 		 * Internal storage for the document object.
 		 */
 		protected var document:Object;
 		
-		/*-.........................................initialized..........................................*/
+		//.........................................initialized..........................................
 		/**
 		 * Called automatically by the MXML compiler if the IActionList is set up using a tag.
 		 */

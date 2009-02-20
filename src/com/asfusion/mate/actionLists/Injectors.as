@@ -4,10 +4,9 @@ package com.asfusion.mate.actionLists
 	import com.asfusion.mate.events.InjectorEvent;
 	import com.asfusion.mate.utils.debug.DebuggerUtil;
 	
-	import flash.events.Event;
 	import flash.events.IEventDispatcher;
-	import flash.utils.getQualifiedClassName;
 	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 	
 	use namespace mate;
 	
@@ -32,11 +31,6 @@ package com.asfusion.mate.actionLists
 		 * @todo
 		 */
 		 protected var includeDerivativesChanged:Boolean;
-		 
-		 /**
-		 * @todo
-		 */
-		 protected var listenerProxy:ListenerProxy;
 		
 		//-----------------------------------------------------------------------------------------------------------
 		//                                          Public Setters and Getters
@@ -155,7 +149,7 @@ package com.asfusion.mate.actionLists
 			if(!targetRegistered && target)
 			{
 				var type:String = getQualifiedClassName(target);
-				dispatcher.addEventListener(type,fireEvent,false,0, true);
+				dispatcher.addEventListener( type, fireEvent, false, 0, true );
 				targetRegistered = true;
 			}
 			
@@ -163,21 +157,27 @@ package com.asfusion.mate.actionLists
 			{
 				for each( var currentTarget:* in targets)
 				{
-					var currentType:String = ( currentTarget is Class) ? getQualifiedClassName(currentTarget) : currentTarget;
-					dispatcher.addEventListener(currentType,fireEvent,false,0, true);
+					var currentType:String = ( currentTarget is Class) ? getQualifiedClassName( currentTarget ) : currentTarget;
+					dispatcher.addEventListener( currentType, fireEvent, false, 0, true);
 				}
 				targetsRegistered = true;
 			}
 			
-			if( !listenerProxy ) 
+			if( target ||  targets) 
 			{
-				listenerProxy = manager.addListenerProxy( dispatcher );
-			}
-			
-			if( includeDerivativesChanged && (targets || target) )
-			{
-				includeDerivativesChanged = false;
-				if( includeDerivatives ) listenerProxy.addExternalListener( listenerProxyHandler );
+				manager.addListenerProxy( dispatcher );
+				if(includeDerivativesChanged)
+				{
+					includeDerivativesChanged = false;
+					if(includeDerivatives)
+					{
+						dispatcher.addEventListener( InjectorEvent.INJECT_DERIVATIVES, injectDerivativesHandler, false, 0, true);
+					}
+					else
+					{
+						dispatcher.removeEventListener( InjectorEvent.INJECT_DERIVATIVES, injectDerivativesHandler );
+					}
+				}
 			}
 		}
 		
@@ -236,27 +236,41 @@ package com.asfusion.mate.actionLists
 		/**
 		 * @todo
 		 */ 
-		public function listenerProxyHandler( event:Event ):void
+		protected function injectDerivativesHandler( event:InjectorEvent ):void
 		{
-			var injectorEvent:InjectorEvent;
-			
-			if( target && event.target is target )
+			if( isDerivative( event.injectorTarget, target  ) )
 			{
-				injectorEvent = new InjectorEvent( event.target );
-				fireEvent( injectorEvent );
+				fireEvent( event );
 			}
 			else if( targets )
 			{
 				for each( var currentTarget:* in targets)
 				{
-					var currentClass:Class = ( currentTarget is Class) ? currentTarget : getDefinitionByName( currentTarget ) as Class;
-					if( event.target is currentClass )
+					if( isDerivative( event.injectorTarget, currentTarget  ) )
 					{
-						injectorEvent = new InjectorEvent( event.target );
-						fireEvent( injectorEvent );
+						fireEvent( event );
 					}
 				}
 			}
 		}
+		
+		/**
+		 * @todo
+		 */
+		 public function isDerivative( injectorTarget:Object, targetClass:* ):Boolean
+		 {
+		 	if( !targetClass ) return false;
+		 	
+		 	var foundDerivative:Boolean = false;
+		 	
+		 	var compareClass:Class = ( targetClass is Class ) ? targetClass : getDefinitionByName( targetClass ) as Class;
+		 	if( injectorTarget is compareClass )
+		 	{
+		 		var injectorClass:Class = getDefinitionByName( getQualifiedClassName( injectorTarget ) ) as Class;
+		 		foundDerivative = ( injectorClass !==  compareClass );
+		 	}
+		 	return foundDerivative;
+		 }
+		
 	}
 }

@@ -59,11 +59,6 @@ package com.asfusion.mate.core
 		 */
 		protected var registered:Boolean;
 		
-		/**
-		 * @todo
-		 */
-		 protected var externalListeners:Array = new Array();;
-		
 		//-----------------------------------------------------------------------------------------------------------
 		//                                         Contructor
 		//-----------------------------------------------------------------------------------------------------------
@@ -117,15 +112,6 @@ package com.asfusion.mate.core
 			registered = false;
 		}
 		
-		 //.........................................addExternalListener........................................
-		 /**
-		 * @todo
-		 */
-		public function addExternalListener( externalListener:Function ):void
-		{
-			externalListeners.push(externalListener);
-		}
-		
 		 
 		//----------------------------------------------------------------------------------------------------------
 	    //                                         Event Handlers
@@ -140,15 +126,10 @@ package com.asfusion.mate.core
 		{
 			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				dispatcher.dispatchEvent(new InjectorEvent(event.target));
+				dispatcher.dispatchEvent( new InjectorEvent(null, event.target ) );
 			}
-			else if( externalListeners.length )
-			{
-				for each( var externalListener:Function in externalListeners )
-				{
-					externalListener( event )
-				}
-			}
+			
+			dispatcher.dispatchEvent(new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, event.target ) );
 		}
 		
 		//.........................................globalListenerProxyHandler......................................
@@ -159,33 +140,15 @@ package com.asfusion.mate.core
 		protected function globalListenerProxyHandler(event:Event):void
 		{
 			var appDispatcher:Sprite = GlobalDispatcher(dispatcher).applicationDispatcher as Sprite;
+			if(event.target is DisplayObject &&  appDispatcher.contains(event.target as DisplayObject ) ) return;
 			
 			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				if(event.target is DisplayObject &&  appDispatcher.contains(event.target as DisplayObject ) )
-				{
-					return;
-				}
-				else
-				{
-					dispatcher.dispatchEvent(new InjectorEvent(event.target));
-				}
+				dispatcher.dispatchEvent(new InjectorEvent( null, event.target ) );
 			}
 			
-			else if( externalListeners.length )
-			{
-				if(event.target is DisplayObject &&  appDispatcher.contains(event.target as DisplayObject ) )
-				{
-					return;
-				}
-				else
-				{
-					for each( var externalListener:Function in externalListeners )
-					{
-						externalListener( event )
-					}
-				}
-			}
+			dispatcher.dispatchEvent( new InjectorEvent(InjectorEvent.INJECT_DERIVATIVES, event.target ) );
+			
 		}
 		
 		//.........................................typeChangeHandler........................................

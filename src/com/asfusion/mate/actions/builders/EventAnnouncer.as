@@ -73,10 +73,10 @@ package com.asfusion.mate.actions.builders
 	public class EventAnnouncer extends ObjectBuilder implements IAction
 	{
 
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                         Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................generator..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Public Setters and Getters
+		//-------------------------------------------------------------------------------------------------------------
+		//.........................................generator..........................................
 		private var _generator:Class = DynamicEvent;
 		/**
 		* The generator attribute specifies what class should be instantiated.
@@ -94,7 +94,7 @@ package com.asfusion.mate.actions.builders
 		}
 		
 		
-		/*-.........................................type..........................................*/
+		//.........................................type..........................................
 		private var _type:String;
 		/**
 		*  The type attribute specifies the event type you want to dispatch.
@@ -112,7 +112,7 @@ package com.asfusion.mate.actions.builders
 		}
 		
 		
-		/*-.........................................bubbles..........................................*/
+		//.........................................bubbles..........................................
 		private var _bubbles:Boolean;
 		/**
 		* Although you can specify the event's bubbles property, whether you set it to true or false will have little effect, 
@@ -131,7 +131,7 @@ package com.asfusion.mate.actions.builders
 		}
 		
 		
-		/*-.........................................cancelable..........................................*/
+		//.........................................cancelable..........................................
 		private var _cancelable:Boolean = true;
 		/**
 		* Indicates whether the behavior associated with the event can be prevented.
@@ -148,7 +148,7 @@ package com.asfusion.mate.actions.builders
 			_cancelable = value;
 		}
 		
-		/*-.........................................cache..........................................*/
+		//.........................................cache..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -161,7 +161,7 @@ package com.asfusion.mate.actions.builders
 			throw(new Error("Events and reponses cannot be cached"));
 		}
 		
-		/*-.........................................dispatcherType..........................................*/
+		//.........................................dispatcherType..........................................
 		private var _dispatcherType:String = "inherit";
 		/**
 		 * String that defines whether the dispatcher used by this tag is <code>global</code> or 
@@ -182,10 +182,10 @@ package com.asfusion.mate.actions.builders
 			}
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override protected methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................createInstance..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Override protected methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................createInstance..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -193,17 +193,16 @@ package com.asfusion.mate.actions.builders
 		{
 			currentInstance = null;
 
-			var creator:Creator = new Creator();
+			var creator:Creator = new Creator( generator, scope.dispatcher);
 			if(constructorArguments !== undefined)
 			{
-				var realParams:Array = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-				currentInstance = creator.create(generator, scope, realParams);
+				currentInstance = creator.create( scope, false, constructorArguments );
 			}
 			else
 			{
 				if(type)
 				{
-					currentInstance = creator.create(generator, scope, [type, bubbles, cancelable]);
+					currentInstance = creator.create(  scope, false, [type, bubbles, cancelable]);
 				}
 				else
 				{
@@ -213,7 +212,7 @@ package com.asfusion.mate.actions.builders
 			return currentInstance;
 		}
 		
-		/*-.........................................run..........................................*/
+		//.........................................run..........................................
 		/**
 		 * @inheritDoc
 		 */
