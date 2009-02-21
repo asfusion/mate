@@ -49,6 +49,10 @@ package com.asfusion.mate.core
 						realArguments.push( argument );
 					}
 				}
+				else
+				{
+					realArguments = parameters;
+				}
 			}
 			else if (parameters !== undefined)
 			{
