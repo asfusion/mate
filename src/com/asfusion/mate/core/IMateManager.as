@@ -32,23 +32,23 @@ package com.asfusion.mate.core
 	 */
 	public interface IMateManager extends IEventDispatcher
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Getters and Setters
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                     Getters and Setters
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................application..........................................*/
+		//.........................................application..........................................
 		/**
 		 * A reference to the Application instance
 		 */
 		function get application():Application
 		
-		/*-.........................................systemManager..........................................*/
+		//........................................systemManager..........................................
 		/**
 		 * A reference to the ISystemManager instance
 		 */
 		function get systemManager():ISystemManager
 		
-		/*-.........................................dispatcher..........................................*/
+		//........................................dispatcher..........................................
 		/**
 		 * A reference to the IEventDispatcher instance that is used by the following tags:
 		 * <ul><li><code>Dispatcher</code></li>
@@ -58,36 +58,36 @@ package com.asfusion.mate.core
 		function set dispatcher(value:IEventDispatcher):void
 		function get dispatcher():IEventDispatcher
 		
-		/*-.........................................responseDispatcher..........................................*/
+		//.........................................responseDispatcher..........................................
 		/**
 		 * A reference to the IEventDispatcher instance used by the <code>Response</code> tag
 		 */
 		function get responseDispatcher():IEventDispatcher
 		
-		/*-.........................................debugger..........................................*/
+		//.........................................debugger..........................................
 		/**
 		 * An <code>ILoggingTarget</code> used by debugging purpose.
 		 */
 		function set debugger(value:ILoggingTarget):void
 		function get debugger():ILoggingTarget
 		
-		/*-.........................................listenerProxyType..........................................*/
+		//.........................................listenerProxyType..........................................
 		/**
 		 * The default event type used by the injectors.
 		 */
 		function set listenerProxyType(value:String):void
 		function get listenerProxyType():String
 		
-		/*-.........................................getCacheCollection..........................................*/
+		//.........................................getCacheCollection..........................................
 		/**
 		 * Global cache.
 		 */
 		function getCacheCollection():Dictionary
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                      Methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................callLater..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                      Methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................callLater..........................................
 		/**
 		 * Queues a function to be called later.
 		 * <p>Before each update of the screen, Flash Player or AIR calls the set of functions 
@@ -97,14 +97,14 @@ package com.asfusion.mate.core
 		 */
 		function callLater(method:Function):void
 		
-		/*-.........................................getLogger..........................................*/
+		//.........................................getLogger..........................................
 		/**
 		 * An <code>IMateLogger</code> used to log errors.
 		 * Similar to Flex <code>ILogger</code>
 		 */
 		function getLogger(active:Boolean):IMateLogger
 		
-		/*-.........................................addListenerProxy..........................................*/
+		//.........................................addListenerProxy.........................................
 		/**
 		 * Adds a proxy listener for a specific type.
 		 */
