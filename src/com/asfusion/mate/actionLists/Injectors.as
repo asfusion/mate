@@ -28,7 +28,7 @@ package com.asfusion.mate.actionLists
 		protected var targetsRegistered:Boolean;
 		
 		/**
-		 * @todo
+		 * Flag indicating if the includeDerivatives property has been changed.
 		 */
 		 protected var includeDerivativesChanged:Boolean;
 		
@@ -82,9 +82,12 @@ package com.asfusion.mate.actionLists
 		//.........................................includeDerivatives..........................................
 		private var _includeDerivatives:Boolean = false;
 		/**
-		 * @todo 
+		 * If this property is true, the injector will inject not only the Class in the
+		 * target property, but also all the classes that extend from that class. 
+		 * If the target is an interface, it will inject all the objects that implement
+		 * the interface.
 		 * 
-		 *  @default true
+		 *  @default false
 		 * */
 		public function get includeDerivatives():Boolean
 		{
@@ -232,9 +235,10 @@ package com.asfusion.mate.actionLists
 			super.setDispatcher(value,local);
 		}
 		
-		//.........................................listenerProxyHandler..........................................
+		//.........................................injectDerivativesHandler..........................................
 		/**
-		 * @todo
+		 * This function is a handler for the injection event, if the target it is a 
+		 * derivative class the injection gets triggered
 		 */ 
 		protected function injectDerivativesHandler( event:InjectorEvent ):void
 		{
@@ -254,10 +258,12 @@ package com.asfusion.mate.actionLists
 			}
 		}
 		
+		//.........................................isDerivative..........................................
 		/**
-		 * @todo
+		 * Check if the current object is a derivative class and return a boolean value
+		 * true / false.
 		 */
-		 public function isDerivative( injectorTarget:Object, targetClass:* ):Boolean
+		 protected function isDerivative( injectorTarget:Object, targetClass:* ):Boolean
 		 {
 		 	if( !targetClass ) return false;
 		 	
