@@ -26,6 +26,7 @@ package com.asfusion.mate.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.utils.getQualifiedClassName;
 	
 	/**
 	 * The ListenerProxy is used by the injector (via MateManager)
@@ -39,9 +40,9 @@ package com.asfusion.mate.core
 	 */
 	public class ListenerProxy
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected Properties
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Protected Properties
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * Storage for the EventDispatcher that will be used to listen and dispatch events.
 		 * This property is required in the constructor of this class.
@@ -58,63 +59,64 @@ package com.asfusion.mate.core
 		 */
 		protected var registered:Boolean;
 		
-		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Contructor
-		-------------------------------------------------------------------------------------------------------------*/
-		public function ListenerProxy(dispatcher:IEventDispatcher)
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Contructor
+		//-----------------------------------------------------------------------------------------------------------
+		public function ListenerProxy( dispatcher:IEventDispatcher )
 		{
 			this.dispatcher = dispatcher;
 		}
 		
-		/*-.........................................addListener........................................*/
+		//.........................................addListener........................................
 		/**
 		 * addListener will register to listen to an event with the type that is passed as argument,
 		 * using capture and priority one.
 		 * If the dispatcher is a GlobalDispatcher, we also register to
 		 * listen events in the popup DiplayObject tree.
 		 */
-		public function addListener(type:String, typeWatcher:IEventDispatcher = null):void
+		public function addListener( type:String, typeWatcher:IEventDispatcher = null ):void
 		{
 			if(this.type != type && registered)
 			{
 				removeListener(this.type);
 			}
 			
-			dispatcher.addEventListener(type, listenerProxyHandler, true,1,true);
-			dispatcher.addEventListener(type, listenerProxyHandler, false,1,true);
-			if(dispatcher is GlobalDispatcher)
+			dispatcher.addEventListener( type, listenerProxyHandler, true, 1, true );
+			dispatcher.addEventListener( type, listenerProxyHandler, false, 1, true );
+			
+			if( dispatcher is GlobalDispatcher )
 			{
-				GlobalDispatcher(dispatcher).popupDispatcher.addEventListener(type, globalListenerProxyHandler, true,1);
+				GlobalDispatcher( dispatcher ).popupDispatcher.addEventListener( type, globalListenerProxyHandler, true, 1, true );
 			}
 			this.type = type;
 			registered = true;
 			
-			if(typeWatcher)
+			if( typeWatcher )
 			{
-				typeWatcher.addEventListener(InjectorSettingsEvent.TYPE_CHANGE, typeChangeHandler);
+				typeWatcher.addEventListener( InjectorSettingsEvent.TYPE_CHANGE, typeChangeHandler );
 			}
 		}
 		
-		 /*-.........................................removeListener........................................*/
+		 //.........................................removeListener........................................
 		 /**
 		 * Removes the listener from the dispatcher.
 		 */
 		public function removeListener(type:String):void
 		{
-			dispatcher.removeEventListener(type, listenerProxyHandler, true);
-			dispatcher.removeEventListener(type, listenerProxyHandler, false);
+			dispatcher.removeEventListener( type, listenerProxyHandler, true  );
+			dispatcher.removeEventListener( type, listenerProxyHandler, false );
 			if(dispatcher is GlobalDispatcher)
 			{
-				GlobalDispatcher(dispatcher).popupDispatcher.removeEventListener(type, globalListenerProxyHandler, true);
+				GlobalDispatcher(dispatcher).popupDispatcher.removeEventListener( type, globalListenerProxyHandler, true );
 			}
 			registered = false;
 		}
+		
 		 
-		/*-----------------------------------------------------------------------------------------------------------
-	     *                                          Event Handlers
-	     -------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................listenerProxyHandler........................................*/
+		//----------------------------------------------------------------------------------------------------------
+	    //                                         Event Handlers
+	    //------------------------------------------------------------------------------------------------------------
+		//........................................listenerProxyHandler........................................
 		/**
 		 * Handler that will run every time an event is captured in our dispatcher.
 		 * This handler will create a new InjectorEvent and will dispatch it from the dispatcher. 
@@ -122,35 +124,34 @@ package com.asfusion.mate.core
 		 */
 		protected function listenerProxyHandler(event:Event):void
 		{
-			if(dispatcher.hasEventListener(type))
+			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				dispatcher.dispatchEvent(new InjectorEvent(event.target));
+				dispatcher.dispatchEvent( new InjectorEvent(null, event.target ) );
 			}
+			
+			dispatcher.dispatchEvent(new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, event.target ) );
 		}
 		
-		/*-.........................................globalListenerProxyHandler........................................*/
+		//.........................................globalListenerProxyHandler......................................
 		/**
 		 * Similar to the listenerProxyHandler with the difference that this handler will only run if
 		 * the dispatcher is a GlobalDispatcher and the event happens in the popup display tree.
 		 */
 		protected function globalListenerProxyHandler(event:Event):void
 		{
-			if(dispatcher.hasEventListener(type))
+			var appDispatcher:Sprite = GlobalDispatcher(dispatcher).applicationDispatcher as Sprite;
+			if(event.target is DisplayObject &&  appDispatcher.contains(event.target as DisplayObject ) ) return;
+			
+			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				var appDispatcher:IEventDispatcher = GlobalDispatcher(dispatcher).applicationDispatcher;
-				if(event.target is DisplayObject && 
-					(appDispatcher as Sprite).contains(event.target as DisplayObject))
-				{
-					return;
-				}
-				else
-				{
-					dispatcher.dispatchEvent(new InjectorEvent(event.target));
-				}
+				dispatcher.dispatchEvent(new InjectorEvent( null, event.target ) );
 			}
+			
+			dispatcher.dispatchEvent( new InjectorEvent(InjectorEvent.INJECT_DERIVATIVES, event.target ) );
+			
 		}
 		
-		/*-.........................................typeChangeHandler........................................*/
+		//.........................................typeChangeHandler........................................
 		/**
 		 * Handler that will run every time the event type changes by calling the injectorSettings.
 		 */

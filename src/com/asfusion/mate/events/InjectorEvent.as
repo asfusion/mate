@@ -8,9 +8,15 @@ package com.asfusion.mate.events
 	 */
 	public class InjectorEvent extends Event
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Public Fields
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Public Constants
+		//------------------------------------------------------------------------------------------------------------
+		
+		public static const INJECT_DERIVATIVES:String = "injectDerivativesInjectorEvent";
+		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Public Properties
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * Target that wants to register for Injection.
 		 */
@@ -21,20 +27,22 @@ package com.asfusion.mate.events
 		 */
 		public var uid:*;
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Constructor
-		-------------------------------------------------------------------------------------------------------------*/	
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Constructor
+		//-------------------------------------------------------------------------------------------------------------
 		/**
 		 * Constructor
 		 */
-		public function InjectorEvent(target:Object, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function InjectorEvent(type:String, target:Object, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			injectorTarget = target;
-			var type:String = getQualifiedClassName(target);
 			if(target.hasOwnProperty("id"))
 			{
 				uid = target["id"];
 			}
+			
+			if( !type ) type = getQualifiedClassName(target);
+				
 			super(type, bubbles, cancelable);
 		}
 		

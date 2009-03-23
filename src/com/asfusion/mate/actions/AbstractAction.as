@@ -118,7 +118,7 @@ package com.asfusion.mate.actions
 		 */
 		protected function complete(scope:IScope):void
 		{
-			// this method is abstract it will be implemented by children
+			currentInstance = null;
 		}
 		
 		/*-----------------------------------------------------------------------------------------------------------

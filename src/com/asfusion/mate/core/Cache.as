@@ -20,7 +20,6 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.IScope;
-	import com.asfusion.mate.events.InjectorEvent;
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
@@ -102,9 +101,9 @@ package com.asfusion.mate.core
 			_generatorKey = value;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Contructor
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Contructor
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * Constructor
 		 */
@@ -121,10 +120,10 @@ package com.asfusion.mate.core
 			this.cacheType = cacheType;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                               Public Methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................addKey..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                             Public Methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................addKey..........................................
 		/**
 		 * 
 		 */
@@ -134,7 +133,7 @@ package com.asfusion.mate.core
 			this.chain.push(key);
 		}
 		
-		/*-.........................................addCachedInstance..........................................*/
+		//.........................................addCachedInstance..........................................
 		/**
 		 * Stores an instance in the cache. The cache can be local, global or inherit. 
 		 * The key that we use to store the instance is the class of the object that we want to store.
@@ -159,7 +158,7 @@ package com.asfusion.mate.core
 			cacheCollection[key] = instance;
 		}
 		
-		/*-.........................................getCachedInstance..........................................*/
+		//.........................................getCachedInstance..........................................
 		/**
 		 * Get an instance from the cache. The cache can be local, global or inherit. 
 		 * The key used is the class of the object that we want to access.
@@ -182,13 +181,14 @@ package com.asfusion.mate.core
 			return cacheCollection[key];
 		}
 		
-		/*-.........................................clearCachedInstance..........................................*/
+		//.........................................clearCachedInstance..........................................
 		/**
 		 * Removes an instance from the cache. The cache can be local, global or inherit. 
 		 * The key used is the class of the object that we want to removed.
 		 */
-		public static function clearCachedInstance(key:*, type:String, scope:IScope):void
+		public static function clearCachedInstance(key:*, type:String, scope:IScope):*
 		{
+			var instance:*;
 			if(type == INHERIT)
 			{
 				type = scope.eventMap.cache;
@@ -202,12 +202,15 @@ package com.asfusion.mate.core
 			{
 				cacheCollection =  scope.getManager().getCacheCollection();
 			}
+			instance = cacheCollection[key];
 			delete cacheCollection[key];
+			
+			return instance;
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          flash_proxy Methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................getProperty..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         flash_proxy Methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................getProperty..........................................
 		/**
 		 * Overrides any request for a property's value. If the property can't be found, 
 		 * the method returns undefined. For more information on this behavior, 
@@ -220,10 +223,10 @@ package com.asfusion.mate.core
 			newCache.addKey(chain, localName);
 			return newCache;
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                               Implementation of the ISmartObject interface
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................getValue..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                               Implementation of the ISmartObject interface
+		//-----------------------------------------------------------------------------------------------------------
+		//........................................getValue..........................................
 		/**
 		 * @inheritDoc
 		 */
@@ -233,21 +236,8 @@ package com.asfusion.mate.core
 			var instance:Object = getCachedInstance(generatorKey, cacheType, scope);
 			if(!instance && autoCreate)
 			{
-				var realParams:Array
-				var creator:Creator = new Creator();
-				if(constructorArguments)
-				{
-					realParams = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-					
-				}
-				instance = creator.create(generatorKey, scope, realParams);
-				addCachedInstance(generatorKey, instance, cacheType, scope);
-				
-				if(registerTarget && instance)
-				{
-					var event:InjectorEvent = new InjectorEvent(instance);
-					scope.dispatcher.dispatchEvent(event);
-				}
+				var creator:Creator = new Creator( generatorKey, scope.dispatcher );
+				instance = creator.create( scope, registerTarget, constructorArguments, cacheType);
 			}
 			value = instance;
 			if(instance && chain)
@@ -277,9 +267,9 @@ package com.asfusion.mate.core
 			}
 			return value;
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                             Implementation of IEventDispatcher interface 
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                             Implementation of IEventDispatcher interface 
+		//-----------------------------------------------------------------------------------------------------------
 		private var dispatcher:EventDispatcher = new EventDispatcher(IEventDispatcher(this));
 		/**
 		 * Registers an event listener object with an EventDispatcher object so that the listener receives notification of an event. 

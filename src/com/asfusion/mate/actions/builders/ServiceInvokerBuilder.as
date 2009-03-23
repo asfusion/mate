@@ -25,7 +25,6 @@ package com.asfusion.mate.actions.builders
 	import com.asfusion.mate.core.Cache;
 	import com.asfusion.mate.core.Creator;
 	import com.asfusion.mate.core.SmartArguments;
-	import com.asfusion.mate.events.InjectorEvent;
 	
 	/**
 	 * This base <code>ServiceInvokerBuilder</code> class is very similar 
@@ -121,12 +120,7 @@ package com.asfusion.mate.actions.builders
 		* 
 		*/
 		protected function createInstance(scope:IScope):Object
-		{
-			if(currentInstance && cache != Cache.NONE)
-			{
-				return currentInstance;
-			}
-			
+		{	
 			if(cache != Cache.NONE)
 			{
 				currentInstance = Cache.getCachedInstance(generator, cache, scope);
@@ -134,21 +128,8 @@ package com.asfusion.mate.actions.builders
 			
 			if(!currentInstance)
 			{
-				var realParams:Array;
-				var creator:Creator = new Creator();
-				
-				if(constructorArguments !== undefined)
-				{
-					realParams = (new SmartArguments()).getRealArguments(scope, constructorArguments);
-				}
-				currentInstance = creator.create(generator, scope, realParams);
-				Cache.addCachedInstance(generator, currentInstance, cache, scope);
-				
-				if(registerTarget && currentInstance)
-				{
-					var event:InjectorEvent = new InjectorEvent(currentInstance);
-					scope.dispatcher.dispatchEvent(event);
-				}
+				var creator:Creator = new Creator( generator, scope.dispatcher );
+				currentInstance = creator.create(  scope, registerTarget, constructorArguments, cache );
 			}
 			return currentInstance;
 		}

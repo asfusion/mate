@@ -19,7 +19,7 @@ package com.asfusion.mate.ioc
 		public static function register(target:Object, uid:* = undefined):Boolean
 		{
 			var manager:IMateManager = MateManager.instance;
-			var event:InjectorEvent = new InjectorEvent(target);
+			var event:InjectorEvent = new InjectorEvent( null, target);
 			event.uid = uid;
 			return manager.dispatcher.dispatchEvent(event);
 		}

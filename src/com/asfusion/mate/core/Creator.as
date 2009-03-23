@@ -19,7 +19,11 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.core
 {
+	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.events.InjectorEvent;
 	import com.asfusion.mate.utils.debug.*;
+	
+	import flash.events.IEventDispatcher;
 	use namespace mate;
 	
 	/**
@@ -27,76 +31,102 @@ package com.asfusion.mate.core
 	 */
 	public class Creator
 	{
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected Fields
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Protected Fields
+		//-----------------------------------------------------------------------------------------------------------
 		/**
 		 * Instance of <code>IMateManager</code> used to get the logger object.
 		 */
 		protected var manager:IMateManager;
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Constructor
-		-------------------------------------------------------------------------------------------------------------*/
+		/**
+		 * @todo
+		 */
+		protected var generator:Class;
+		
+		/**
+		 * @todo
+		 */
+		protected var dispatcher:IEventDispatcher;
+		
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Constructor
+		//-----------------------------------------------------------------------------------------------------------
 		/**
 		 * Constructor
 		 */
-		public function Creator()
+		public function Creator( classGenerator:Class, dispatcher:IEventDispatcher = null )
 		{
 			manager = MateManager.instance;
+			generator = classGenerator;
+			this.dispatcher = dispatcher;
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                           Public functions
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                           Public functions
+		//------------------------------------------------------------------------------------------------------------
 		/**
 		 * A method that calls createInstance to create the object 
 		 * and logs any problem that may encounter.
 		 */
-		/*-.........................................create..........................................*/
-		public function create(template:Class, loggerProvider:ILoggerProvider, parameters:Array = null):Object
+		//.........................................create..........................................
+		public function create( loggerProvider:ILoggerProvider, notify:Boolean = false, constructorArguments:* = null, cache:String = "none" ):Object
 		{
 			var logger:IMateLogger = ( loggerProvider ) ? loggerProvider.getLogger(): manager.getLogger(true);
 			var instance:Object;
 			var logInfo:LogInfo;
 			var reTry:Boolean;
+			var realArguments:Array;
+			var scope:IScope = ( loggerProvider is IScope ) ? IScope(loggerProvider) : null;
 			
-			if(!template)
+			if(!generator)
 			{
 				logger.error(LogTypes.GENERATOR_NOT_FOUND, new LogInfo(loggerProvider,null));
 				return null;
 			}
-			if(parameters && parameters.length > 15)
+			if( constructorArguments )
 			{
-				logger.error(LogTypes.TOO_MANY_ARGUMENTS, new LogInfo(loggerProvider,null));
-			}
-			else
-			{
-				try
+				realArguments = (new SmartArguments()).getRealArguments(scope, constructorArguments);
+				if( realArguments && realArguments.length > 15 )
 				{
-					instance = createInstance(template, parameters);
-				}
-				catch(error:ArgumentError)
-				{
-					logInfo =  new LogInfo(loggerProvider,template,error,"constructor", parameters);
-					logger.error(LogTypes.ARGUMENT_ERROR,logInfo);
-					reTry = !logInfo.foundProblem;
-				}
-				catch(error:TypeError)
-				{
-					logInfo = new LogInfo(loggerProvider,template,error,"constructor", parameters)
-					logger.error(LogTypes.TYPE_ERROR, logInfo);
-					reTry = !logInfo.foundProblem;
-				}
-				if(reTry)
-				{
-					instance = createInstance(template, parameters);
+					logger.error(LogTypes.TOO_MANY_ARGUMENTS, new LogInfo(loggerProvider,null));
 				}
 			}
+			
+			try
+			{
+				instance = createInstance(generator, realArguments);
+				if(notify && dispatcher)
+				{
+					dispatcher.dispatchEvent( new InjectorEvent( null, instance ) );
+					dispatcher.dispatchEvent( new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, instance ) );
+				}
+				if( cache != Cache.NONE && scope)
+				{
+					Cache.addCachedInstance( generator, instance, cache, scope );
+				}
+			}
+			catch(error:ArgumentError)
+			{
+				logInfo =  new LogInfo(loggerProvider, generator, error, "constructor", realArguments);
+				logger.error(LogTypes.ARGUMENT_ERROR,logInfo);
+				reTry = !logInfo.foundProblem;
+			}
+			catch(error:TypeError)
+			{
+				logInfo = new LogInfo(loggerProvider, generator, error, "constructor", realArguments)
+				logger.error(LogTypes.TYPE_ERROR, logInfo);
+				reTry = !logInfo.foundProblem;
+			}
+			if(reTry)
+			{
+				instance = createInstance(generator, realArguments);
+			}
+			
 			return instance;
 		}
 		
-		/*-.........................................createInstance..........................................*/
+		//.........................................createInstance..........................................
 		/**
 		 * It is the actual creation method. It can throw errors if parameters are wrong.
 		 */

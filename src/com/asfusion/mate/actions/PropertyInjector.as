@@ -137,14 +137,8 @@ package com.asfusion.mate.actions
 			var sourceObject:Object = Cache.getCachedInstance(source, sourceCache, scope);
 			if(!sourceObject)
 			{
-				var creator:Creator = new Creator();
-				sourceObject = creator.create(source, scope);
-				Cache.addCachedInstance(source, sourceObject, sourceCache, scope);
-				if(sourceObject)
-				{
-					var event:InjectorEvent = new InjectorEvent(sourceObject);
-					scope.dispatcher.dispatchEvent(event);
-				}
+				var creator:Creator = new Creator( source, scope.dispatcher );
+				sourceObject = creator.create( scope, true, null, sourceCache );
 			}
 			return sourceObject;
 		}

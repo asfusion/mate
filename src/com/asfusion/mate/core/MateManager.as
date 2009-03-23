@@ -27,10 +27,10 @@ package com.asfusion.mate.core
 	public class MateManager
 	{
 		
-		/*-----------------------------------------------------------------------------------------------------------
-        *                                          Public setters and Getters
-        -------------------------------------------------------------------------------------------------------------*/
-        /*-.........................................instance..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+        //                                          Public setters and Getters
+        //-----------------------------------------------------------------------------------------------------------
+        //.........................................instance..........................................
 		private static var _instance:IMateManager
 		/**
 		 * Returns a single <code>IMateManager</code> instance. 
@@ -41,10 +41,10 @@ package com.asfusion.mate.core
 			return inst;
 		}
 		
-        /*-----------------------------------------------------------------------------------------------------------
-        *                                          Static Private Methods
-        -------------------------------------------------------------------------------------------------------------*/
-        /*-.........................................createInstance........................................*/
+        //-----------------------------------------------------------------------------------------------------------
+        //                                         Static Private Methods
+        //-----------------------------------------------------------------------------------------------------------
+        //.........................................createInstance........................................
         /**
         * Creates the <code>IMateManager</code> instance.
         */
@@ -83,30 +83,30 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	private var methodQueue:Dictionary = new Dictionary();
 	private var listenerProxies:Dictionary = new Dictionary(true);
 	
-	/*-----------------------------------------------------------------------------------------------------------
-     *                                          Public setters and Getters
-     -------------------------------------------------------------------------------------------------------------*/
+	//-----------------------------------------------------------------------------------------------------------
+    //                                          Public setters and Getters
+    //-----------------------------------------------------------------------------------------------------------
      
-     /*-.........................................getCacheCollection..........................................*/
+     //.........................................getCacheCollection..........................................
     private var _cache:Dictionary = new Dictionary();
 	public function getCacheCollection():Dictionary
 	{
 		return _cache;
 	}
 	
-    /*-.........................................application..........................................*/
+    //.........................................application..........................................
 	public function get application():Application
 	{
 		return Application.application as Application;
 	}
 	
-	/*-.........................................systemManager..........................................*/
+	//.........................................systemManager..........................................
 	public function get systemManager():ISystemManager
 	{
 		return (application.systemManager) ? application.systemManager.topLevelSystemManager : SystemManagerFinder.find().topLevelSystemManager;
 	}
 	
-	/*-.........................................loggerClass........................................*/
+	//.........................................loggerClass........................................
 	private var _loggerClass:Class = Logger;
 	public function get loggerClass():Class
 	{
@@ -118,7 +118,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	
 	
-	/*-.........................................listenerProxyType........................................*/
+	//.........................................listenerProxyType........................................
 	private var _listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
 	public function get listenerProxyType():String
 	{
@@ -138,7 +138,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	
 	
-	/*-.........................................debugger........................................*/
+	//.........................................debugger........................................
 	private  var _debugger:ILoggingTarget;
 	public function get debugger():ILoggingTarget
 	{
@@ -150,7 +150,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	
 	
-	/*-.........................................dispatcher........................................*/
+	//.........................................dispatcher........................................
 	private  var _dispatcher:IEventDispatcher = new GlobalDispatcher();
 	public function get dispatcher():IEventDispatcher
 	{
@@ -170,23 +170,23 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	}
 	
 	
-	/*-.........................................responseDispatcher........................................*/
+	//.........................................responseDispatcher........................................
 	private var _responseDispatcher:IEventDispatcher = new EventDispatcher();
 	public function get responseDispatcher():IEventDispatcher
 	{
 		return _responseDispatcher;
 	}
-	/*-----------------------------------------------------------------------------------------------------------
-     *                                          Public Methods
-     -------------------------------------------------------------------------------------------------------------*/
-      /*-.........................................callLater........................................*/
+	//-----------------------------------------------------------------------------------------------------------
+    //                                          Public Methods
+    //-----------------------------------------------------------------------------------------------------------
+    //.........................................callLater........................................
 	public function callLater(method:Function):void
 	{
 		methodQueue[method] = method;
 		addListeners();
 	}
 	
-    /*-.........................................getLogger........................................*/
+    //.........................................getLogger........................................
     public function getLogger(active:Boolean):IMateLogger
     {
     	var logger:IMateLogger;
@@ -202,8 +202,8 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
     	return logger;
     }
     
-    /*-.........................................addListenerProxy........................................*/
-	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):void
+    //.........................................addListenerProxy........................................
+	public function addListenerProxy(eventDispatcher:IEventDispatcher, type:String = null):ListenerProxy
 	{
 		var listenerProxy:ListenerProxy = listenerProxies[eventDispatcher];
 		
@@ -220,26 +220,27 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		{
 			listenerProxy.addListener(type);
 		}
+		return listenerProxy;
 	}
 	
     
-	/*-----------------------------------------------------------------------------------------------------------
-     *                                          Private Methods
-     -------------------------------------------------------------------------------------------------------------*/
+	//-----------------------------------------------------------------------------------------------------------
+    //                                          Private Methods
+    // ----------------------------------------------------------------------------------------------------------
 	
-	/*-.........................................addListeners........................................*/
+	//.........................................addListeners........................................
 	private function addListeners():void
 	{
 		systemManager.stage.addEventListener(Event.ENTER_FRAME, callLaterDispatcher);
 	}
 	
-	/*-.........................................removeListeners........................................*/
+	//.........................................removeListeners........................................
 	private function removeListeners():void
 	{
 		systemManager.stage.removeEventListener(Event.ENTER_FRAME, callLaterDispatcher);
 	}
 	
-	/*-.........................................callLaterDispatcher........................................*/
+	//.........................................callLaterDispatcher........................................
 	private function callLaterDispatcher(event:Event):void
 	{
 		for each(var method:Function in methodQueue)
