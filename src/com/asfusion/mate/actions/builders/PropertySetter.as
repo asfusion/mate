@@ -127,15 +127,17 @@ package com.asfusion.mate.actions.builders
 			{
 				try
 				{
+					var value:*;
 					if(sourceKey)
 					{
-						currentInstance[targetKey] = realSource[sourceKey];
+						value = realSource[sourceKey];
 					}
 					else
 					{
-						currentInstance[targetKey] = realSource;
+						value = realSource;
 					}
-					scope.lastReturn = currentInstance[targetKey];
+					currentInstance[targetKey] = value;
+					scope.lastReturn = value;
 				}
 				catch(error:ReferenceError)
 				{
