@@ -272,8 +272,9 @@ package com.asfusion.mate.actionLists
 		 	var compareClass:Class = ( targetClass is Class ) ? targetClass : getDefinitionByName( targetClass ) as Class;
 		 	if( injectorTarget is compareClass )
 		 	{
-		 		var injectorClass:Class = getDefinitionByName( getQualifiedClassName( injectorTarget ) ) as Class;
-		 		foundDerivative = ( injectorClass !==  compareClass );
+		 		var targetClassName:String = getQualifiedClassName( injectorTarget );
+		 		var compareClassName:String = getQualifiedClassName( compareClass );
+		 		foundDerivative = ( targetClassName !==  compareClassName );
 		 	}
 		 	return foundDerivative;
 		 }
