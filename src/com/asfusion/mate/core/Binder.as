@@ -20,6 +20,7 @@ Author: Nahuel Foronda, Principal Architect
 package com.asfusion.mate.core
 {
 	import com.asfusion.mate.actionLists.IScope;
+	import com.asfusion.mate.utils.binding.SoftChangeWatcher;
 	import com.asfusion.mate.utils.debug.LogInfo;
 	import com.asfusion.mate.utils.debug.LogTypes;
 	
@@ -32,6 +33,13 @@ package com.asfusion.mate.core
 	 */
 	public class Binder
 	{
+		protected var soft:Boolean;
+		public function Binder( soft:Boolean = false )
+		{
+			this.soft = soft;
+		}
+		
+		
 		/**
 		 * The function that implements the binding between two objects.
 		 */
@@ -49,8 +57,16 @@ package com.asfusion.mate.core
 				}
 				try
 				{
-					var wacher:ChangeWatcher = BindingUtils.bindProperty(target, targetKey, source, chainSourceKey);
-					if(wacher.isWatching()) isWatching = true;
+					if( soft )
+					{
+						var softWacher:SoftChangeWatcher = bindProperty(target, targetKey, source, chainSourceKey);
+						if(softWacher.isWatching()) isWatching = true;
+					}
+					else
+					{
+						var wacher:ChangeWatcher = BindingUtils.bindProperty(target, targetKey, source, chainSourceKey);
+						if(wacher.isWatching()) isWatching = true;
+					}
 				}
 				catch(error:ReferenceError)
 				{
@@ -114,5 +130,22 @@ package com.asfusion.mate.core
 			}
 			return isWatching;
 		}
+		
+		public static function bindProperty( site:Object, prop:String,  host:Object, chain:Object, commitOnly:Boolean = false):SoftChangeWatcher
+		{
+	        var w:SoftChangeWatcher =  SoftChangeWatcher.watch(host, chain, null, commitOnly);
+	        
+	        if (w != null)
+	        {
+	            var assign:Function = function(event:*):void
+	            {
+	                site[prop] = w.getValue();
+	            };
+	            w.setHandler(assign);
+	            assign(null);
+	        }
+	        
+	        return w;
+	    }
 	}
 }

@@ -123,6 +123,22 @@ package com.asfusion.mate.actions
 		{
 			_sourceCache = value;
 		}
+		
+		//........................................softBinding..........................................
+		private var _softBinding:Boolean = false;
+		/**
+		 * An object that contains the data that the injector will use to set the target object
+		 * 
+		 * @default null
+		 * */
+		public function get softBinding():Boolean
+		{
+			return _softBinding;
+		}
+		public function set softBinding( value:Boolean ):void
+		{
+			_softBinding = value
+		}
 		//-----------------------------------------------------------------------------------------------------------
 		//                                          Protected methods
 		//-----------------------------------------------------------------------------------------------------------
@@ -183,7 +199,7 @@ package com.asfusion.mate.actions
 			var event:InjectorEvent = InjectorEvent(scope.event);
 			if(targetId == null || targetId == event.uid)
 			{
-				var binder:Binder = new Binder();
+				var binder:Binder = new Binder( softBinding );
 				
 				binder.bind(scope, event.injectorTarget, targetKey, currentInstance, sourceKey);
 			}
