@@ -131,6 +131,8 @@ package com.asfusion.mate.core
 			return isWatching;
 		}
 		
+		private static var keepFunctionLive:Array = new Array();
+		
 		public static function bindProperty( site:Object, prop:String,  host:Object, chain:Object, commitOnly:Boolean = false):SoftChangeWatcher
 		{
 	        var w:SoftChangeWatcher =  SoftChangeWatcher.watch(host, chain, null, commitOnly);
@@ -143,6 +145,8 @@ package com.asfusion.mate.core
 	            };
 	            w.setHandler(assign);
 	            assign(null);
+	            
+	            keepFunctionLive.push( assign );
 	        }
 	        
 	        return w;
