@@ -305,9 +305,6 @@ package com.asfusion.mate.actionLists
 		{	
 			if(autoSubscribe && !consumerSubscribedCalled)
 			{
-				if(consumer.subscribed)
-					consumer.unsubscribe();
-				
 				consumer.subscribe();
 				consumerSubscribedCalled = true;
 			}
