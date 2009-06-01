@@ -19,9 +19,9 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions.builders
 {
+	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
-	import com.asfusion.mate.actionLists.*;
 	import com.asfusion.mate.utils.debug.*;
 	
 	import mx.rpc.AbstractOperation;
@@ -288,10 +288,19 @@ package com.asfusion.mate.actions.builders
 		{
 			var argumentList:Array = (new SmartArguments()).getRealArguments(scope, this.arguments);
 			var webServiceInstance:WebService = currentInstance;
+			var operation:AbstractOperation;
 			
 			if(method)
 			{
-				var operation:AbstractOperation = webServiceInstance.getOperation(method);
+				var realMethod:Object = ( method is ISmartObject ) ?  ISmartObject( method ).getValue( scope ) : method;
+				if( realMethod is String )
+				{
+					operation = webServiceInstance.getOperation( realMethod as String );
+				}
+				else
+				{
+					throw( new Error( "Method can only be a String or a SmartObject that represents a String" ) );
+				}
 				if(argumentList)
 				{
 					operation.arguments = argumentList;

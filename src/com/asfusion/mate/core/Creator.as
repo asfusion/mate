@@ -96,14 +96,14 @@ package com.asfusion.mate.core
 			try
 			{
 				instance = createInstance(generator, realArguments);
+				if( cache != Cache.NONE && scope)
+				{
+					Cache.addCachedInstance( generator, instance, cache, scope );
+				}
 				if(notify && dispatcher)
 				{
 					dispatcher.dispatchEvent( new InjectorEvent( null, instance ) );
 					dispatcher.dispatchEvent( new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, instance ) );
-				}
-				if( cache != Cache.NONE && scope)
-				{
-					Cache.addCachedInstance( generator, instance, cache, scope );
 				}
 			}
 			catch(error:ArgumentError)

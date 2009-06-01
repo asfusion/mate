@@ -26,6 +26,7 @@ package com.asfusion.mate.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	
 	/**
@@ -43,11 +44,29 @@ package com.asfusion.mate.core
 		//-----------------------------------------------------------------------------------------------------------
 		//                                         Protected Properties
 		//------------------------------------------------------------------------------------------------------------
+		
+		private var dispatcherHolder:Dictionary = new Dictionary( true );
 		/**
 		 * Storage for the EventDispatcher that will be used to listen and dispatch events.
 		 * This property is required in the constructor of this class.
 		 */
-		protected var dispatcher:IEventDispatcher;
+		protected function get dispatcher():IEventDispatcher
+		{
+			var weekDispatcher:IEventDispatcher;
+			for( var i:* in dispatcherHolder)
+			{
+				if( i is IEventDispatcher)
+				{
+					weekDispatcher = i;
+				}
+			}
+			return weekDispatcher;
+		}
+		
+		protected function set dispatcher( value:IEventDispatcher ):void
+		{
+			dispatcherHolder[ value ] = "dispatcher";
+		}
 		
 		/**
 		 * Type used to register to events in the dispatcher object.
@@ -76,24 +95,26 @@ package com.asfusion.mate.core
 		 */
 		public function addListener( type:String, typeWatcher:IEventDispatcher = null ):void
 		{
+			var weekDispatcher:IEventDispatcher = dispatcher;
+			
 			if(this.type != type && registered)
 			{
 				removeListener(this.type);
 			}
 			
-			dispatcher.addEventListener( type, listenerProxyHandler, true, 1, true );
-			dispatcher.addEventListener( type, listenerProxyHandler, false, 1, true );
+			weekDispatcher.addEventListener( type, listenerProxyHandler, true, 1, true );
+			weekDispatcher.addEventListener( type, listenerProxyHandler, false, 1, true );
 			
-			if( dispatcher is GlobalDispatcher )
+			if( weekDispatcher is GlobalDispatcher )
 			{
-				GlobalDispatcher( dispatcher ).popupDispatcher.addEventListener( type, globalListenerProxyHandler, true, 1, true );
+				GlobalDispatcher( weekDispatcher ).popupDispatcher.addEventListener( type, globalListenerProxyHandler, true, 1, true );
 			}
 			this.type = type;
 			registered = true;
 			
 			if( typeWatcher )
 			{
-				typeWatcher.addEventListener( InjectorSettingsEvent.TYPE_CHANGE, typeChangeHandler );
+				typeWatcher.addEventListener( InjectorSettingsEvent.TYPE_CHANGE, typeChangeHandler, false, 0, true );
 			}
 		}
 		
@@ -103,11 +124,12 @@ package com.asfusion.mate.core
 		 */
 		public function removeListener(type:String):void
 		{
-			dispatcher.removeEventListener( type, listenerProxyHandler, true  );
-			dispatcher.removeEventListener( type, listenerProxyHandler, false );
-			if(dispatcher is GlobalDispatcher)
+			var weekDispatcher:IEventDispatcher = dispatcher;
+			weekDispatcher.removeEventListener( type, listenerProxyHandler, true  );
+			weekDispatcher.removeEventListener( type, listenerProxyHandler, false );
+			if(weekDispatcher is GlobalDispatcher)
 			{
-				GlobalDispatcher(dispatcher).popupDispatcher.removeEventListener( type, globalListenerProxyHandler, true );
+				GlobalDispatcher( weekDispatcher ).popupDispatcher.removeEventListener( type, globalListenerProxyHandler, true );
 			}
 			registered = false;
 		}
@@ -124,12 +146,13 @@ package com.asfusion.mate.core
 		 */
 		protected function listenerProxyHandler(event:Event):void
 		{
-			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
+			var weekDispatcher:IEventDispatcher = dispatcher;
+			if( weekDispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				dispatcher.dispatchEvent( new InjectorEvent(null, event.target ) );
+				weekDispatcher.dispatchEvent( new InjectorEvent(null, event.target ) );
 			}
 			
-			dispatcher.dispatchEvent(new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, event.target ) );
+			weekDispatcher.dispatchEvent(new InjectorEvent( InjectorEvent.INJECT_DERIVATIVES, event.target ) );
 		}
 		
 		//.........................................globalListenerProxyHandler......................................
@@ -139,15 +162,16 @@ package com.asfusion.mate.core
 		 */
 		protected function globalListenerProxyHandler(event:Event):void
 		{
-			var appDispatcher:Sprite = GlobalDispatcher(dispatcher).applicationDispatcher as Sprite;
+			var weekDispatcher:IEventDispatcher = dispatcher;
+			var appDispatcher:Sprite = GlobalDispatcher( weekDispatcher ).applicationDispatcher as Sprite;
 			if(event.target is DisplayObject &&  appDispatcher.contains(event.target as DisplayObject ) ) return;
 			
-			if( dispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
+			if( weekDispatcher.hasEventListener( getQualifiedClassName( event.target ) ) )
 			{
-				dispatcher.dispatchEvent(new InjectorEvent( null, event.target ) );
+				weekDispatcher.dispatchEvent(new InjectorEvent( null, event.target ) );
 			}
 			
-			dispatcher.dispatchEvent( new InjectorEvent(InjectorEvent.INJECT_DERIVATIVES, event.target ) );
+			weekDispatcher.dispatchEvent( new InjectorEvent(InjectorEvent.INJECT_DERIVATIVES, event.target ) );
 			
 		}
 		

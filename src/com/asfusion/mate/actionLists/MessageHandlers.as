@@ -41,15 +41,16 @@ package com.asfusion.mate.actionLists
 		 */
 		protected var consumer:Consumer;
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Public Setters and Getters
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................autoSubscribe ..........................................*/
+		//.........................................autoSubscribe ..........................................
+		private var consumerSubscribedCalled:Boolean = false;
+		private var _autoSubscribe:Boolean = true;
 		/**
 		 *  If this flag is true the consumer will be automatically subscribed when the <code>MessageHandlers</code> is created.
 		 */
-		private var _autoSubscribe:Boolean = true;
 		public function get autoSubscribe ():Boolean
 		{
 			return _autoSubscribe;
@@ -59,7 +60,7 @@ package com.asfusion.mate.actionLists
 			_autoSubscribe = value;
 		}
 		
-		/*-.........................................destination ..........................................*/
+		//........................................destination ..........................................
 		/**
 		 * Provides access to the destination for the <code>MessageAgent</code>. Changing the destination will disconnect the 
 		 * <code>MessageAgent</code> if it is currently connected.
@@ -75,7 +76,7 @@ package com.asfusion.mate.actionLists
 			
 		}
 		
-		/*-.........................................selector..........................................*/
+		//.........................................selector..........................................
 		/**
 		 * The selector for the Consumer. This is an expression that is passed to the destination which
 		 * uses it to filter the messages delivered to the Consumer.
@@ -97,7 +98,7 @@ package com.asfusion.mate.actionLists
 		}
 		
 		
-		/*-.........................................subtopic..........................................*/
+		//.........................................subtopic..........................................
 		/**
 		 * Provides access to the subtopic for the remote destination that the MessageAgent uses.
 		 */
@@ -112,7 +113,7 @@ package com.asfusion.mate.actionLists
 		}
 		
 		
-		/*-.........................................resubscribeAttempts..........................................*/
+		//.........................................resubscribeAttempts..........................................
 		/**
 		 * The number of resubscribe attempts that the Consumer makes in the event that the destination is unavailable 
 		 * or the connection to the destination fails. A value of -1 enables infinite attempts. 
@@ -134,7 +135,7 @@ package com.asfusion.mate.actionLists
 		}
 		
 		
-		/*-.........................................resubscribeInterval..........................................*/
+		//.........................................resubscribeInterval..........................................
 		/**
 		 * The number of milliseconds between resubscribe attempts. If a Consumer doesn't receive an acknowledgement
 		 * for a subscription request, it will wait the specified number of milliseconds before attempting to resubscribe.
@@ -156,7 +157,7 @@ package com.asfusion.mate.actionLists
 		}
 		
 		
-		/*-.........................................faultHandlers..........................................*/
+		//.........................................faultHandlers..........................................
 		private var _faultHandlers:Array;
 		/**
 		 * 	An array of actions (IAction) contained in this fault action-list. 
@@ -177,9 +178,9 @@ package com.asfusion.mate.actionLists
 		}
 		
 
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Constructor
-		-------------------------------------------------------------------------------------------------------------*/	
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Constructor
+		//------------------------------------------------------------------------------------------------------------	
 		/**
 		 * Constructor
 		 */
@@ -190,7 +191,7 @@ package com.asfusion.mate.actionLists
 			
 		}
 		
-		/*-.........................................getConsumer..........................................*/
+		//.........................................getConsumer..........................................
 		/**
 		 * Returns an instance of the <code>Consumer</code> used in this <code>MessageHandlers</code>
 		 */
@@ -205,7 +206,7 @@ package com.asfusion.mate.actionLists
 			return consumer;
 		}
 		
-		/*-.........................................subscribe..........................................*/
+		//.........................................subscribe..........................................
 		/**
 		 * Subscribes to the remote destination.
 		 */
@@ -215,7 +216,7 @@ package com.asfusion.mate.actionLists
 			consumer.subscribe(clientId);
 		}
 		
-		/*-.........................................unsubscribe..........................................*/
+		//.........................................unsubscribe..........................................
 		/**
 		 * Unsubscribes from the remote destination. In the case of durable JMS subscriptions, 
 		 * this will destroy the durable subscription on the JMS server.
@@ -225,10 +226,10 @@ package com.asfusion.mate.actionLists
 			consumer.unsubscribe();
 		}
 		
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override Public methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................toString..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                          Override Public methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................toString..........................................
 		/**
 		 * @inheritDoc
 		 */ 
@@ -239,7 +240,7 @@ package com.asfusion.mate.actionLists
 			return str;
 		}
 		
-		/*-.........................................clearReferences..........................................*/
+		//.........................................clearReferences..........................................
 		/**
 		 *  @inheritDoc
 		*/
@@ -249,10 +250,10 @@ package com.asfusion.mate.actionLists
 			consumer.removeEventListener(MessageEvent.MESSAGE, fireEvent);
 			consumer.removeEventListener(MessageFaultEvent.FAULT,  fireFaultEvent);
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
-		/*-.........................................fireFaultEvent..........................................*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Protected methods
+		//-----------------------------------------------------------------------------------------------------------
+		//.........................................fireFaultEvent..........................................
 		/**
 		 * Called by the consumer when the fault event gets triggered.
 		 * This method creates a scope and then runs the sequence.
@@ -279,7 +280,7 @@ package com.asfusion.mate.actionLists
 			}
 		}
 		
-		/*-.........................................fireEvent..........................................*/
+		//.........................................fireEvent..........................................
 		/**
 		 * Called by the consumer when the message event gets triggered.
 		 * This method creates a scope and then runs the sequence.
@@ -292,22 +293,20 @@ package com.asfusion.mate.actionLists
 			currentScope.currentEvent = event;
 			runSequence(currentScope, actions);
 		}
-		/*-----------------------------------------------------------------------------------------------------------
-		*                                          Override Protected methods
-		-------------------------------------------------------------------------------------------------------------*/
+		//-----------------------------------------------------------------------------------------------------------
+		//                                         Override Protected methods
+		//-------------------------------------------------------------------------------------------------------------
 		
-		/*-.........................................commitProperties..........................................*/
+		//.........................................commitProperties..........................................
 		/**
 		 * Processes the properties set on the component.
 		*/
 		override protected function commitProperties():void
-		{
-			if(autoSubscribe)
+		{	
+			if(autoSubscribe && !consumerSubscribedCalled)
 			{
-				if(consumer.subscribed)
-					consumer.unsubscribe();
-					
 				consumer.subscribe();
+				consumerSubscribedCalled = true;
 			}
 		}
 	}

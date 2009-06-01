@@ -88,18 +88,18 @@ package com.asfusion.mate.actions.builders
 		
 		
 		/*-.........................................method..........................................*/
-		private var _method:String;
+		private var _method:Object;
 		/**
 		 * HTTP method for sending the request. Permitted values are GET, POST, HEAD, OPTIONS, PUT, TRACE and DELETE. 
 		 * Lowercase letters are converted to uppercase letters. The default value is GET.
 		 */
-		override public function get method():String
+		override public function get method():Object
 		{
 			return _method;
 		}
 		
 		[Inspectable(enumeration="GET,POST,HEAD,OPTIONS,PUT,TRACE,DELETE")]
-		override public function set method(value:String):void
+		override public function set method( value:Object ):void
 		{
 			_method = value;
 		}
@@ -271,12 +271,20 @@ package com.asfusion.mate.actions.builders
 			if(contentType)				httpInstance.contentType = contentType;
 			if(destination) 			httpInstance.destination = destination;
 			if(headers) 				httpInstance.headers = headers;
-			if(method) 					httpInstance.method = method;
 			if(requestTimeoutChanged)	httpInstance.requestTimeout = requestTimeout
 			if(resultFormat) 			httpInstance.resultFormat = resultFormat;
 			if(rootURL)					httpInstance.rootURL = rootURL;
 			if(proxyChanged)			httpInstance.useProxy = useProxy;
 			if(objectsBindableChanged)	httpInstance.makeObjectsBindable = makeObjectsBindable;
+			
+			if(method)
+			{
+				var realMethod:Object = ( method is ISmartObject ) ?  ISmartObject( method ).getValue( scope ) : method;
+				if( realMethod is String )
+				{
+					httpInstance.method = realMethod as String;
+				}
+			} 					
 			
 			if(username && password)
 			{

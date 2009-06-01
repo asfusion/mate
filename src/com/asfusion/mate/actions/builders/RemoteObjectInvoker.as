@@ -215,10 +215,19 @@ package com.asfusion.mate.actions.builders
 		{
 			var argumentList:Array = (new SmartArguments()).getRealArguments(scope, this.arguments);
 			var remoteObjectInstance:RemoteObject = currentInstance;
+			var operation:AbstractOperation;
 			
 			if(method)
 			{
-				var operation:AbstractOperation = remoteObjectInstance.getOperation(method);
+				var realMethod:Object = ( method is ISmartObject ) ?  ISmartObject( method ).getValue( scope ) : method;
+				if( realMethod is String )
+				{
+					operation = remoteObjectInstance.getOperation( realMethod as String );
+				}
+				else
+				{
+					throw( new Error( "Method can only be a String or a SmartObject that represents a String" ) );
+				}
 				if(argumentList)
 				{
 					operation.arguments = argumentList;
