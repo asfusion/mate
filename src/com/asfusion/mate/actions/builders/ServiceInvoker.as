@@ -65,18 +65,19 @@ package com.asfusion.mate.actions.builders
 		-------------------------------------------------------------------------------------------------------------*/
 			
 		/*-.........................................method..........................................*/
-		private var _method:String;
+		private var _method:Object;
 		/**
 		 * The <code>method</code> attribute specifies what function to call on the service instance.
+		 * It can be a SmartObject or String
 		 * 
 		 * @default null
 		 */
-		public function get method():String
+		public function get method():Object
 		{
 			return _method;
 		}
 		
-		public function set method(value:String):void
+		public function set method(value:Object):void
 		{
 			_method = value;
 		}
