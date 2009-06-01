@@ -46,10 +46,11 @@ package com.asfusion.mate.actionLists
 		-------------------------------------------------------------------------------------------------------------*/
 		
 		/*-.........................................autoSubscribe ..........................................*/
+		private var consumerSubscribedCalled:Boolean = false;
+		private var _autoSubscribe:Boolean = true;
 		/**
 		 *  If this flag is true the consumer will be automatically subscribed when the <code>MessageHandlers</code> is created.
 		 */
-		private var _autoSubscribe:Boolean = true;
 		public function get autoSubscribe ():Boolean
 		{
 			return _autoSubscribe;
@@ -301,13 +302,14 @@ package com.asfusion.mate.actionLists
 		 * Processes the properties set on the component.
 		*/
 		override protected function commitProperties():void
-		{
-			if(autoSubscribe)
+		{	
+			if(autoSubscribe && !consumerSubscribedCalled)
 			{
 				if(consumer.subscribed)
 					consumer.unsubscribe();
-					
+				
 				consumer.subscribe();
+				consumerSubscribedCalled = true;
 			}
 		}
 	}
