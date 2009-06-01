@@ -127,9 +127,10 @@ package com.asfusion.mate.actions
 		//........................................softBinding..........................................
 		private var _softBinding:Boolean = false;
 		/**
-		 * An object that contains the data that the injector will use to set the target object
+		 * Flag that will be used to define the type of binding used by the PropertyInjector tag. 
+		 * If softBinding is true, it will use weak references in the binding. Default value is false
 		 * 
-		 * @default null
+		 * @default false
 		 * */
 		public function get softBinding():Boolean
 		{
