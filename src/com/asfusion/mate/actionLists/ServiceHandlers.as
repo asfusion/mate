@@ -104,7 +104,7 @@ package com.asfusion.mate.actionLists
 			{
 				if(actions && actions.length > 0)
 				{
-					var currentScope:ServiceScope = new ServiceScope(inheritedScope.event, debug, inheritedScope);
+					var currentScope:ServiceScope = new ServiceScope( event, debug, inheritedScope );
 					currentScope.owner = this;
 				
 					if(event is FaultEvent)
