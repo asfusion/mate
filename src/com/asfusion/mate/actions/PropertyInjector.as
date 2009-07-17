@@ -169,7 +169,7 @@ package com.asfusion.mate.actions
 		 */
 		override protected function prepare(scope:IScope):void
 		{
-			if(!scope.event is InjectorEvent) return;
+			if(! (scope.event is InjectorEvent)) return;
 			
 			var event:InjectorEvent = InjectorEvent(scope.event);
 			if(targetId == null || targetId == event.uid)
@@ -195,7 +195,7 @@ package com.asfusion.mate.actions
 		 */
 		override protected function run(scope:IScope):void
 		{
-			if(!scope.event is InjectorEvent) return;
+			if(! (scope.event is InjectorEvent)) return;
 			
 			var event:InjectorEvent = InjectorEvent(scope.event);
 			if(targetId == null || targetId == event.uid)
