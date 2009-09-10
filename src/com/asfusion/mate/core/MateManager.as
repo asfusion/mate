@@ -59,23 +59,20 @@ package com.asfusion.mate.core
 /******************************************************************************************************************
 *                                         Inner Class MateManagerInstance
 *******************************************************************************************************************/	
-import com.asfusion.mate.core.GlobalDispatcher;
-import com.asfusion.mate.core.IMateManager;
-import com.asfusion.mate.core.ListenerProxy;
+import com.asfusion.mate.core.*;
 import com.asfusion.mate.events.DispatcherEvent;
 import com.asfusion.mate.events.InjectorSettingsEvent;
-import com.asfusion.mate.utils.SystemManagerFinder;
 import com.asfusion.mate.utils.debug.*;
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
+import flash.utils.getDefinitionByName;
 
-import mx.core.Application;
-import mx.events.FlexEvent;
 import mx.logging.ILoggingTarget;
-import mx.managers.ISystemManager;
+
 
 class MateManagerInstance extends EventDispatcher implements IMateManager
 {
@@ -94,18 +91,6 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 		return _cache;
 	}
 	
-    //.........................................application..........................................
-	public function get application():Application
-	{
-		return Application.application as Application;
-	}
-	
-	//.........................................systemManager..........................................
-	public function get systemManager():ISystemManager
-	{
-		return (application.systemManager) ? application.systemManager.topLevelSystemManager : SystemManagerFinder.find().topLevelSystemManager;
-	}
-	
 	//.........................................loggerClass........................................
 	private var _loggerClass:Class = Logger;
 	public function get loggerClass():Class
@@ -119,7 +104,7 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	
 	
 	//.........................................listenerProxyType........................................
-	private var _listenerProxyType:String = FlexEvent.CREATION_COMPLETE;
+	private var _listenerProxyType:String = "creationComplete"; //FlexEvent.CREATION_COMPLETE;
 	public function get listenerProxyType():String
 	{
 		return _listenerProxyType;
@@ -179,12 +164,6 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 	//-----------------------------------------------------------------------------------------------------------
     //                                          Public Methods
     //-----------------------------------------------------------------------------------------------------------
-    //.........................................callLater........................................
-	public function callLater(method:Function):void
-	{
-		methodQueue[method] = method;
-		addListeners();
-	}
 	
     //.........................................getLogger........................................
     public function getLogger(active:Boolean):IMateLogger
@@ -221,33 +200,5 @@ class MateManagerInstance extends EventDispatcher implements IMateManager
 			listenerProxy.addListener(type);
 		}
 		return listenerProxy;
-	}
-	
-    
-	//-----------------------------------------------------------------------------------------------------------
-    //                                          Private Methods
-    // ----------------------------------------------------------------------------------------------------------
-	
-	//.........................................addListeners........................................
-	private function addListeners():void
-	{
-		systemManager.stage.addEventListener(Event.ENTER_FRAME, callLaterDispatcher);
-	}
-	
-	//.........................................removeListeners........................................
-	private function removeListeners():void
-	{
-		systemManager.stage.removeEventListener(Event.ENTER_FRAME, callLaterDispatcher);
-	}
-	
-	//.........................................callLaterDispatcher........................................
-	private function callLaterDispatcher(event:Event):void
-	{
-		for each(var method:Function in methodQueue)
-		{
-			method();
-		}
-		methodQueue = new Dictionary();
-		removeListeners();
 	}
 }
