@@ -26,9 +26,10 @@ package com.asfusion.mate.core
 	import flash.events.Event;
 	import flash.events.EventPhase;
 	import flash.events.IEventDispatcher;
+	import flash.utils.getDefinitionByName;
 	
-	import mx.core.Application;
-	
+	import mx.core.UIComponent;
+
 	/**
 	 * GlobalDispatcher is the default dispatcher that "Mate" uses. 
 	 * This class functions as a dual dispatcher because we can register to 
@@ -41,12 +42,36 @@ package com.asfusion.mate.core
 	{
 		
 		/*-.........................................applicationDispatcher..........................................*/
+		
+		private var application:IEventDispatcher;
 		/**
 		 * Returns the application itself as an event dispatcher.
 		 */
 		public function get applicationDispatcher():IEventDispatcher
 		{
-			return Application.application as IEventDispatcher;
+			if( !application )
+			{
+				var flexGlobals:Object;
+				try
+				{
+					flexGlobals = getDefinitionByName( "mx.core::FlexGlobals" );
+					if( flexGlobals && flexGlobals.hasOwnProperty( "topLevelApplication" ) )
+					{
+						application = flexGlobals[ "topLevelApplication" ] as IEventDispatcher;
+					}
+				}
+				catch( e:Error )
+				{
+					// ignore because we are using Flex 3 SDK
+				}
+				
+				if( !application )
+				{
+					var mxApplication:Object = getDefinitionByName( "mx.core::Application" );
+					application = mxApplication[ "application" ] as IEventDispatcher;
+				}
+			}
+			return application;
 		}
 		
 		/*-.........................................popupDispatcher..........................................*/
@@ -57,7 +82,7 @@ package com.asfusion.mate.core
 		 */
 		public function get popupDispatcher():IEventDispatcher
 		{
-				var application:Application = applicationDispatcher as Application;
+				var application:UIComponent = applicationDispatcher as UIComponent;
 				return (application.systemManager) ? application.systemManager.topLevelSystemManager : SystemManagerFinder.find().topLevelSystemManager;
 		}
 	

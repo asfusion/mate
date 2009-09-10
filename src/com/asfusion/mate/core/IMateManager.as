@@ -24,7 +24,6 @@ package com.asfusion.mate.core
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	
-	import mx.core.Application;
 	import mx.logging.ILoggingTarget;
 	import mx.managers.ISystemManager;
 	/**
@@ -36,18 +35,7 @@ package com.asfusion.mate.core
 		//                                     Getters and Setters
 		//-----------------------------------------------------------------------------------------------------------
 		
-		//.........................................application..........................................
-		/**
-		 * A reference to the Application instance
-		 */
-		function get application():Application
-		
-		//........................................systemManager..........................................
-		/**
-		 * A reference to the ISystemManager instance
-		 */
-		function get systemManager():ISystemManager
-		
+
 		//........................................dispatcher..........................................
 		/**
 		 * A reference to the IEventDispatcher instance that is used by the following tags:
@@ -87,15 +75,6 @@ package com.asfusion.mate.core
 		//-----------------------------------------------------------------------------------------------------------
 		//                                      Methods
 		//-----------------------------------------------------------------------------------------------------------
-		//.........................................callLater..........................................
-		/**
-		 * Queues a function to be called later.
-		 * <p>Before each update of the screen, Flash Player or AIR calls the set of functions 
-		 * that are scheduled for the update. Sometimes, a function should be called in the next 
-		 * update to allow the rest of the code scheduled for the current update to be executed. 
-		 * Some features, like effects, can cause queued functions to be delayed until the feature completes.</p>
-		 */
-		function callLater(method:Function):void
 		
 		//.........................................getLogger..........................................
 		/**

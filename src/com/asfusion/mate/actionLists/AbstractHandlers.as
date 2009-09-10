@@ -240,12 +240,14 @@ package com.asfusion.mate.actionLists
 		}
 		
 		/*-.........................................invalidateProperties..........................................*/
+		private var needsInvalidation:Boolean;
 		/**
 		*  @inheritDoc
 		*/
 		public function invalidateProperties():void
 		{
-			manager.callLater(commitProperties)
+			if( !isInitialized ) needsInvalidation = true;
+			else commitProperties();
 		}
 		
 		/*-.........................................setInheritScope..........................................*/
@@ -389,6 +391,7 @@ package com.asfusion.mate.actionLists
 		}
 		
 		/*-.........................................initialized..........................................*/
+		private var isInitialized:Boolean;
 		/**
 		 * Called automatically by the MXML compiler if the IActionList is set up using a tag.
 		 */
@@ -413,6 +416,13 @@ package com.asfusion.mate.actionLists
 			{
 				setDispatcher(manager.dispatcher,false);
 			}
+			
+			if( needsInvalidation )
+			{
+				commitProperties();
+				needsInvalidation = false;
+			}
+			isInitialized = true;
 		}
 	}
 }
