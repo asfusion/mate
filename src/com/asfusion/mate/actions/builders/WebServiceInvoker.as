@@ -277,7 +277,9 @@ package com.asfusion.mate.actions.builders
 				webServiceInstance.setRemoteCredentials(remoteUsername as String, remotePassword as String);
 			}
 			
-			webServiceInstance.loadWSDL();
+			if (!webServiceInstance.ready) {
+				webServiceInstance.loadWSDL();
+			}
 		}
 		
 		/*-.........................................run..........................................*/
