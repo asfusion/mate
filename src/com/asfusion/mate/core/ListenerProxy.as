@@ -95,6 +95,8 @@ package com.asfusion.mate.core
 		 */
 		public function addListener( type:String, typeWatcher:IEventDispatcher = null ):void
 		{
+			if (registered && (this.type == type)) return;
+				
 			var weekDispatcher:IEventDispatcher = dispatcher;
 			
 			if(this.type != type && registered)
@@ -109,6 +111,7 @@ package com.asfusion.mate.core
 			{
 				GlobalDispatcher( weekDispatcher ).popupDispatcher.addEventListener( type, globalListenerProxyHandler, true, 1, true );
 			}
+
 			this.type = type;
 			registered = true;
 			

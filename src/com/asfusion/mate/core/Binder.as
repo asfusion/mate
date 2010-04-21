@@ -33,28 +33,36 @@ package com.asfusion.mate.core
 	 */
 	public class Binder
 	{
-		protected var soft:Boolean;
-		public function Binder( soft:Boolean = false )
+		// ****************************************************************************
+		// Constructor
+		// ****************************************************************************
+		
+
+		public function Binder( soft:Boolean = false, scope:Object = null )
 		{
-			this.soft = soft;
+			this.soft 	= soft;
+			this._scope = scope;	// logging purposes
 		}
 		
+		// ****************************************************************************
+		// Public Methods
+		// ****************************************************************************
 		
 		/**
 		 * The function that implements the binding between two objects.
 		 */
-		public function bind(scope:IScope,target:Object, targetKey:String, source:Object, sourceKey:String):Boolean
+		public function bind(scope:Object, target:Object, targetKey:String, source:Object, sourceKey:String):Boolean
 		{
-			var isWatching:Boolean;
-			var logInfo:LogInfo;
+			var isWatching:Boolean = false;
+			
+			if (scope != null) _scope = scope;
+			
 			if(target && targetKey && source && sourceKey)
 			{
-				var chainSourceKey:Object = sourceKey;
-				var multipleLevels:int = chainSourceKey.indexOf(".");
-				if(multipleLevels > 0)
-				{
-					chainSourceKey = sourceKey.split(".");
-				}
+				var multipleLevels : int    = sourceKey.indexOf(".");
+				var chainSourceKey : Object = (multipleLevels > 0) ? sourceKey.split(".") : sourceKey;
+				var data           : Object = null;
+				
 				try
 				{
 					if( soft )
@@ -64,23 +72,19 @@ package com.asfusion.mate.core
 					}
 					else
 					{
-						var wacher:ChangeWatcher = BindingUtils.bindProperty(target, targetKey, source, chainSourceKey);
+						var wacher : ChangeWatcher = BindingUtils.bindProperty(target, targetKey, source, chainSourceKey);
 						if(wacher.isWatching()) isWatching = true;
 					}
 				}
 				catch(error:ReferenceError)
 				{
-					logInfo = new LogInfo( scope, source, error, null, null,sourceKey );
-					logInfo.data = {target:target, targetKey:targetKey};
-					scope.getLogger().error(LogTypes.CANNOT_BIND, logInfo);
-					isWatching = false;
+					data = {target:target, targetKey:targetKey};
+					logError(LogTypes.CANNOT_BIND, error, source, sourceKey, data);
 				}
 				catch(error:TypeError)
 				{
-					logInfo = new LogInfo( scope, source, error,null, null,sourceKey );
-					logInfo.data = {target:target, targetKey:targetKey, source:source, sourceKey:sourceKey};
-					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
-					isWatching = false;
+					data = {target:target, targetKey:targetKey, source:source, sourceKey:sourceKey};
+					logError(LogTypes.PROPERTY_TYPE_ERROR, error, source, sourceKey, data);
 				}
 			}
 			else if(target && targetKey && source)
@@ -88,50 +92,29 @@ package com.asfusion.mate.core
 				try
 				{
 					target[targetKey] = source;
+					isWatching        = true;
 				}
 				catch(error:ReferenceError)
 				{
-					logInfo = new LogInfo( scope, target, error, null, null,targetKey );
-					scope.getLogger().error(LogTypes.PROPERTY_NOT_FOUND, logInfo);
-					isWatching = false;
+					logError(LogTypes.PROPERTY_NOT_FOUND, error, target, targetKey);
 				}
 				catch(error:TypeError)
 				{
-					logInfo = new LogInfo( scope, source, error);
-					logInfo.data = {target:target, targetKey:targetKey, source:source};
-					scope.getLogger().error(LogTypes.PROPERTY_TYPE_ERROR, logInfo);
-					isWatching = false;
+					data = {target:target, targetKey:targetKey, source:source};
+					logError(LogTypes.PROPERTY_TYPE_ERROR, error, source,null,data);
 				}
 			}
 			else
 			{
-				isWatching = false;
-				if(!targetKey)
-				{
-					logInfo = new LogInfo( scope);
-					scope.getLogger().error(LogTypes.TARGET_KEY_UNDEFINED, logInfo);
-				}
-				else if(!target)
-				{
-					logInfo = new LogInfo( scope);
-					scope.getLogger().error(LogTypes.TARGET_UNDEFINED, logInfo);
-				}
-				else if(!source)
-				{
-					logInfo = new LogInfo( scope);
-					scope.getLogger().error(LogTypes.SOURCE_UNDEFINED, logInfo);
-				}
+				if(!targetKey)			logError(LogTypes.TARGET_KEY_UNDEFINED);
+				else if(!target)		logError(LogTypes.TARGET_UNDEFINED);
+				else if(!source)		logError(LogTypes.SOURCE_UNDEFINED);
 			}
-			if(!isWatching)
-			{
-				logInfo = new LogInfo( scope);
-				logInfo.data = {targetKey:targetKey};
-				scope.getLogger().info(LogTypes.NOT_BINDING, logInfo);
-			}
+			
+			if(!isWatching)				logError(LogTypes.NOT_BINDING,null,null,null,{targetKey:targetKey});
+			
 			return isWatching;
 		}
-		
-		private static var keepFunctionLive:Array = new Array();
 		
 		public static function bindProperty( site:Object, prop:String,  host:Object, chain:Object, commitOnly:Boolean = false):SoftChangeWatcher
 		{
@@ -146,10 +129,30 @@ package com.asfusion.mate.core
 	            w.setHandler(assign);
 	            assign(null);
 	            
-	            keepFunctionLive.push( assign );
+	            _keepFunctionLive.push( assign );
 	        }
 	        
 	        return w;
 	    }
+		
+		// ****************************************************************************
+		// Private Error logging
+		// ****************************************************************************
+		
+	    private function logError(	errorCode	:String, 
+	    							error		:Error	=null,
+	    							source		:*		=null, 
+	    							sourceKey	:String	=null,
+	    							data		:Object	=null) : void {
+	    	
+	    	if (_scope != null) 
+			{
+				_scope.getLogger().error(errorCode, new LogInfo( _scope, source, error, null, null, sourceKey,data ));
+			}
+	    }
+
+				protected 	var soft				: Boolean 	= false;
+				private     var _scope          	: Object    = null;
+		static 	private 	var _keepFunctionLive	: Array 	= new Array();
 	}
 }

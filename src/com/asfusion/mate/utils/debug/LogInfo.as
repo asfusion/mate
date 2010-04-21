@@ -84,20 +84,24 @@ package com.asfusion.mate.utils.debug
 		/**
 		 * Constructor
 		 */
-		public function LogInfo(loggerProvider:ILoggerProvider, 
+		public function LogInfo(loggerProvider:Object, 
 								instance:* = null,  
 								error:Error = null, 
 								method:String = null, 
 								parameters:Array = null, 
-								property:String = null)
+								property:String = null,
+								data:Object = null )
 		{
-			this.target = loggerProvider.getCurrentTarget();
-			this.instance  = instance;
-			this.error = error;
-			this.method = method;
-			this.parameters = parameters;
-			this.loggerProvider = loggerProvider;
-			this.property = property;
+			if( loggerProvider is ILoggerProvider)
+			{
+				this.loggerProvider = ILoggerProvider(loggerProvider);
+				this.target = this.loggerProvider.getCurrentTarget();
+				this.instance  = instance;
+				this.error = error;
+				this.method = method;
+				this.parameters = parameters;
+				this.property = property;
+			}
 		}
 
 	}
