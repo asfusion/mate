@@ -31,6 +31,7 @@
 	<component class="com.asfusion.mate.actions.builders.serviceClasses.Request"/>
 	<component class="com.asfusion.mate.actions.builders.AsyncMethodInvoker"/>
 	<component class="com.asfusion.mate.actions.builders.AsyncCommandInvoker"/>
+	<component class="com.asfusion.mate.actions.builders.PropertyGetter"/>
 	<component class="com.asfusion.mate.actions.builders.PropertySetter"/>
 	<component class="com.asfusion.mate.actions.builders.DelegateInvoker"/>
 	
