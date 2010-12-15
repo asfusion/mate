@@ -56,8 +56,7 @@ package com.asfusion.mate.testing
 		 * @todo
 		 */
 		public var cache:Boolean =  true;
-		
-		/**
+		/**		 * Indicates whether any unhandled errors thrown by the service method should be caught		 * and dispatched as a fault. Default is true.		 */		public var useFault:Boolean = true;		/**
 		 * @todo
 		 */
 		protected var methodsDictionary:Dictionary;
@@ -107,7 +106,7 @@ package com.asfusion.mate.testing
 		 */
 		override public function getOperation(name:String):AbstractOperation
 	    {   
-	    	var operation:MockOperation = new MockOperation(name, getMethod(name), showBusyCursor);
+	    	var operation:MockOperation = new MockOperation(name, getMethod(name), showBusyCursor, useFault);
 	    	//add fault and result listeners
 	    	operation.addEventListener(ResultEvent.RESULT, dispatchResult, false, 0, true);
 	    	operation.addEventListener(FaultEvent.FAULT, dispatchFault, false, 0, true);

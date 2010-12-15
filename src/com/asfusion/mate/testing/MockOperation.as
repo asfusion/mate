@@ -59,21 +59,18 @@ package com.asfusion.mate.testing
 		protected var showCursor:Boolean;
 		
 
-		
-		//--------------------------------------------------------------------------
-	    // Contructor
+		/**		 * @todo		 */		protected var useFault:Boolean = true;		//--------------------------------------------------------------------------	    // Contructor
 	    //--------------------------------------------------------------------------
 	    /**
 	    * Contructor
 	    */
-		public function MockOperation(name:String, method:MockMethod, showBusyCursor:Boolean)
+		public function MockOperation(name:String, method:MockMethod, showBusyCursor:Boolean, useFault:Boolean = true)
 		{
 			this.method = method;
 			var generator:Class = method.mockGenerator;
 			mock = MockCache.getInstance( generator, method.cache )
 			showCursor = showBusyCursor;
-			
-			super(service, name);
+			this.useFault = useFault;			super(service, name);
 		}
 		
 		// --------------------------------------------------------------
@@ -166,8 +163,7 @@ package com.asfusion.mate.testing
 			
 			catch (error:Error) 
 			{
-				startFault(new Fault(error.name, error.name, error.message));
-			}
+				if ( useFault )					startFault(new Fault(error.name, error.name, error.message));				else					throw error;			}
 		}
 		
 		// --------------------------------
