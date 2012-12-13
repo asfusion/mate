@@ -29,7 +29,6 @@ package com.asfusion.mate.actionLists
 	import mx.rpc.events.AbstractEvent;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
-	import mx.rpc.soap.WebService;
 	
 	use namespace mate;
 	/**
@@ -101,7 +100,7 @@ package com.asfusion.mate.actionLists
 		 */
 		override protected function fireEvent(event:Event):void
 		{	
-			if(AbstractEvent(event).token == token || ( dispatcher is WebService && event is FaultEvent ) ) 
+			if(AbstractEvent(event).token == token) 
 			{
 				if(actions && actions.length > 0)
 				{
