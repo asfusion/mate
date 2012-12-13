@@ -26,7 +26,7 @@ package com.asfusion.mate.actions.builders
 	use namespace mate;
 	
 	/**
-	* The <code>CommandInvoker</code> tag is very similar to the <code>MethodInvokerr</code> tag, but limited. 
+	* The <code>CommandInvoker</code> tag is very similar to the <code>MethodInvoker</code> tag, but limited.
 	* It only allows specifying the <code>generator</code> class to instantiate. 
 	* It will always call the method <code>execute</code> and pass the current event as its only argument. 
 	* This tag is very useful when reusing Cairngorm commands.
@@ -47,7 +47,7 @@ package com.asfusion.mate.actions.builders
  	* /&gt;
 	* </pre>
 	* 
-	* @see com.asfusion.mate.actions.builders.MethodInvokerr
+	* @see com.asfusion.mate.actions.builders.MethodInvoker
 	* @see com.asfusion.mate.actionLists.EventHandlers
 	*/
 	public class CommandInvoker extends ObjectBuilder
