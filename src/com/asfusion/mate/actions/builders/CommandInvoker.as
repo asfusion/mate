@@ -56,7 +56,7 @@ package com.asfusion.mate.actions.builders
 		//                                        Public Setters and Getters
 		//-----------------------------------------------------------------------------------------------------------
 
-		//.........................................generator..........................................
+		//.........................................destroy..........................................
 		private var _destroy:Boolean = false;
 		/**
 		 * If set up this parameter to true, method <code>destroy</code> of this command instance will be called
