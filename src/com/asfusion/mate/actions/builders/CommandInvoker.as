@@ -19,7 +19,6 @@ Author: Nahuel Foronda, Principal Architect
 */
 package com.asfusion.mate.actions.builders
 {
-	import com.asfusion.mate.actions.IAction;
 	import com.asfusion.mate.core.*;
 	import com.asfusion.mate.actionLists.IScope;
 	
@@ -27,10 +26,12 @@ package com.asfusion.mate.actions.builders
 	use namespace mate;
 	
 	/**
-	* The <code>CommandInvoker</code> tag is very similar to the <code>MethodInvokerr</code> tag, but limited. 
+	* The <code>CommandInvoker</code> tag is very similar to the <code>MethodInvoker</code> tag, but limited.
 	* It only allows specifying the <code>generator</code> class to instantiate. 
 	* It will always call the method <code>execute</code> and pass the current event as its only argument. 
 	* This tag is very useful when reusing Cairngorm commands.
+	* If you specify <code>destroy="true"</code>, method <code>destroy</code> of this command instance
+	* will be called immediately after calling of <code>execute</code> method.
 	* Unless you specify cache="none", this <code>CommandInvoker</code> instance will be "cached" and not instantiated again.
 	* 
     * 
@@ -42,14 +43,35 @@ package com.asfusion.mate.actions.builders
 	* generator="Class"
 	* constructorArguments="Object|Array"
 	* cache="local|global|inherit|none"
+	* destroy="true|false"
  	* /&gt;
 	* </pre>
 	* 
-	* @see com.asfusion.mate.actions.builders.MethodInvokerr
+	* @see com.asfusion.mate.actions.builders.MethodInvoker
 	* @see com.asfusion.mate.actionLists.EventHandlers
 	*/
 	public class CommandInvoker extends ObjectBuilder
 	{
+		//-----------------------------------------------------------------------------------------------------------
+		//                                        Public Setters and Getters
+		//-----------------------------------------------------------------------------------------------------------
+
+		//.........................................destroy..........................................
+		private var _destroy:Boolean = false;
+		/**
+		 * If set up this parameter to true, method <code>destroy</code> of this command instance will be called
+		 * after calling <code>execute</code> method.
+		 *
+		 * @default false
+		 */
+		public function get destroy():Boolean
+		{
+			return _destroy;
+		}
+		public function set destroy(value:Boolean):void
+		{
+			_destroy = value;
+		}
 		
 		/*-----------------------------------------------------------------------------------------------------------
 		*                                          Override protected methods
@@ -64,6 +86,11 @@ package com.asfusion.mate.actions.builders
 			var methodCaller:MethodCaller = new MethodCaller();
 			var event:Event = scope.event;
 			scope.lastReturn = methodCaller.call(scope ,currentInstance, 'execute', [event], false);
+			// Destroy command if need.
+			if(_destroy)
+			{
+				methodCaller.call(scope ,currentInstance, 'destroy', [event], false);
+			}
 		}
 	}
 }
